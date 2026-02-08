@@ -72,7 +72,10 @@
                 "items": { "type": "string" }
               }
             }
-          }
+          },
+          "bannerImage": { "type": "string" },
+          "bannerAlt": { "type": "string" },
+          "bannerPosition": { "enum": ["center", "top", "bottom"] }
         }
       }
     }

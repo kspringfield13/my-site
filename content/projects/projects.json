@@ -24,7 +24,10 @@
         "screenshots": [],
         "diagrams": [],
         "docs": []
-      }
+      },
+      "bannerImage": "/projects/banners/xenosync.png",
+      "bannerAlt": "xenosync multi-agent orchestration interface preview",
+      "bannerPosition": "center"
     },
     {
       "slug": "chatdeb",
@@ -49,7 +52,10 @@
         "screenshots": [],
         "diagrams": [],
         "docs": []
-      }
+      },
+      "bannerImage": "/projects/banners/chatdeb.png",
+      "bannerAlt": "chatdeb analytics chat interface preview",
+      "bannerPosition": "center"
     },
     {
       "slug": "ecommerce-dbt",
@@ -74,7 +80,10 @@
         "screenshots": [],
         "diagrams": [],
         "docs": []
-      }
+      },
+      "bannerImage": "/projects/banners/ecommerce-dbt.png",
+      "bannerAlt": "ecommerce-dbt lineage and model dashboard preview",
+      "bannerPosition": "center"
     },
     {
       "slug": "elt-pipeline",
@@ -99,7 +108,10 @@
         "screenshots": [],
         "diagrams": [],
         "docs": []
-      }
+      },
+      "bannerImage": "/projects/banners/elt-pipeline.png",
+      "bannerAlt": "elt-pipeline Snowflake and dbt workflow preview",
+      "bannerPosition": "center"
     },
     {
       "slug": "xbot",
@@ -124,7 +136,10 @@
         "screenshots": [],
         "diagrams": [],
         "docs": []
-      }
+      },
+      "bannerImage": "/projects/banners/xbot.png",
+      "bannerAlt": "xbot content automation dashboard preview",
+      "bannerPosition": "center"
     },
     {
       "slug": "xagg",
@@ -149,7 +164,10 @@
         "screenshots": [],
         "diagrams": [],
         "docs": []
-      }
+      },
+      "bannerImage": "/projects/banners/xagg.png",
+      "bannerAlt": "xagg news and market data dashboard preview",
+      "bannerPosition": "center"
     }
   ]
 }

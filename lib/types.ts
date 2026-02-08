@@ -22,6 +22,9 @@ export interface ProjectMeta {
   topics: string[];
   readmeHighlights: string[];
   artifacts: ProjectArtifacts;
+  bannerImage?: string;
+  bannerAlt?: string;
+  bannerPosition?: "center" | "top" | "bottom";
   updatedAt?: string;
 }
 

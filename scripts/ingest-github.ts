@@ -34,6 +34,9 @@ interface ProjectMeta {
     diagrams: string[];
     docs: string[];
   };
+  bannerImage?: string;
+  bannerAlt?: string;
+  bannerPosition?: "center" | "top" | "bottom";
   updatedAt?: string;
 }
 
@@ -286,6 +289,9 @@ async function main() {
       ...normalized,
       demoUrl: previous?.demoUrl ?? normalized.demoUrl,
       artifacts: previous?.artifacts ?? normalized.artifacts,
+      bannerImage: previous?.bannerImage,
+      bannerAlt: previous?.bannerAlt,
+      bannerPosition: previous?.bannerPosition,
       tags: previous?.tags?.length ? previous.tags : normalized.tags,
       stack: previous?.stack?.length ? previous.stack : normalized.stack,
       pinned: pinnedNames.includes(normalized.slug) || REQUIRED_REPOS.includes(normalized.slug),

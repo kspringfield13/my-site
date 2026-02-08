@@ -1,0 +1,461 @@
+.rail {
+  --count: 6;
+  position: relative;
+  margin: 1rem 0 0;
+  padding: 0.5rem 0;
+  min-height: clamp(290px, 36vw, 360px);
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+  gap: clamp(0.85rem, 1.5vw, 1rem);
+  overflow: visible;
+}
+
+.rail::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--c-accent-700) 24%, transparent),
+    color-mix(in srgb, var(--c-accent-700) 75%, transparent),
+    color-mix(in srgb, var(--c-accent-700) 24%, transparent)
+  );
+  opacity: 0.9;
+}
+
+.item {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.item::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  background: color-mix(in srgb, var(--c-accent-700) 76%, var(--c-text));
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--c-accent-900) 46%, transparent),
+    0 0 16px color-mix(in srgb, var(--c-accent-700) 34%, transparent);
+}
+
+.item::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(50% - 36px);
+  width: 2px;
+  height: 36px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--c-accent-700) 46%, transparent),
+    color-mix(in srgb, var(--c-accent-700) 8%, transparent)
+  );
+}
+
+.item:nth-child(even) {
+  align-items: flex-end;
+}
+
+.item:nth-child(even)::after {
+  top: 50%;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--c-accent-700) 8%, transparent),
+    color-mix(in srgb, var(--c-accent-700) 46%, transparent)
+  );
+}
+
+.card {
+  --base-y: -40px;
+  --hx: 0;
+  --hy: 0;
+  position: relative;
+  width: min(100%, 220px);
+  min-height: 162px;
+  padding: 0.88rem 0.9rem 0.86rem;
+  border-radius: 0.95rem;
+  border: 1px solid color-mix(in srgb, var(--c-accent-700) 24%, var(--c-border));
+  backdrop-filter: blur(7px);
+  background: linear-gradient(
+    168deg,
+    color-mix(in srgb, var(--c-accent-900) 24%, var(--c-surface-2)) 0%,
+    color-mix(in srgb, var(--c-surface-2) 86%, transparent) 100%
+  );
+  box-shadow:
+    0 9px 22px color-mix(in srgb, var(--c-accent-900) 12%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--c-text) 24%, transparent);
+  overflow: hidden;
+  transform: translate3d(
+    calc(var(--hx) * (8px * var(--depth))),
+    calc(var(--base-y) + var(--hy) * (10px * var(--depth))),
+    0
+  );
+  animation: card-float 7.2s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.48s);
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+
+.cardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.65rem;
+  width: 100%;
+}
+
+.item:nth-child(even) .card {
+  --base-y: 40px;
+}
+
+.card:hover {
+  border-color: color-mix(in srgb, var(--c-accent-700) 64%, transparent);
+  box-shadow:
+    0 14px 28px color-mix(in srgb, var(--c-accent-900) 24%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--c-accent-700) 44%, transparent);
+}
+
+.cardTrigger {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+.cardTrigger:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--c-accent-700) 72%, var(--c-text));
+  outline-offset: 3px;
+}
+
+.year {
+  margin: 0.16rem 0 0;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--c-accent-700) 40%, transparent);
+  background: color-mix(in srgb, var(--c-accent-900) 22%, transparent);
+  padding: 0.16rem 0.48rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--c-accent-700) 80%, var(--c-text));
+}
+
+.label {
+  margin: 0.8rem 0 0;
+  width: 100%;
+  font-size: 0.94rem;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--c-text) 94%, transparent);
+  text-wrap: balance;
+  min-height: 3.9em;
+}
+
+.cardCta {
+  margin-top: 0.74rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--c-accent-700) 62%, var(--c-text));
+  opacity: 0.88;
+  transition:
+    color 200ms ease,
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+.cardCta::after {
+  content: "↗";
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
+.logo {
+  width: 60px;
+  height: 60px;
+  margin-top: 0.06rem;
+  margin-left: auto;
+  flex-shrink: 0;
+  object-fit: contain;
+  opacity: 0.88;
+  pointer-events: none;
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease,
+    filter 220ms ease;
+}
+
+.card:hover .logo {
+  opacity: 1;
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--c-accent-700) 32%, transparent));
+}
+
+.card:hover .year {
+  border-color: color-mix(in srgb, var(--c-accent-700) 64%, transparent);
+  color: color-mix(in srgb, var(--c-link-hover) 82%, var(--c-text));
+}
+
+.card:hover .cardCta {
+  color: color-mix(in srgb, var(--c-link-hover) 84%, var(--c-text));
+  opacity: 1;
+  transform: translateX(1px);
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--c-bg) 72%, transparent);
+  backdrop-filter: blur(4px);
+}
+
+.modalPanel {
+  position: relative;
+  width: min(680px, 100%);
+  max-height: min(88dvh, 760px);
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--c-accent-700) 34%, var(--c-border));
+  border-radius: 1rem;
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--c-surface-2) 88%, var(--c-accent-900)) 0%,
+    color-mix(in srgb, var(--c-surface-2) 70%, var(--c-bg)) 100%
+  );
+  box-shadow: 0 24px 50px color-mix(in srgb, var(--c-bg) 46%, transparent);
+  padding: 1rem 1rem 1.1rem;
+}
+
+.modalClose {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--c-accent-700) 32%, transparent);
+  background: color-mix(in srgb, var(--c-accent-900) 24%, transparent);
+  color: color-mix(in srgb, var(--c-text) 92%, transparent);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modalClose:hover {
+  border-color: color-mix(in srgb, var(--c-accent-700) 62%, transparent);
+}
+
+.modalHeader {
+  margin-top: 0.7rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem;
+  align-items: start;
+}
+
+.modalLogo {
+  width: 88px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  border: 1px dashed color-mix(in srgb, var(--c-accent-700) 32%, transparent);
+  background: color-mix(in srgb, var(--c-accent-900) 20%, transparent);
+}
+
+.modalRole {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  color: color-mix(in srgb, var(--c-text) 96%, transparent);
+}
+
+.modalCompany {
+  margin: 0.18rem 0 0;
+  font-size: 0.95rem;
+  color: color-mix(in srgb, var(--c-accent-700) 72%, var(--c-text));
+}
+
+.modalMeta {
+  margin: 0.28rem 0 0;
+  font-size: 0.84rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--c-text) 66%, transparent);
+}
+
+.modalBullets {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.72rem;
+}
+
+.modalBullets li {
+  position: relative;
+  padding-left: 1rem;
+  color: color-mix(in srgb, var(--c-text) 90%, transparent);
+  line-height: 1.45;
+}
+
+.modalBullets li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--c-accent-700) 70%, var(--c-text));
+}
+
+@keyframes card-float {
+  0%,
+  100% {
+    transform: translate3d(
+      calc(var(--hx) * (8px * var(--depth))),
+      calc(var(--base-y) + var(--hy) * (10px * var(--depth))),
+      0
+    );
+  }
+
+  50% {
+    transform: translate3d(
+      calc(var(--hx) * (8px * var(--depth))),
+      calc(var(--base-y) + var(--hy) * (10px * var(--depth)) - 6px),
+      0
+    );
+  }
+}
+
+@media (max-width: 900px) {
+  .rail {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    gap: 0.9rem;
+    padding: 0.25rem 0;
+  }
+
+  .rail::before {
+    left: 1.25rem;
+    right: auto;
+    top: 1rem;
+    bottom: 1rem;
+    width: 2px;
+    height: auto;
+    transform: none;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--c-accent-700) 24%, transparent),
+      color-mix(in srgb, var(--c-accent-700) 76%, transparent),
+      color-mix(in srgb, var(--c-accent-700) 24%, transparent)
+    );
+  }
+
+  .item {
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-left: 1.9rem;
+  }
+
+  .item::before {
+    left: 1.25rem;
+    top: 1.08rem;
+    transform: translate(-50%, 0);
+  }
+
+  .item::after {
+    left: 1.25rem;
+    top: 1.42rem;
+    width: 20px;
+    height: 2px;
+    transform: none;
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--c-accent-700) 56%, transparent),
+      color-mix(in srgb, var(--c-accent-700) 10%, transparent)
+    );
+  }
+
+  .item:nth-child(even) {
+    align-items: flex-start;
+  }
+
+  .item:nth-child(even)::after {
+    top: 1.42rem;
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--c-accent-700) 56%, transparent),
+      color-mix(in srgb, var(--c-accent-700) 10%, transparent)
+    );
+  }
+
+  .card {
+    --base-y: 0px;
+    width: min(100%, 560px);
+  }
+
+  .item:nth-child(even) .card {
+    --base-y: 0px;
+  }
+}
+
+@media (max-width: 640px) {
+  .modalBackdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modalPanel {
+    width: 100%;
+    max-height: min(88dvh, 820px);
+    border-radius: 1rem 1rem 0 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    padding: 0.9rem 0.9rem 1.15rem;
+  }
+
+  .modalRole {
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+}

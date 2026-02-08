@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kylespringfield.dev/schemas/search-index.schema.json",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "type", "title", "url", "tags", "body"],
+    "properties": {
+      "id": { "type": "string" },
+      "type": { "enum": ["Project", "Writing", "Section", "Now"] },
+      "title": { "type": "string" },
+      "url": { "type": "string" },
+      "tags": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "body": { "type": "string" }
+    }
+  }
+}

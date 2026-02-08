@@ -1,0 +1,33 @@
+{
+  "systemsShipped": {
+    "pipelines": 24,
+    "dashboards": 31,
+    "apps": 12
+  },
+  "timelineHighlights": [
+    {
+      "year": 2013,
+      "label": "NetApp analytics foundations"
+    },
+    {
+      "year": 2014,
+      "label": "UBS reporting + analysis"
+    },
+    {
+      "year": 2017,
+      "label": "RRD: analytics -> DS -> DE"
+    },
+    {
+      "year": 2021,
+      "label": "Freelance Python systems"
+    },
+    {
+      "year": 2024,
+      "label": "Peraton CMS FWA pipelines"
+    },
+    {
+      "year": 2025,
+      "label": "Cisco experimentation + strategy"
+    }
+  ]
+}

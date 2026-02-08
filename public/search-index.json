@@ -1,0 +1,90 @@
+[
+  {
+    "id": "project:xenosync",
+    "type": "Project",
+    "title": "xenosync",
+    "url": "/projects/xenosync",
+    "tags": ["ai", "fullstack", "orchestration"],
+    "body": "Multi-agent AI orchestration platform coordinating parallel Claude Code sessions."
+  },
+  {
+    "id": "project:chatdeb",
+    "type": "Project",
+    "title": "chatdeb",
+    "url": "/projects/chatdeb",
+    "tags": ["ai", "data", "fullstack", "fastapi", "dbt"],
+    "body": "Full-stack chatbot for analyzing business data with FastAPI, OpenAI/LangChain, DuckDB/dbt, and React/Next."
+  },
+  {
+    "id": "project:ecommerce-dbt",
+    "type": "Project",
+    "title": "ecommerce-dbt",
+    "url": "/projects/ecommerce-dbt",
+    "tags": ["data", "dbt", "duckdb", "ci"],
+    "body": "End-to-end dbt pipeline on DuckDB with schema tests, docs, and CI."
+  },
+  {
+    "id": "project:elt-pipeline",
+    "type": "Project",
+    "title": "elt-pipeline",
+    "url": "/projects/elt-pipeline",
+    "tags": ["data", "dbt", "snowflake", "elt"],
+    "body": "dbt + Snowflake ELT pipeline patterns for maintainable transformations."
+  },
+  {
+    "id": "project:xbot",
+    "type": "Project",
+    "title": "xbot",
+    "url": "/projects/xbot",
+    "tags": ["ai", "fullstack", "automation"],
+    "body": "OpenAI-powered automation bot for generating posts and images to X/Discord."
+  },
+  {
+    "id": "project:xagg",
+    "type": "Project",
+    "title": "xagg",
+    "url": "/projects/xagg",
+    "tags": ["data", "fullstack", "streamlit"],
+    "body": "Streamlit news aggregator combining headlines and market data."
+  },
+  {
+    "id": "section:hero",
+    "type": "Section",
+    "title": "Hero",
+    "url": "/#hero",
+    "tags": ["positioning", "proof"],
+    "body": "Kyle builds data pipelines, analytics systems, and AI-powered apps."
+  },
+  {
+    "id": "section:proof",
+    "type": "Section",
+    "title": "Proof",
+    "url": "/#proof",
+    "tags": ["timeline", "skills", "metrics"],
+    "body": "Impact timeline, skills graph, and systems shipped counters."
+  },
+  {
+    "id": "section:skills",
+    "type": "Section",
+    "title": "Skills",
+    "url": "/#skills",
+    "tags": ["sql", "python", "dbt", "genai"],
+    "body": "Practical clusters across Data Engineering, Analytics, AI, and delivery."
+  },
+  {
+    "id": "now:2026-02-04-multi-agent-reliability",
+    "type": "Now",
+    "title": "Multi-agent reliability sweep",
+    "url": "/#now",
+    "tags": ["models", "ai"],
+    "body": "Benchmarked retry and reconciliation strategies for parallel coding sessions."
+  },
+  {
+    "id": "writing:first-principles-analytics",
+    "type": "Writing",
+    "title": "First-principles analytics systems",
+    "url": "/writing/first-principles-analytics",
+    "tags": ["analytics", "systems", "decision-making"],
+    "body": "A short note on building analytics systems that hold up under ambiguity."
+  }
+]

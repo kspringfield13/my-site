@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kylespringfield.dev/schemas/project-index.schema.json",
+  "type": "object",
+  "required": ["updatedAt", "projects"],
+  "properties": {
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "slug",
+          "name",
+          "tagline",
+          "description",
+          "tags",
+          "stack",
+          "repoUrl",
+          "pinned",
+          "stars",
+          "forks",
+          "language",
+          "topics",
+          "readmeHighlights",
+          "artifacts"
+        ],
+        "properties": {
+          "slug": { "type": "string" },
+          "name": { "type": "string" },
+          "tagline": { "type": "string" },
+          "description": { "type": "string" },
+          "tags": {
+            "type": "array",
+            "items": { "enum": ["ai", "data", "fullstack"] }
+          },
+          "stack": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "repoUrl": { "type": "string", "format": "uri" },
+          "demoUrl": { "type": "string" },
+          "pinned": { "type": "boolean" },
+          "stars": { "type": "integer" },
+          "forks": { "type": "integer" },
+          "language": { "type": "string" },
+          "topics": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "readmeHighlights": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "artifacts": {
+            "type": "object",
+            "required": ["screenshots", "diagrams", "docs"],
+            "properties": {
+              "screenshots": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "diagrams": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "docs": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

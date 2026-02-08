@@ -1,0 +1,27 @@
+---
+title: "chatdeb"
+slug: "chatdeb"
+tags: ["ai", "data", "fullstack"]
+repoUrl: "https://github.com/kspringfield13/chatdeb"
+---
+
+## Context
+Business users need conversational analytics that still respects modeled data contracts.
+
+## Approach
+Built a full-stack assistant with FastAPI + OpenAI/LangChain on top of DuckDB/dbt models and a React/Next interface.
+
+## Architecture
+UI query layer -> API orchestration -> retrieval + LLM response synthesis -> dbt-modeled warehouse tables.
+
+## Results
+Enabled faster exploratory analysis while maintaining traceability to governed data models.
+
+## Lessons
+Conversation UX improves only when response grounding and metric definitions are explicit.
+
+## Artifacts
+- Repo: https://github.com/kspringfield13/chatdeb
+
+## If I had 2 more weeks...
+Ship richer source citations and query execution observability.

@@ -1,0 +1,27 @@
+---
+title: "xenosync"
+slug: "xenosync"
+tags: ["ai", "fullstack"]
+repoUrl: "https://github.com/kspringfield13/xenosync"
+---
+
+## Context
+Parallel coding and analysis sessions create coordination overhead and merge conflicts.
+
+## Approach
+Designed a controller pattern to assign tasks to specialized agents and collect outputs into a structured merge queue.
+
+## Architecture
+Coordinator service -> session workers -> merge/reconciliation layer -> final artifact pipeline.
+
+## Results
+Improved throughput for multi-thread implementation work while reducing failed joins.
+
+## Lessons
+Agent orchestration quality depends more on control-plane design than prompt quality alone.
+
+## Artifacts
+- Repo: https://github.com/kspringfield13/xenosync
+
+## If I had 2 more weeks...
+Add conflict scoring and detailed run telemetry dashboards.

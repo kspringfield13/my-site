@@ -1,0 +1,96 @@
+{
+  "about": "Staff-level analytics and AI engineer focused on building reliable data pipelines, experimentation systems, and AI-enabled applications that drive strategy.",
+  "proofBullets": [
+    "Business Analyst III at Cisco via TEKsystems (Sep 2025-present), focused on analytics and experimentation.",
+    "Built CMS FWA data engineering workflows at Peraton (Sep 2024-Sep 2025) for fraud, waste, and abuse programs.",
+    "Hands-on across SQL/Python/dbt/Snowflake/AWS with GenAI accelerators for delivery velocity."
+  ],
+  "experience": [
+    {
+      "title": "Business Analyst III",
+      "company": "TEKsystems (at Cisco)",
+      "start": "2025-09",
+      "end": "Present",
+      "highlights": [
+        "Leads analytics initiatives aligned to product and business decision-making.",
+        "Implements experimentation methods and statistical evaluation for strategic tests."
+      ]
+    },
+    {
+      "title": "Data Engineer",
+      "company": "Peraton (supporting CMS FWA)",
+      "start": "2024-09",
+      "end": "2025-09",
+      "highlights": [
+        "Built and maintained fraud, waste, and abuse-focused data pipelines.",
+        "Improved reliability and traceability of downstream analytics datasets."
+      ]
+    },
+    {
+      "title": "Freelance Python Developer",
+      "company": "Independent",
+      "start": "2021-09",
+      "end": "2024-09",
+      "highlights": [
+        "Delivered automation and analytics tooling for client operations.",
+        "Built custom reporting and ETL workflows across diverse domains."
+      ]
+    },
+    {
+      "title": "Data Analyst -> Marketing Data Scientist -> Senior Data Scientist -> Data Engineer",
+      "company": "RRD",
+      "start": "2017-01",
+      "end": "2021-09",
+      "highlights": [
+        "Progressed through analytics and data science roles into engineering ownership.",
+        "Supported marketing and product measurement with statistically grounded analysis."
+      ]
+    },
+    {
+      "title": "Analyst",
+      "company": "UBS",
+      "start": "2014-01",
+      "end": "2015-01",
+      "highlights": [
+        "Delivered analytical reporting and process support across business operations."
+      ]
+    },
+    {
+      "title": "Analyst",
+      "company": "NetApp",
+      "start": "2013-01",
+      "end": "2014-01",
+      "highlights": [
+        "Supported performance analysis and operational data workflows."
+      ]
+    }
+  ],
+  "skills": [
+    "SQL",
+    "Python",
+    "dbt",
+    "ETL",
+    "ELT",
+    "GenAI",
+    "Git",
+    "CI/CD",
+    "Measurement",
+    "Tableau",
+    "Power BI",
+    "Snowflake",
+    "AWS",
+    "Databricks",
+    "Docker"
+  ],
+  "certifications": [
+    "Tableau Certified Data Analyst",
+    "DataCamp certifications (multiple)",
+    "Databricks accreditations (multiple)"
+  ],
+  "skillClusters": {
+    "data": ["SQL", "Python", "dbt", "ETL", "ELT", "Snowflake", "AWS", "Databricks"],
+    "analytics": ["Measurement", "Experimentation", "Statistics", "Tableau", "Power BI"],
+    "ai": ["GenAI", "LLM app workflows", "Prompt/system design", "AI-enabled automation"],
+    "dev": ["Git", "CI/CD", "Docker", "Testing", "Production observability"]
+  }
+}

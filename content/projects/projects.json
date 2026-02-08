@@ -1,0 +1,155 @@
+{
+  "updatedAt": "2026-02-08T00:00:00.000Z",
+  "projects": [
+    {
+      "slug": "xenosync",
+      "name": "xenosync",
+      "tagline": "Multi-agent AI orchestration platform coordinating parallel Claude Code sessions.",
+      "description": "Coordinates parallel coding agents, reconciles outputs, and improves throughput for multi-threaded implementation work.",
+      "tags": ["ai", "fullstack"],
+      "stack": ["TypeScript", "Node.js", "LLM APIs", "Automation"],
+      "repoUrl": "https://github.com/kspringfield13/xenosync",
+      "demoUrl": "",
+      "pinned": true,
+      "stars": 0,
+      "forks": 0,
+      "language": "TypeScript",
+      "topics": ["multi-agent", "orchestration", "ai"],
+      "readmeHighlights": [
+        "Coordinates parallel coding sessions across specialized agents.",
+        "Includes orchestration controls for retries and merge workflows.",
+        "Built to improve throughput while preserving output quality."
+      ],
+      "artifacts": {
+        "screenshots": [],
+        "diagrams": [],
+        "docs": []
+      }
+    },
+    {
+      "slug": "chatdeb",
+      "name": "chatdeb",
+      "tagline": "Full-stack chatbot for analyzing business data.",
+      "description": "Combines FastAPI, OpenAI/LangChain, DuckDB/dbt, and React/Next for data-aware conversational analysis.",
+      "tags": ["ai", "data", "fullstack"],
+      "stack": ["FastAPI", "OpenAI", "LangChain", "DuckDB", "dbt", "React", "Next.js"],
+      "repoUrl": "https://github.com/kspringfield13/chatdeb",
+      "demoUrl": "",
+      "pinned": true,
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "topics": ["chatbot", "analytics", "llm", "dbt"],
+      "readmeHighlights": [
+        "Conversational layer grounded in business data models.",
+        "Full-stack architecture with API and modern frontend.",
+        "Supports practical exploration of KPI and trend questions."
+      ],
+      "artifacts": {
+        "screenshots": [],
+        "diagrams": [],
+        "docs": []
+      }
+    },
+    {
+      "slug": "ecommerce-dbt",
+      "name": "ecommerce-dbt",
+      "tagline": "End-to-end dbt pipeline on DuckDB with tests, docs, and CI.",
+      "description": "Demonstrates dbt best practices: schema tests, data documentation, and CI enforcement in a realistic e-commerce domain.",
+      "tags": ["data"],
+      "stack": ["dbt", "DuckDB", "SQL", "CI/CD"],
+      "repoUrl": "https://github.com/kspringfield13/ecommerce-dbt",
+      "demoUrl": "",
+      "pinned": true,
+      "stars": 0,
+      "forks": 0,
+      "language": "SQL",
+      "topics": ["dbt", "elt", "analytics-engineering"],
+      "readmeHighlights": [
+        "End-to-end warehouse modeling with dbt.",
+        "Schema tests and docs integrated into CI.",
+        "Patterns designed for maintainable analytics engineering."
+      ],
+      "artifacts": {
+        "screenshots": [],
+        "diagrams": [],
+        "docs": []
+      }
+    },
+    {
+      "slug": "elt-pipeline",
+      "name": "elt-pipeline",
+      "tagline": "dbt + Snowflake ELT pipeline patterns.",
+      "description": "Reference implementation for ELT workflows on Snowflake with modular transformations and production-friendly conventions.",
+      "tags": ["data"],
+      "stack": ["dbt", "Snowflake", "SQL", "Python"],
+      "repoUrl": "https://github.com/kspringfield13/elt-pipeline",
+      "demoUrl": "",
+      "pinned": true,
+      "stars": 0,
+      "forks": 0,
+      "language": "SQL",
+      "topics": ["snowflake", "elt", "dbt"],
+      "readmeHighlights": [
+        "Production-minded ELT structure for Snowflake.",
+        "Reusable transformation layers and model patterns.",
+        "Focuses on reliability and maintainability."
+      ],
+      "artifacts": {
+        "screenshots": [],
+        "diagrams": [],
+        "docs": []
+      }
+    },
+    {
+      "slug": "xbot",
+      "name": "xbot",
+      "tagline": "OpenAI-powered automation bot for generating posts and images to X/Discord.",
+      "description": "Automates social content workflows using LLM prompting and media generation with cross-platform posting.",
+      "tags": ["ai", "fullstack"],
+      "stack": ["Python", "OpenAI API", "Automation", "APIs"],
+      "repoUrl": "https://github.com/kspringfield13/xbot",
+      "demoUrl": "",
+      "pinned": true,
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "topics": ["automation", "openai", "social"],
+      "readmeHighlights": [
+        "Generates and publishes content automatically.",
+        "Combines text and image generation flows.",
+        "Targets practical automation across multiple channels."
+      ],
+      "artifacts": {
+        "screenshots": [],
+        "diagrams": [],
+        "docs": []
+      }
+    },
+    {
+      "slug": "xagg",
+      "name": "xagg",
+      "tagline": "Streamlit news aggregator combining headlines and market data.",
+      "description": "Aggregates and presents market context by combining news signals with financial data feeds.",
+      "tags": ["data", "fullstack"],
+      "stack": ["Python", "Streamlit", "APIs", "Data aggregation"],
+      "repoUrl": "https://github.com/kspringfield13/xagg",
+      "demoUrl": "",
+      "pinned": true,
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "topics": ["streamlit", "aggregation", "market-data"],
+      "readmeHighlights": [
+        "Combines headlines with market data for quick situational awareness.",
+        "Interactive dashboard for exploration and filtering.",
+        "Shows practical integration of multiple external sources."
+      ],
+      "artifacts": {
+        "screenshots": [],
+        "diagrams": [],
+        "docs": []
+      }
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { getNowEntries, getNowEntryAgeDays, getWeeklySummary } from "@/lib/content";
+import { getNowEntries, getNowEntryAgeDays } from "@/lib/content";
 
 export async function SectionNow() {
-  const [now, weekly] = await Promise.all([getNowEntries(), getWeeklySummary()]);
+  const now = await getNowEntries();
   const entries = [...now.entries].sort((a, b) => Date.parse(b.date) - Date.parse(a.date)).slice(0, 6);
 
   return (
@@ -33,19 +33,6 @@ export async function SectionNow() {
         })}
       </div>
 
-      {weekly.summary ? (
-        <article className="card-base mt-6">
-          <p className="eyebrow">Weekly summary · {weekly.weekOf || "Current"}</p>
-          <p className="mt-2 text-sm">{weekly.summary}</p>
-          {weekly.bullets.length > 0 ? (
-            <ul className="mt-3 list-disc space-y-1 pl-5 text-sm">
-              {weekly.bullets.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          ) : null}
-        </article>
-      ) : null}
     </section>
   );
 }

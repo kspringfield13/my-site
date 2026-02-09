@@ -8,14 +8,35 @@ import styles from "./HeroSpotlight.module.css";
 const INSTAGRAM_URL = "https://instagram.com/kspringfpv";
 const X_URL = "https://x.com/kspringfield13";
 
-const MAX_ECHOES = 14;
-const LERP_FACTOR = 0.16;
+const DESKTOP_LERP_FACTOR = 0.11;
+const MOBILE_LERP_FACTOR = 0.18;
+const MAX_TRAILS = 14;
 const MATRIX_CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*+-";
+const EMPTY_PLASMA_MASK =
+  "radial-gradient(circle 1px at -9999px -9999px, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%)";
 
 type Point = { x: number; y: number };
-type Echo = { id: number; x: number; y: number; radius: number; lifeMs: number };
 type ToneState = { name: boolean; innovator: boolean; socials: boolean };
 type BoundsState = { name: DOMRect | null; innovator: DOMRect | null; socials: DOMRect | null };
+type PlasmaTrail = {
+  id: number;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+  lifeMs: number;
+  maxLifeMs: number;
+  phase: number;
+  wobble: number;
+};
+
+type PlasmaBlob = {
+  x: number;
+  y: number;
+  radius: number;
+  alpha: number;
+};
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -30,6 +51,23 @@ function intersectsCircle(rect: DOMRect | null, circle: Point, radius: number) {
   return dx * dx + dy * dy <= radius * radius;
 }
 
+function buildPlasmaMask(blobs: PlasmaBlob[]) {
+  if (blobs.length === 0) return EMPTY_PLASMA_MASK;
+
+  return blobs
+    .map((blob) => {
+      const x = blob.x.toFixed(2);
+      const y = blob.y.toFixed(2);
+      const radius = blob.radius.toFixed(2);
+      const alpha = clamp(blob.alpha, 0, 1);
+      const midAlpha = clamp(alpha * 0.82, 0, 1);
+      const outerAlpha = clamp(alpha * 0.36, 0, 1);
+
+      return `radial-gradient(circle ${radius}px at ${x}px ${y}px, rgba(0,0,0,${alpha.toFixed(3)}) 0%, rgba(0,0,0,${midAlpha.toFixed(3)}) 48%, rgba(0,0,0,${outerAlpha.toFixed(3)}) 72%, rgba(0,0,0,0) 100%)`;
+    })
+    .join(",");
+}
+
 export function HeroSpotlight() {
   const heroRef = useRef<HTMLElement>(null);
   const matrixCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -41,20 +79,26 @@ export function HeroSpotlight() {
   const targetRef = useRef<Point>({ x: 0, y: 0 });
   const currentRef = useRef<Point>({ x: 0, y: 0 });
   const lastRawRef = useRef<Point | null>(null);
+  const lastSampleRef = useRef<Point>({ x: 0, y: 0 });
   const boundsRef = useRef<BoundsState>({ name: null, innovator: null, socials: null });
 
   const rafRef = useRef<number | null>(null);
   const matrixRafRef = useRef<number | null>(null);
   const hasPointerRef = useRef(false);
   const touchActiveRef = useRef(false);
+  const mobileViewportRef = useRef(false);
   const coarsePointerRef = useRef(false);
   const reduceMotionRef = useRef(false);
-  const spotlightRadiusRef = useRef(128);
-  const lastEchoAtRef = useRef(0);
-  const nextEchoIdRef = useRef(1);
-  const echoTimeoutsRef = useRef<number[]>([]);
   const toneRef = useRef<ToneState>({ name: false, innovator: false, socials: false });
   const revealActiveRef = useRef(false);
+  const lastTickAtRef = useRef(0);
+
+  const nextTrailIdRef = useRef(1);
+  const lastTrailSpawnAtRef = useRef(0);
+  const plasmaTrailsRef = useRef<PlasmaTrail[]>([]);
+  const plasmaTurbulenceRef = useRef(0);
+  const plasmaIntensityRef = useRef(0);
+
   const matrixCtxRef = useRef<CanvasRenderingContext2D | null>(null);
   const matrixColumnsRef = useRef<number[]>([]);
   const matrixSpeedsRef = useRef<number[]>([]);
@@ -64,8 +108,17 @@ export function HeroSpotlight() {
   const matrixLastDrawAtRef = useRef(0);
 
   const [revealActive, setRevealActive] = useState(false);
+  const [agentMode, setAgentMode] = useState(false);
   const [tones, setTones] = useState<ToneState>({ name: false, innovator: false, socials: false });
-  const [echoes, setEchoes] = useState<Echo[]>([]);
+  const matrixActive = true;
+
+  const resetTones = useCallback(() => {
+    const prev = toneRef.current;
+    if (!prev.name && !prev.innovator && !prev.socials) return;
+    const next = { name: false, innovator: false, socials: false };
+    toneRef.current = next;
+    setTones(next);
+  }, []);
 
   const setRevealActiveState = useCallback((next: boolean) => {
     if (revealActiveRef.current === next) return;
@@ -74,14 +127,15 @@ export function HeroSpotlight() {
 
     if (!next) {
       lastRawRef.current = null;
-      setEchoes([]);
-      const prev = toneRef.current;
-      if (prev.name || prev.innovator || prev.socials) {
-        const reset = { name: false, innovator: false, socials: false };
-        toneRef.current = reset;
-        setTones(reset);
-      }
     }
+  }, []);
+
+  const resetPlasmaStyles = useCallback(() => {
+    const hero = heroRef.current;
+    if (!hero) return;
+    hero.style.setProperty("--plasma-mask", EMPTY_PLASMA_MASK);
+    hero.style.setProperty("--plasma-opacity", "0");
+    hero.style.setProperty("--flow-energy", "0.12");
   }, []);
 
   const measureBounds = useCallback(() => {
@@ -134,7 +188,7 @@ export function HeroSpotlight() {
   const drawMatrixFrame = useCallback((time: number) => {
     const ctx = matrixCtxRef.current;
     const { width, height } = matrixSizeRef.current;
-    if (!ctx || width === 0 || height === 0 || !revealActiveRef.current) {
+    if (!ctx || width === 0 || height === 0) {
       matrixRafRef.current = null;
       return;
     }
@@ -210,114 +264,261 @@ export function HeroSpotlight() {
     [clearMatrixCanvas]
   );
 
-  const applyScene = useCallback((x: number, y: number) => {
-    const hero = heroRef.current;
-    if (!hero) return;
-
-    // The top portrait layer uses these CSS vars in a radial mask, creating a circular
-    // "cut-out" where IMAGE ONE becomes transparent and IMAGE TWO is revealed underneath.
-    hero.style.setProperty("--spotlight-x", `${x.toFixed(2)}px`);
-    hero.style.setProperty("--spotlight-y", `${y.toFixed(2)}px`);
-
+  const spawnTrail = useCallback((x: number, y: number, vx: number, vy: number, strength: number) => {
     const { width, height } = viewportRef.current;
-    if (width > 0 && height > 0) {
-      const nx = (x - width / 2) / (width / 2);
-      const ny = (y - height / 2) / (height / 2);
-      hero.style.setProperty("--grid-shift-x", `${(-nx * 6).toFixed(2)}px`);
-      hero.style.setProperty("--grid-shift-y", `${(-ny * 6).toFixed(2)}px`);
+    if (width === 0 || height === 0) return;
+
+    const minDim = Math.min(width, height);
+    const radiusBase = clamp(minDim * 0.075, 36, 96) * (0.72 + Math.random() * 0.52) * strength;
+    const id = nextTrailIdRef.current++;
+    const trail: PlasmaTrail = {
+      id,
+      x: x - vx * (0.028 + Math.random() * 0.02),
+      y: y - vy * (0.028 + Math.random() * 0.02),
+      vx: -vx * (0.06 + Math.random() * 0.07) + (Math.random() - 0.5) * 58,
+      vy: -vy * (0.06 + Math.random() * 0.07) + (Math.random() - 0.5) * 58,
+      radius: radiusBase,
+      maxLifeMs: 720 + Math.random() * 640,
+      lifeMs: 720 + Math.random() * 640,
+      phase: Math.random() * Math.PI * 2,
+      wobble: 0.84 + Math.random() * 1.18
+    };
+
+    const next = [...plasmaTrailsRef.current, trail];
+    plasmaTrailsRef.current = next.length > MAX_TRAILS ? next.slice(next.length - MAX_TRAILS) : next;
+  }, []);
+
+  const applyScene = useCallback(
+    (x: number, y: number, timeMs: number, dtSec: number) => {
+      const hero = heroRef.current;
+      if (!hero) return;
+
+      const { width, height } = viewportRef.current;
+      if (width <= 0 || height <= 0) return;
+
+      const nx = (x - width / 2) / (width / 2 || 1);
+      const ny = (y - height / 2) / (height / 2 || 1);
+
       hero.style.setProperty("--name-shift-x", `${(-nx * 11).toFixed(2)}px`);
       hero.style.setProperty("--name-shift-y", `${(-ny * 11).toFixed(2)}px`);
       hero.style.setProperty("--link-shift-x", `${(-nx * 8).toFixed(2)}px`);
       hero.style.setProperty("--link-shift-y", `${(-ny * 8).toFixed(2)}px`);
       hero.style.setProperty("--social-shift-x", `${(-nx * 10).toFixed(2)}px`);
       hero.style.setProperty("--social-shift-y", `${(-ny * 10).toFixed(2)}px`);
-    }
 
-    if (!revealActiveRef.current) {
-      return;
-    }
+      if (mobileViewportRef.current) {
+        plasmaTrailsRef.current = [];
+        plasmaIntensityRef.current = 0;
+        plasmaTurbulenceRef.current = 0;
+        hero.style.setProperty("--flow-shift-x", `${(-nx * 3.2).toFixed(2)}px`);
+        hero.style.setProperty("--flow-shift-y", `${(-ny * 3.2).toFixed(2)}px`);
+        hero.style.setProperty("--flow-angle", "0deg");
+        resetPlasmaStyles();
+        resetTones();
+        return;
+      }
 
-    const radius = spotlightRadiusRef.current;
-    const next: ToneState = {
-      name: intersectsCircle(boundsRef.current.name, { x, y }, radius),
-      innovator: intersectsCircle(boundsRef.current.innovator, { x, y }, radius),
-      socials: intersectsCircle(boundsRef.current.socials, { x, y }, radius)
-    };
+      const safeDt = Math.max(dtSec, 1 / 120);
+      const previous = lastSampleRef.current;
+      const vx = (x - previous.x) / safeDt;
+      const vy = (y - previous.y) / safeDt;
+      const speed = Math.hypot(vx, vy);
+      lastSampleRef.current = { x, y };
 
-    const prev = toneRef.current;
-    if (
-      next.name !== prev.name ||
-      next.innovator !== prev.innovator ||
-      next.socials !== prev.socials
-    ) {
-      toneRef.current = next;
-      setTones(next);
-    }
-  }, []);
+      const turbulenceTarget = revealActiveRef.current
+        ? clamp(speed / (coarsePointerRef.current ? 1680 : 1280), 0, 1.24)
+        : 0;
+      const turbulenceLerp = clamp(safeDt * (revealActiveRef.current ? 6.4 : 2.3), 0.03, 0.34);
+      plasmaTurbulenceRef.current += (turbulenceTarget - plasmaTurbulenceRef.current) * turbulenceLerp;
+      const turbulence = plasmaTurbulenceRef.current;
+
+      const intensityTarget = revealActiveRef.current ? 1 : 0;
+      const intensityLerp = clamp(safeDt * (revealActiveRef.current ? 7.2 : 2.5), 0.03, 0.32);
+      plasmaIntensityRef.current += (intensityTarget - plasmaIntensityRef.current) * intensityLerp;
+      const intensity = plasmaIntensityRef.current;
+
+      if (revealActiveRef.current && !reduceMotionRef.current) {
+        const spawnThreshold = coarsePointerRef.current ? 560 : 430;
+        const minInterval = coarsePointerRef.current ? 100 : 70;
+        if (speed > spawnThreshold && timeMs - lastTrailSpawnAtRef.current > minInterval) {
+          const count = speed > spawnThreshold * 1.72 ? 2 : 1;
+          for (let index = 0; index < count; index += 1) {
+            spawnTrail(x, y, vx, vy, 1 + turbulence * 0.28);
+          }
+          lastTrailSpawnAtRef.current = timeMs;
+        }
+      }
+
+      const driftAmplitude = (reduceMotionRef.current ? 0.15 : 0.55) + turbulence * 0.45;
+      const decayMultiplier = reduceMotionRef.current ? 1.45 : 1;
+      const nextTrails: PlasmaTrail[] = [];
+      for (const trail of plasmaTrailsRef.current) {
+        const remaining = trail.lifeMs - safeDt * 1000 * decayMultiplier;
+        if (remaining <= 0) {
+          continue;
+        }
+
+        trail.lifeMs = remaining;
+        const drag = Math.pow(0.86, safeDt * 60);
+        trail.vx *= drag;
+        trail.vy *= drag;
+
+        trail.x += trail.vx * safeDt;
+        trail.y += trail.vy * safeDt;
+
+        trail.x += Math.cos(timeMs * 0.0018 * trail.wobble + trail.phase) * driftAmplitude;
+        trail.y += Math.sin(timeMs * 0.0016 * trail.wobble + trail.phase * 1.24) * driftAmplitude;
+
+        if (trail.x < -180 || trail.x > width + 180 || trail.y < -180 || trail.y > height + 180) {
+          continue;
+        }
+
+        nextTrails.push(trail);
+      }
+      plasmaTrailsRef.current = nextTrails;
+
+      const flowShiftX = -nx * (5 + turbulence * 14);
+      const flowShiftY = -ny * (5 + turbulence * 14);
+      hero.style.setProperty("--flow-shift-x", `${flowShiftX.toFixed(2)}px`);
+      hero.style.setProperty("--flow-shift-y", `${flowShiftY.toFixed(2)}px`);
+
+      const flowAngle = Math.atan2(vy || ny, vx || nx || 0.0001) * (180 / Math.PI);
+      hero.style.setProperty("--flow-angle", `${flowAngle.toFixed(2)}deg`);
+
+      if (intensity < 0.015 && nextTrails.length === 0) {
+        resetPlasmaStyles();
+        resetTones();
+        return;
+      }
+
+      const minDim = Math.min(width, height);
+      const baseRadius = clamp(minDim * 0.15, 78, 176);
+      const time = timeMs / 1000;
+      const motionBiasX = clamp(vx * 0.028, -72, 72);
+      const motionBiasY = clamp(vy * 0.028, -72, 72);
+
+      const blobs: PlasmaBlob[] = [];
+      const leadPulse = 1 + Math.sin(time * 2.4) * 0.06 + Math.sin(time * 4.2 + 1.18) * 0.04;
+      blobs.push({
+        x: x + motionBiasX * 0.58,
+        y: y + motionBiasY * 0.58,
+        radius: baseRadius * leadPulse * (1 + turbulence * 0.34),
+        alpha: 0.92 * intensity
+      });
+
+      const satellites = reduceMotionRef.current ? 3 : 5;
+      for (let index = 0; index < satellites; index += 1) {
+        const angleBase = (Math.PI * 2 * index) / satellites;
+        const swirl = time * (0.52 + turbulence * 0.56) + angleBase;
+        const orbital = baseRadius * (0.34 + 0.13 * Math.sin(time * 1.63 + index * 1.12) + turbulence * 0.24);
+        const xOffset = Math.cos(swirl) * orbital + motionBiasX * (index % 2 === 0 ? 0.2 : -0.16);
+        const yOffset = Math.sin(swirl) * orbital + motionBiasY * (index % 2 === 0 ? -0.16 : 0.2);
+
+        blobs.push({
+          x: x + xOffset,
+          y: y + yOffset,
+          radius: baseRadius * (0.36 + 0.09 * Math.sin(time * 2.08 + index * 0.92) + turbulence * 0.18),
+          alpha: (0.56 + 0.12 * Math.sin(time * 1.4 + index * 0.8)) * intensity
+        });
+      }
+
+      for (const trail of nextTrails) {
+        const lifeRatio = clamp(trail.lifeMs / trail.maxLifeMs, 0, 1);
+        const wobble = 1 + Math.sin(time * 2.6 * trail.wobble + trail.phase) * 0.16;
+
+        blobs.push({
+          x: trail.x,
+          y: trail.y,
+          radius: trail.radius * wobble,
+          alpha: Math.pow(lifeRatio, 1.42) * 0.62 * intensity
+        });
+      }
+
+      hero.style.setProperty("--plasma-mask", buildPlasmaMask(blobs));
+
+      const plasmaOpacity = clamp(intensity * (0.72 + turbulence * 0.24) + nextTrails.length * 0.014, 0, 0.98);
+      hero.style.setProperty("--plasma-opacity", plasmaOpacity.toFixed(3));
+      hero.style.setProperty("--flow-energy", clamp(0.18 + turbulence * 0.82, 0.18, 1).toFixed(3));
+
+      const interactionRadius = baseRadius * (0.68 + turbulence * 0.42);
+      const nextTone: ToneState =
+        intensity < 0.11
+          ? { name: false, innovator: false, socials: false }
+          : {
+              name: intersectsCircle(boundsRef.current.name, { x, y }, interactionRadius),
+              innovator: intersectsCircle(boundsRef.current.innovator, { x, y }, interactionRadius),
+              socials: intersectsCircle(boundsRef.current.socials, { x, y }, interactionRadius)
+            };
+
+      const prev = toneRef.current;
+      if (
+        nextTone.name !== prev.name ||
+        nextTone.innovator !== prev.innovator ||
+        nextTone.socials !== prev.socials
+      ) {
+        toneRef.current = nextTone;
+        setTones(nextTone);
+      }
+    },
+    [resetPlasmaStyles, resetTones, spawnTrail]
+  );
 
   const syncViewport = useCallback(() => {
     const width = window.innerWidth;
     const height = window.innerHeight;
     viewportRef.current = { width, height };
 
+    const isMobile = width <= 768;
+    if (mobileViewportRef.current !== isMobile) {
+      mobileViewportRef.current = isMobile;
+      if (isMobile) {
+        setRevealActiveState(false);
+      }
+    }
+
     const center = { x: width / 2, y: height / 2 };
     if (!hasPointerRef.current && !touchActiveRef.current) {
       currentRef.current = center;
       targetRef.current = center;
+      lastSampleRef.current = center;
     }
 
-    const radius = clamp(Math.min(width, height) * 0.16, 88, 162);
-    spotlightRadiusRef.current = radius;
-    heroRef.current?.style.setProperty("--spotlight-r", `${radius.toFixed(2)}px`);
     setupMatrixCanvas();
     measureBounds();
-    applyScene(currentRef.current.x || center.x, currentRef.current.y || center.y);
-  }, [applyScene, measureBounds, setupMatrixCanvas]);
-
-  const spawnEcho = useCallback((x: number, y: number) => {
-    // Echoes are transient blurred circles that spawn at high cursor velocity
-    // and self-remove after a short lifetime to keep performance stable.
-    const lifeMs = coarsePointerRef.current ? 220 + Math.random() * 140 : 300 + Math.random() * 280;
-    const radius = spotlightRadiusRef.current * (0.36 + Math.random() * 0.26);
-    const id = nextEchoIdRef.current++;
-    const echo: Echo = { id, x, y, radius, lifeMs };
-
-    setEchoes((previous) => {
-      const next = [...previous, echo];
-      return next.length > MAX_ECHOES ? next.slice(next.length - MAX_ECHOES) : next;
-    });
-
-    const timeoutId = window.setTimeout(() => {
-      setEchoes((previous) => previous.filter((item) => item.id !== id));
-      echoTimeoutsRef.current = echoTimeoutsRef.current.filter((existingId) => existingId !== timeoutId);
-    }, lifeMs + 70);
-
-    echoTimeoutsRef.current.push(timeoutId);
-  }, []);
+    applyScene(currentRef.current.x || center.x, currentRef.current.y || center.y, performance.now(), 1 / 60);
+  }, [applyScene, measureBounds, setRevealActiveState, setupMatrixCanvas]);
 
   const updateTarget = useCallback(
     (x: number, y: number, pointerType: string) => {
-      setRevealActiveState(true);
       hasPointerRef.current = true;
       targetRef.current = { x, y };
 
-      const prev = lastRawRef.current;
-      lastRawRef.current = { x, y };
-      if (!prev || reduceMotionRef.current) return;
+      const isDesktopPointer = !mobileViewportRef.current && pointerType !== "touch";
+      if (isDesktopPointer) {
+        setRevealActiveState(true);
+      }
 
-      const delta = Math.hypot(x - prev.x, y - prev.y);
+      const previous = lastRawRef.current;
+      lastRawRef.current = { x, y };
+      if (!previous || !isDesktopPointer || reduceMotionRef.current) {
+        return;
+      }
+
+      const delta = Math.hypot(x - previous.x, y - previous.y);
       const now = performance.now();
-      const threshold = coarsePointerRef.current ? 52 : 34;
-      const minInterval = coarsePointerRef.current ? 160 : 75;
-      if (delta > threshold && now - lastEchoAtRef.current > minInterval && pointerType !== "pen") {
-        spawnEcho(x, y);
-        lastEchoAtRef.current = now;
+      const threshold = coarsePointerRef.current ? 64 : 42;
+      const minInterval = coarsePointerRef.current ? 110 : 78;
+      if (delta > threshold && now - lastTrailSpawnAtRef.current > minInterval) {
+        const impliedVx = (x - previous.x) * 60;
+        const impliedVy = (y - previous.y) * 60;
+        spawnTrail(x, y, impliedVx, impliedVy, 1.08);
+        lastTrailSpawnAtRef.current = now;
       }
     },
-    [setRevealActiveState, spawnEcho]
+    [setRevealActiveState, spawnTrail]
   );
 
-  const centerSpotlight = useCallback(() => {
+  const centerTarget = useCallback(() => {
     const { width, height } = viewportRef.current;
     targetRef.current = { x: width / 2, y: height / 2 };
     lastRawRef.current = null;
@@ -344,21 +545,19 @@ export function HeroSpotlight() {
 
   const onPointerEnter = useCallback(
     (event: ReactPointerEvent<HTMLElement>) => {
-      if (event.pointerType === "mouse") {
-        updateTarget(event.clientX, event.clientY, event.pointerType);
-      }
+      if (event.pointerType !== "mouse") return;
+      updateTarget(event.clientX, event.clientY, event.pointerType);
     },
     [updateTarget]
   );
 
   const onPointerLeave = useCallback(
     (event: ReactPointerEvent<HTMLElement>) => {
-      if (event.pointerType !== "touch") {
-        setRevealActiveState(false);
-        centerSpotlight();
-      }
+      if (event.pointerType === "touch") return;
+      setRevealActiveState(false);
+      centerTarget();
     },
-    [centerSpotlight, setRevealActiveState]
+    [centerTarget, setRevealActiveState]
   );
 
   const onPointerEnd = useCallback(
@@ -366,9 +565,9 @@ export function HeroSpotlight() {
       if (event.pointerType !== "touch") return;
       touchActiveRef.current = false;
       setRevealActiveState(false);
-      centerSpotlight();
+      centerTarget();
     },
-    [centerSpotlight, setRevealActiveState]
+    [centerTarget, setRevealActiveState]
   );
 
   useEffect(() => {
@@ -411,27 +610,31 @@ export function HeroSpotlight() {
   }, [measureBounds, setupMatrixCanvas, syncViewport]);
 
   useEffect(() => {
-    if (revealActive) {
+    if (matrixActive) {
       startMatrix();
       return;
     }
     stopMatrix(true);
-  }, [revealActive, startMatrix, stopMatrix]);
+  }, [matrixActive, startMatrix, stopMatrix]);
 
   useEffect(() => {
-    const tick = () => {
+    const tick = (time: number) => {
       const current = currentRef.current;
       const target = targetRef.current;
 
+      const dt = lastTickAtRef.current > 0 ? Math.min(64, time - lastTickAtRef.current) / 1000 : 1 / 60;
+      lastTickAtRef.current = time;
+
+      const lerpFactor = mobileViewportRef.current ? MOBILE_LERP_FACTOR : DESKTOP_LERP_FACTOR;
       if (reduceMotionRef.current) {
         current.x = target.x;
         current.y = target.y;
       } else {
-        current.x += (target.x - current.x) * LERP_FACTOR;
-        current.y += (target.y - current.y) * LERP_FACTOR;
+        current.x += (target.x - current.x) * lerpFactor;
+        current.y += (target.y - current.y) * lerpFactor;
       }
 
-      applyScene(current.x, current.y);
+      applyScene(current.x, current.y, time, dt);
       rafRef.current = window.requestAnimationFrame(tick);
     };
 
@@ -441,15 +644,16 @@ export function HeroSpotlight() {
         window.cancelAnimationFrame(rafRef.current);
       }
       stopMatrix(true);
-      echoTimeoutsRef.current.forEach((id) => window.clearTimeout(id));
-      echoTimeoutsRef.current = [];
+      plasmaTrailsRef.current = [];
+      resetPlasmaStyles();
+      lastTickAtRef.current = 0;
     };
-  }, [applyScene, stopMatrix]);
+  }, [applyScene, resetPlasmaStyles, stopMatrix]);
 
   return (
     <section
       ref={heroRef}
-      className={styles.hero}
+      className={[styles.hero, agentMode ? styles.agentMode : ""].filter(Boolean).join(" ")}
       onPointerEnter={onPointerEnter}
       onPointerMove={onPointerMove}
       onPointerDown={onPointerDown}
@@ -459,64 +663,42 @@ export function HeroSpotlight() {
       aria-label="Kyle Springfield hero"
     >
       <div
-        className={[
-          styles.matrixLayer,
-          revealActive ? styles.matrixLayerActive : "",
-          revealActive ? styles.matrixLayerReveal : ""
-        ]
-          .filter(Boolean)
-          .join(" ")}
+        className={[styles.matrixLayer, matrixActive ? styles.matrixLayerActive : ""].filter(Boolean).join(" ")}
         aria-hidden="true"
       >
         <canvas ref={matrixCanvasRef} className={styles.matrixCanvas} />
       </div>
 
-      <div
-        className={[
-          styles.layer,
-          styles.underLayer,
-          revealActive ? styles.underLayerActive : "",
-          revealActive ? styles.underLayerReveal : ""
-        ]
-          .filter(Boolean)
-          .join(" ")}
-      />
-      <div
-        className={[
-          styles.layer,
-          styles.topLayer,
-          revealActive ? styles.topLayerMasked : ""
-        ]
-          .filter(Boolean)
-          .join(" ")}
-      />
-
-      <div className={styles.echoLayer} aria-hidden="true">
-        {echoes.map((echo) => (
-          <span
-            key={echo.id}
-            className={styles.echo}
-            style={{
-              left: `${echo.x}px`,
-              top: `${echo.y}px`,
-              width: `${(echo.radius * 2).toFixed(2)}px`,
-              height: `${(echo.radius * 2).toFixed(2)}px`,
-              animationDuration: `${echo.lifeMs.toFixed(0)}ms`
-            }}
-          />
-        ))}
-      </div>
-
       <div className={styles.gridOverlay} aria-hidden="true" />
+      <div className={`${styles.layer} ${styles.topLayer}`} />
+      <div
+        className={[styles.layer, styles.plasmaRevealLayer, revealActive ? styles.plasmaRevealLayerActive : ""]
+          .filter(Boolean)
+          .join(" ")}
+        aria-hidden="true"
+      />
 
       <div className={styles.uiLayer}>
         <div
           ref={nameRef}
           className={`${styles.nameBlock} ${tones.name ? styles.toneLight : styles.toneDark}`}
         >
-          <span className={styles.nameLine}>Kyle</span>
-          <span className={styles.nameLine}>Springfield</span>
+          <span className={styles.nameLine}>{agentMode ? "Agent" : "Kyle"}</span>
+          <span className={styles.nameLine}>{agentMode ? "Kyle" : "Springfield"}</span>
         </div>
+
+        <button
+          type="button"
+          className={`${styles.profileToggle} ${agentMode ? styles.profileToggleActive : ""}`}
+          onClick={() => setAgentMode((previous) => !previous)}
+          aria-label={agentMode ? "Switch to Kyle mode" : "Switch to Agent Kyle mode"}
+          aria-pressed={agentMode}
+        >
+          <svg className={styles.socialIcon} viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2a5 5 0 1 1-5 5 5 5 0 0 1 5-5m0 12c5.14 0 9 2.43 9 5v1H3v-1c0-2.57 3.86-5 9-5" />
+          </svg>
+          <span className={styles.srOnly}>{agentMode ? "Switch to Kyle" : "Switch to Agent Kyle"}</span>
+        </button>
 
         <div
           ref={innovatorRef}

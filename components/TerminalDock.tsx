@@ -239,7 +239,7 @@ export function TerminalDock() {
       <button
         ref={launcherRef}
         type="button"
-        className="rounded-full border border-border bg-surface-2 px-4 py-2 text-sm text-fg shadow-panel transition-colors hover:border-border-accent hover:bg-surface-3"
+        className="btn-secondary gap-2 px-4 py-2 text-sm shadow-panel"
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-controls="terminal-dialog"

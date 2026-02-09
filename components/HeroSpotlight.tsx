@@ -522,8 +522,8 @@ export function HeroSpotlight() {
           ref={innovatorRef}
           className={`${styles.innovatorAnchor} ${tones.innovator ? styles.toneLight : styles.toneDark}`}
         >
-          <Link href="/projects" className={styles.innovatorLink}>
-            Innovator
+          <Link href="/about" className={styles.innovatorLink}>
+            About
           </Link>
         </div>
 

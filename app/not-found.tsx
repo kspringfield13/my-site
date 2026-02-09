@@ -6,7 +6,7 @@ export default function NotFoundPage() {
       <p className="eyebrow">404</p>
       <h1 className="display mt-4 max-w-2xl">Couldn&apos;t find that page.</h1>
       <p className="lede mt-4 max-w-prose">
-        Try the console command <code className="inline-code">help</code> or jump back to flagship work.
+        Jump back to flagship work or browse the latest projects.
       </p>
       <div className="mt-8 flex flex-wrap gap-3">
         <Link className="btn-primary" href="/">

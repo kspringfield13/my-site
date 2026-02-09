@@ -15,7 +15,7 @@ export default function ColophonPage() {
           <ul className="mt-3 list-disc space-y-1 pl-5 text-sm">
             <li>Next.js + TypeScript + Tailwind</li>
             <li>MDX case studies and writing</li>
-            <li>Build-time search index + terminal command layer</li>
+            <li>Build-time search index for fast content discovery</li>
             <li>GitHub + resume ingestion scripts</li>
           </ul>
         </article>
@@ -23,7 +23,7 @@ export default function ColophonPage() {
           <h2 className="subhead">Performance strategy</h2>
           <ul className="mt-3 list-disc space-y-1 pl-5 text-sm">
             <li>Server-rendered primary content</li>
-            <li>Terminal loaded client-side only</li>
+            <li>Client-side panels loaded only when needed</li>
             <li>SVG visualizations with no runtime chart library</li>
             <li>Reduced-motion and accessibility defaults</li>
           </ul>

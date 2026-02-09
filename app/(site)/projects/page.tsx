@@ -21,7 +21,7 @@ export default async function ProjectsPage() {
         <ProjectsGrid projects={projects} showOpenCaseStudy />
       </div>
       <div className="mt-10 text-sm text-muted">
-        Prefer a command workflow? Open the console and run <code className="inline-code">projects --pinned</code>.
+        Looking for highlights first? Flagship case studies are marked on each card.
       </div>
       <Link href="/" className="btn-secondary mt-8 inline-flex">
         Back home

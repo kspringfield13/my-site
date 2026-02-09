@@ -1,6 +1,6 @@
 # Kyle Springfield Personal Site
 
-Editorial portfolio with a lightweight data-console layer.
+Editorial portfolio focused on projects, writing, and AI workflows.
 
 ## Stack
 - Next.js App Router + TypeScript
@@ -103,4 +103,4 @@ Recommended flow:
 
 ## Notes
 - Ingestion scripts are non-destructive: existing case-study MDX files are never overwritten.
-- Terminal dock is optional; site remains navigable without JavaScript.
+- Agent Kyle panel is optional; the site remains navigable without JavaScript.

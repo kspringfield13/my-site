@@ -17,7 +17,9 @@ const EMPTY_PLASMA_MASK =
 
 type Point = { x: number; y: number };
 type ToneState = { name: boolean; innovator: boolean; socials: boolean };
-type BoundsState = { name: DOMRect | null; innovator: DOMRect | null; socials: DOMRect | null };
+type LocalRect = { left: number; right: number; top: number; bottom: number };
+type BoundsState = { name: LocalRect | null; innovator: LocalRect | null; socials: LocalRect | null };
+type PortraitSize = { width: number; height: number };
 type PlasmaTrail = {
   id: number;
   x: number;
@@ -42,7 +44,7 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
-function intersectsCircle(rect: DOMRect | null, circle: Point, radius: number) {
+function intersectsCircle(rect: LocalRect | null, circle: Point, radius: number) {
   if (!rect) return false;
   const nearestX = clamp(circle.x, rect.left, rect.right);
   const nearestY = clamp(circle.y, rect.top, rect.bottom);
@@ -68,6 +70,29 @@ function buildPlasmaMask(blobs: PlasmaBlob[]) {
     .join(",");
 }
 
+function parseBackgroundOffset(value: string, containerSize: number, imageSize: number) {
+  const delta = containerSize - imageSize;
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "center") return delta * 0.5;
+  if (normalized === "top" || normalized === "left") return 0;
+  if (normalized === "bottom" || normalized === "right") return delta;
+  if (normalized.endsWith("%")) {
+    const percent = Number.parseFloat(normalized.slice(0, -1));
+    return Number.isFinite(percent) ? delta * (percent / 100) : delta * 0.5;
+  }
+  if (normalized.endsWith("px")) {
+    const pixels = Number.parseFloat(normalized.slice(0, -2));
+    return Number.isFinite(pixels) ? pixels : delta * 0.5;
+  }
+  const numeric = Number.parseFloat(normalized);
+  return Number.isFinite(numeric) ? numeric : delta * 0.5;
+}
+
+function isPointInsideRect(rect: LocalRect | null, point: Point) {
+  if (!rect) return false;
+  return point.x >= rect.left && point.x <= rect.right && point.y >= rect.top && point.y <= rect.bottom;
+}
+
 export function HeroSpotlight() {
   const heroRef = useRef<HTMLElement>(null);
   const matrixCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -76,6 +101,9 @@ export function HeroSpotlight() {
   const socialsRef = useRef<HTMLDivElement>(null);
 
   const viewportRef = useRef({ width: 0, height: 0 });
+  const heroOffsetRef = useRef({ left: 0, top: 0 });
+  const topPortraitBoundsRef = useRef<LocalRect | null>(null);
+  const portraitSizesRef = useRef<{ me: PortraitSize | null; ai: PortraitSize | null }>({ me: null, ai: null });
   const targetRef = useRef<Point>({ x: 0, y: 0 });
   const currentRef = useRef<Point>({ x: 0, y: 0 });
   const lastRawRef = useRef<Point | null>(null);
@@ -108,6 +136,7 @@ export function HeroSpotlight() {
   const matrixLastDrawAtRef = useRef(0);
 
   const [revealActive, setRevealActive] = useState(false);
+  const [topLayerHovered, setTopLayerHovered] = useState(false);
   const [agentMode, setAgentMode] = useState(false);
   const [tones, setTones] = useState<ToneState>({ name: false, innovator: false, socials: false });
   const matrixActive = true;
@@ -138,11 +167,67 @@ export function HeroSpotlight() {
     hero.style.setProperty("--flow-energy", "0.12");
   }, []);
 
+  const measureTopPortraitBounds = useCallback(() => {
+    const hero = heroRef.current;
+    if (!hero) {
+      topPortraitBoundsRef.current = null;
+      return;
+    }
+
+    const heroRect = hero.getBoundingClientRect();
+    const width = heroRect.width || viewportRef.current.width;
+    const height = heroRect.height || viewportRef.current.height;
+    if (width <= 0 || height <= 0) {
+      topPortraitBoundsRef.current = null;
+      return;
+    }
+
+    const topPortraitSize = agentMode ? portraitSizesRef.current.ai : portraitSizesRef.current.me;
+    if (!topPortraitSize || topPortraitSize.width <= 0 || topPortraitSize.height <= 0) {
+      topPortraitBoundsRef.current = null;
+      return;
+    }
+
+    const computed = window.getComputedStyle(hero);
+    const zoomRaw = computed.getPropertyValue("--portrait-zoom").trim();
+    const zoom = Number.parseFloat(zoomRaw);
+    const portraitZoom = Number.isFinite(zoom) && zoom > 0 ? zoom : 1;
+    const yRaw = computed.getPropertyValue("--portrait-y").trim() || "50%";
+
+    const renderHeight = height * portraitZoom;
+    const renderWidth = renderHeight * (topPortraitSize.width / topPortraitSize.height);
+    const left = (width - renderWidth) * 0.5;
+    const top = parseBackgroundOffset(yRaw, height, renderHeight);
+
+    topPortraitBoundsRef.current = {
+      left,
+      right: left + renderWidth,
+      top,
+      bottom: top + renderHeight
+    };
+  }, [agentMode]);
+
   const measureBounds = useCallback(() => {
+    const heroRect = heroRef.current?.getBoundingClientRect();
+    if (!heroRect) {
+      boundsRef.current = { name: null, innovator: null, socials: null };
+      return;
+    }
+
+    const toLocal = (rect: DOMRect | undefined | null): LocalRect | null => {
+      if (!rect) return null;
+      return {
+        left: rect.left - heroRect.left,
+        right: rect.right - heroRect.left,
+        top: rect.top - heroRect.top,
+        bottom: rect.bottom - heroRect.top
+      };
+    };
+
     boundsRef.current = {
-      name: nameRef.current?.getBoundingClientRect() ?? null,
-      innovator: innovatorRef.current?.getBoundingClientRect() ?? null,
-      socials: socialsRef.current?.getBoundingClientRect() ?? null
+      name: toLocal(nameRef.current?.getBoundingClientRect()),
+      innovator: toLocal(innovatorRef.current?.getBoundingClientRect()),
+      socials: toLocal(socialsRef.current?.getBoundingClientRect())
     };
   }, []);
 
@@ -464,8 +549,13 @@ export function HeroSpotlight() {
   );
 
   const syncViewport = useCallback(() => {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    const heroRect = heroRef.current?.getBoundingClientRect();
+    const width = heroRect ? heroRect.width : window.innerWidth;
+    const height = heroRect ? heroRect.height : window.innerHeight;
+    heroOffsetRef.current = {
+      left: heroRect?.left ?? 0,
+      top: heroRect?.top ?? 0
+    };
     viewportRef.current = { width, height };
 
     const isMobile = width <= 768;
@@ -485,18 +575,40 @@ export function HeroSpotlight() {
 
     setupMatrixCanvas();
     measureBounds();
+    measureTopPortraitBounds();
     applyScene(currentRef.current.x || center.x, currentRef.current.y || center.y, performance.now(), 1 / 60);
-  }, [applyScene, measureBounds, setRevealActiveState, setupMatrixCanvas]);
+  }, [applyScene, measureBounds, measureTopPortraitBounds, setRevealActiveState, setupMatrixCanvas]);
+
+  const syncTopLayerHover = useCallback(
+    (x: number, y: number, isDesktopPointer: boolean) => {
+      if (!isDesktopPointer) {
+        setTopLayerHovered(false);
+        return;
+      }
+
+      if (!topPortraitBoundsRef.current) {
+        measureTopPortraitBounds();
+      }
+
+      const hovered = isPointInsideRect(topPortraitBoundsRef.current, { x, y });
+      setTopLayerHovered(hovered);
+    },
+    [measureTopPortraitBounds]
+  );
 
   const updateTarget = useCallback(
-    (x: number, y: number, pointerType: string) => {
+    (viewportX: number, viewportY: number, pointerType: string) => {
       hasPointerRef.current = true;
+      const { left, top } = heroOffsetRef.current;
+      const x = viewportX - left;
+      const y = viewportY - top;
       targetRef.current = { x, y };
 
       const isDesktopPointer = !mobileViewportRef.current && pointerType !== "touch";
       if (isDesktopPointer) {
         setRevealActiveState(true);
       }
+      syncTopLayerHover(x, y, isDesktopPointer);
 
       const previous = lastRawRef.current;
       lastRawRef.current = { x, y };
@@ -515,7 +627,7 @@ export function HeroSpotlight() {
         lastTrailSpawnAtRef.current = now;
       }
     },
-    [setRevealActiveState, spawnTrail]
+    [setRevealActiveState, spawnTrail, syncTopLayerHover]
   );
 
   const centerTarget = useCallback(() => {
@@ -555,9 +667,10 @@ export function HeroSpotlight() {
     (event: ReactPointerEvent<HTMLElement>) => {
       if (event.pointerType === "touch") return;
       setRevealActiveState(false);
+      setTopLayerHovered(false);
       centerTarget();
     },
-    [centerTarget, setRevealActiveState]
+    [centerTarget, setRevealActiveState, setTopLayerHovered]
   );
 
   const onPointerEnd = useCallback(
@@ -565,10 +678,62 @@ export function HeroSpotlight() {
       if (event.pointerType !== "touch") return;
       touchActiveRef.current = false;
       setRevealActiveState(false);
+      setTopLayerHovered(false);
       centerTarget();
     },
-    [centerTarget, setRevealActiveState]
+    [centerTarget, setRevealActiveState, setTopLayerHovered]
   );
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadPortraitSize = (src: string, key: "me" | "ai") => {
+      if (portraitSizesRef.current[key]) return;
+
+      const image = new window.Image();
+      image.decoding = "async";
+      image.onload = () => {
+        if (cancelled) return;
+        portraitSizesRef.current[key] = {
+          width: image.naturalWidth || 1,
+          height: image.naturalHeight || 1
+        };
+        measureTopPortraitBounds();
+        syncTopLayerHover(
+          targetRef.current.x,
+          targetRef.current.y,
+          !mobileViewportRef.current && revealActiveRef.current
+        );
+      };
+      image.onerror = () => {
+        if (cancelled) return;
+        portraitSizesRef.current[key] = null;
+      };
+      image.src = src;
+    };
+
+    loadPortraitSize("/hero-me.png", "me");
+    loadPortraitSize("/hero-ai.png", "ai");
+    measureTopPortraitBounds();
+    syncTopLayerHover(
+      targetRef.current.x,
+      targetRef.current.y,
+      !mobileViewportRef.current && revealActiveRef.current
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [measureTopPortraitBounds, syncTopLayerHover]);
+
+  useEffect(() => {
+    measureTopPortraitBounds();
+    syncTopLayerHover(
+      targetRef.current.x,
+      targetRef.current.y,
+      !mobileViewportRef.current && revealActiveRef.current
+    );
+  }, [measureTopPortraitBounds, syncTopLayerHover]);
 
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -585,7 +750,26 @@ export function HeroSpotlight() {
     coarsePointer.addEventListener("change", syncMedia);
 
     const onResize = () => syncViewport();
-    const onScroll = () => measureBounds();
+    const onScroll = () => {
+      const heroRect = heroRef.current?.getBoundingClientRect();
+      heroOffsetRef.current = {
+        left: heroRect?.left ?? 0,
+        top: heroRect?.top ?? 0
+      };
+      if (heroRect) {
+        viewportRef.current = {
+          width: heroRect.width,
+          height: heroRect.height
+        };
+      }
+      measureBounds();
+      measureTopPortraitBounds();
+      syncTopLayerHover(
+        targetRef.current.x,
+        targetRef.current.y,
+        !mobileViewportRef.current && revealActiveRef.current
+      );
+    };
     window.addEventListener("resize", onResize, { passive: true });
     window.addEventListener("orientationchange", onResize);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -607,7 +791,7 @@ export function HeroSpotlight() {
       window.removeEventListener("scroll", onScroll);
       observer?.disconnect();
     };
-  }, [measureBounds, setupMatrixCanvas, syncViewport]);
+  }, [measureBounds, measureTopPortraitBounds, setupMatrixCanvas, syncTopLayerHover, syncViewport]);
 
   useEffect(() => {
     if (matrixActive) {
@@ -652,6 +836,7 @@ export function HeroSpotlight() {
 
   return (
     <section
+      id="hero-spotlight"
       ref={heroRef}
       className={[styles.hero, agentMode ? styles.agentMode : ""].filter(Boolean).join(" ")}
       onPointerEnter={onPointerEnter}
@@ -670,7 +855,11 @@ export function HeroSpotlight() {
       </div>
 
       <div className={styles.gridOverlay} aria-hidden="true" />
-      <div className={`${styles.layer} ${styles.topLayer}`} />
+      <div
+        className={[styles.layer, styles.topLayer, revealActive && topLayerHovered ? styles.topLayerReveal : ""]
+          .filter(Boolean)
+          .join(" ")}
+      />
       <div
         className={[styles.layer, styles.plasmaRevealLayer, revealActive ? styles.plasmaRevealLayerActive : ""]
           .filter(Boolean)

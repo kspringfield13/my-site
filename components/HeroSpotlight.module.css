@@ -18,6 +18,8 @@
   --flow-angle: 0deg;
   --flow-energy: 0.12;
   --plasma-opacity: 0;
+  --top-layer-opacity: 0.93;
+  --top-layer-opacity-hover: 0.75;
   --top-portrait: url("/hero-me.png");
   --reveal-portrait: url("/hero-ai.png");
   --plasma-mask: radial-gradient(
@@ -150,6 +152,12 @@
 .topLayer {
   z-index: 2;
   background-image: var(--top-portrait);
+  opacity: var(--top-layer-opacity);
+  transition: opacity 140ms linear;
+}
+
+.topLayerReveal {
+  opacity: var(--top-layer-opacity-hover);
 }
 
 .plasmaRevealLayer {

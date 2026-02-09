@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { GeistPixelSquare } from "geist/font/pixel";
 import "@/styles/globals.css";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
+import { AgentKyleDock } from "@/components/AgentKyleDock";
 import { THEME_PALETTE } from "@/lib/theme/palette";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kylespringfield.dev";
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         {children}
+        <AgentKyleDock />
         <AnalyticsProvider />
       </body>
     </html>

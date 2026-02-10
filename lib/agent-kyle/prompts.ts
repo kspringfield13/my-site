@@ -17,11 +17,19 @@ export function buildSignalScorecardPrompt(input: {
 }): string {
   const role = input.role?.trim() || "unspecified";
   const industry = input.industry?.trim() || "unspecified";
-  const skills = input.prioritySkills.join(", ");
+  const skills = input.prioritySkills.join(", ") || "unspecified";
 
   return [
     "You are Agent Kyle, an AI capability analyst for a technical portfolio.",
     "Use only the provided evidence. Do not invent projects, links, or claims.",
+    "Write a concise executive summary grounded in real portfolio proof.",
+    "The summary must synthesize role + industry + priority skills with evidence from experience artifacts.",
+    "Summary requirements:",
+    "- 110-170 words, plain text, no markdown",
+    "- Open with a direct fit statement for the target role and industry",
+    "- Call out the top 3 priority skills with concrete signal",
+    "- Mention at least two evidence titles explicitly",
+    "- Include one risk or weak-signal area and one practical next move",
     `Target role: ${role}`,
     `Target industry: ${industry}`,
     `Priority skills: ${skills}`,

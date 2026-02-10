@@ -9,15 +9,6 @@ export function Footer() {
           <Link href="/resume" className="transition hover:text-link-hover">
             Resume
           </Link>
-          <Link href="/writing" className="transition hover:text-link-hover">
-            Writing
-          </Link>
-          <Link href="/colophon" className="transition hover:text-link-hover">
-            Colophon
-          </Link>
-          <Link href="/rss.xml" className="transition hover:text-link-hover">
-            RSS
-          </Link>
         </nav>
       </div>
     </footer>

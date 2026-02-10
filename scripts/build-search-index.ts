@@ -5,7 +5,7 @@ import matter from "gray-matter";
 
 interface SearchDoc {
   id: string;
-  type: "Project" | "Writing" | "Section" | "Now";
+  type: "Project" | "Section" | "Now";
   title: string;
   url: string;
   tags: string[];
@@ -19,33 +19,6 @@ async function readJson<T>(filePath: string, fallback: T): Promise<T> {
   } catch {
     return fallback;
   }
-}
-
-async function loadWritingDocs(base: string): Promise<SearchDoc[]> {
-  const writingDir = path.join(base, "content", "writing");
-  let files: string[] = [];
-  try {
-    files = await fs.readdir(writingDir);
-  } catch {
-    return [];
-  }
-
-  const docs: SearchDoc[] = [];
-  for (const file of files) {
-    if (!file.endsWith(".mdx")) continue;
-    const source = await fs.readFile(path.join(writingDir, file), "utf8");
-    const parsed = matter(source);
-    const slug = (parsed.data.slug as string) || file.replace(/\.mdx$/, "");
-    docs.push({
-      id: `writing:${slug}`,
-      type: "Writing",
-      title: (parsed.data.title as string) || slug,
-      url: `/writing/${slug}`,
-      tags: Array.isArray(parsed.data.tags) ? (parsed.data.tags as string[]) : [],
-      body: parsed.content.slice(0, 800)
-    });
-  }
-  return docs;
 }
 
 async function main() {
@@ -123,9 +96,6 @@ async function main() {
       body: `${entry.tried} ${entry.outcome} ${entry.nextStep}`
     }))
   );
-
-  const writingDocs = await loadWritingDocs(base);
-  docs.push(...writingDocs);
 
   const outputPath = path.join(base, "public", "search-index.json");
   await fs.mkdir(path.dirname(outputPath), { recursive: true });

@@ -7,7 +7,7 @@
     "required": ["id", "type", "title", "url", "tags", "body"],
     "properties": {
       "id": { "type": "string" },
-      "type": { "enum": ["Project", "Writing", "Section", "Now"] },
+      "type": { "enum": ["Project", "Section", "Now"] },
       "title": { "type": "string" },
       "url": { "type": "string" },
       "tags": {

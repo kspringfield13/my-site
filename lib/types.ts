@@ -69,16 +69,38 @@ export interface ProofMetrics {
 export interface ResumeRole {
   title: string;
   company: string;
+  location?: string;
   start: string;
   end: string;
   highlights: string[];
 }
 
+export interface ResumeContact {
+  email?: string;
+  linkedin?: string;
+}
+
+export interface ResumeEducation {
+  degree: string;
+  concentration?: string;
+  school: string;
+}
+
+export interface ResumeCertification {
+  name: string;
+  issuer: string;
+}
+
 export interface ResumeDerived {
+  name?: string;
+  contact?: ResumeContact;
   about: string;
+  highlights: string[];
+  education: ResumeEducation[];
   experience: ResumeRole[];
   skills: string[];
   certifications: string[];
+  certificationDetails: ResumeCertification[];
   proofBullets: string[];
   skillClusters: {
     data: string[];
@@ -90,24 +112,9 @@ export interface ResumeDerived {
 
 export interface SearchDoc {
   id: string;
-  type: "Project" | "Writing" | "Section" | "Now";
+  type: "Project" | "Section" | "Now";
   title: string;
   url: string;
   tags: string[];
   body: string;
-}
-
-export interface WritingFrontmatter {
-  title: string;
-  slug: string;
-  date: string;
-  summary: string;
-  tags?: string[];
-}
-
-export interface WritingIndexItem {
-  title: string;
-  slug: string;
-  date: string;
-  summary: string;
 }

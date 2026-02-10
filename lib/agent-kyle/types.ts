@@ -3,7 +3,7 @@ import { z } from "zod";
 export const agentKyleTabSchema = z.enum(["scorecard", "fit"]);
 export type AgentKyleTab = z.infer<typeof agentKyleTabSchema>;
 
-export const evidenceSourceSchema = z.enum(["project", "writing", "resume", "now", "section"]);
+export const evidenceSourceSchema = z.enum(["project", "resume", "now", "section"]);
 export type EvidenceSource = z.infer<typeof evidenceSourceSchema>;
 
 export const evidenceItemSchema = z.object({

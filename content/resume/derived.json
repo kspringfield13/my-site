@@ -1,67 +1,123 @@
 {
-  "about": "Staff-level analytics and AI engineer focused on building reliable data pipelines, experimentation systems, and AI-enabled applications that drive strategy.",
-  "proofBullets": [
-    "Business Analyst III at Cisco via TEKsystems (Sep 2025-present), focused on analytics and experimentation.",
-    "Built CMS FWA data engineering workflows at Peraton (Sep 2024-Sep 2025) for fraud, waste, and abuse programs.",
-    "Hands-on across SQL/Python/dbt/Snowflake/AWS with GenAI accelerators for delivery velocity."
+  "name": "Kyle Springfield",
+  "contact": {
+    "email": "kspringfield13@gmail.com",
+    "linkedin": "linkedin.com/in/kylespringfield"
+  },
+  "about": "Data and AI engineer building reliable analytics systems across SQL, Python, dbt, Snowflake, and AWS with a focus on experimentation and decision-ready execution.",
+  "highlights": [
+    "Build and automate reliable AWS/Snowflake data pipelines with SQL, Python, and dbt; enforce version control, testing, and reproducible workflows.",
+    "Apply statistical analysis and experimentation to uncover trends, measure lift, and strengthen data storytelling and metric design.",
+    "Leverage Gen AI tools to speed up exploration, automate routine analyses, and improve documentation.",
+    "Synthesize large, noisy datasets to uncover customer patterns, segment opportunities, and inform product and marketing strategy."
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Science in Business Information Technology",
+      "concentration": "Operations and Supply Chain Management",
+      "school": "Virginia Tech"
+    }
   ],
   "experience": [
     {
       "title": "Business Analyst III",
-      "company": "TEKsystems (at Cisco)",
+      "company": "TEKsystems at Cisco",
+      "location": "Raleigh, NC",
       "start": "2025-09",
       "end": "Present",
       "highlights": [
-        "Leads analytics initiatives aligned to product and business decision-making.",
-        "Implements experimentation methods and statistical evaluation for strategic tests."
+        "Build and ship Tableau dashboards and self-serve metrics for Global Sales Enablement; transform training and survey data from Snowflake into decision-ready insights for leaders.",
+        "Partner with PMs and Sales Directors to prioritize analytics, define KPIs, and surface adoption/impact trends that inform enablement strategy, content, and field rollout."
       ]
     },
     {
       "title": "Data Engineer",
-      "company": "Peraton (supporting CMS FWA)",
+      "company": "Peraton",
+      "location": "Raleigh, NC",
       "start": "2024-09",
       "end": "2025-09",
       "highlights": [
-        "Built and maintained fraud, waste, and abuse-focused data pipelines.",
-        "Improved reliability and traceability of downstream analytics datasets."
+        "Delivered high-quality, efficient data solutions and reporting to support Centers for Medicare & Medicaid Services in detecting and preventing fraud, waste, and abuse within government-sponsored health programs.",
+        "Architect and maintain AWS data pipelines with Python, SQL, and Bash; ingesting, reconciling, and validating multi-source data from CMS and partner vendor systems.",
+        "Enable downstream analytics by curating clean datasets and metrics used in investigations of suspicious provider/claims patterns."
       ]
     },
     {
-      "title": "Freelance Python Developer",
-      "company": "Independent",
+      "title": "Python Developer",
+      "company": "Freelance",
+      "location": "Raleigh, NC",
       "start": "2021-09",
       "end": "2024-09",
       "highlights": [
-        "Delivered automation and analytics tooling for client operations.",
-        "Built custom reporting and ETL workflows across diverse domains."
+        "Created and optimized data pipelines and workflows, leveraging Python, SQL, Gen AI, TypeScript, and AWS to deliver actionable business insights for various clients.",
+        "Delivered lightweight React apps and Tableau dashboards that turned complex datasets into clear, decision-ready visuals used by leadership.",
+        "Automated client reporting with parameterized Python jobs and validation checks (schema, nulls, anomaly flags), lifting accuracy and trust in metrics."
       ]
     },
     {
-      "title": "Data Analyst -> Marketing Data Scientist -> Senior Data Scientist -> Data Engineer",
-      "company": "RRD",
-      "start": "2017-01",
+      "title": "Data Engineer",
+      "company": "Vericast",
+      "location": "Morrisville, NC",
+      "start": "2021-07",
       "end": "2021-09",
       "highlights": [
-        "Progressed through analytics and data science roles into engineering ownership.",
-        "Supported marketing and product measurement with statistically grounded analysis."
+        "Refactored and modularized Python libraries used by marketing-science models, cutting training/scoring run time in half and raising model accuracy; enforced unit tests and Git-based code review for team-wide reuse.",
+        "Automated campaign analysis/reporting via Python, SQL, Tableau templates, and scheduled runs, eliminating significant manual effort and standardizing KPIs across stakeholders."
       ]
     },
     {
-      "title": "Analyst",
-      "company": "UBS",
-      "start": "2014-01",
-      "end": "2015-01",
+      "title": "Senior Data Scientist",
+      "company": "Vericast",
+      "location": "Morrisville, NC",
+      "start": "2020-02",
+      "end": "2021-07",
       "highlights": [
-        "Delivered analytical reporting and process support across business operations."
+        "Developed Python scripts for automation and data models within Jupyter Notebooks, streamlining digital campaign measurement workflows to significantly enhance operational efficiency.",
+        "Applied machine learning to custom data models in Python and SQL, enhancing predictive analytics and campaign performance evaluations."
       ]
     },
     {
-      "title": "Analyst",
+      "title": "Marketing Data Scientist",
+      "company": "Vericast",
+      "location": "Morrisville, NC",
+      "start": "2018-06",
+      "end": "2020-02",
+      "highlights": [
+        "Spearheaded the development of self-service automation by creating Python scripts integrated with Jira to streamline processes, resulting in significant enhancements in efficiency and task management.",
+        "Developed tailored Tableau dashboards for top clients, managing brand sales data sources to deliver detailed insights that supported strategic decision-making."
+      ]
+    },
+    {
+      "title": "Data Analyst",
+      "company": "Vericast",
+      "location": "Morrisville, NC",
+      "start": "2017-11",
+      "end": "2018-06",
+      "highlights": [
+        "Transformed post-campaign data into actionable insights using Python, SQL, and Tableau, enabling enhanced strategic decisions and better client outcomes.",
+        "Developed advanced Python ETL scripts for data visualization and market trend analysis, leading to improved strategic decision-making."
+      ]
+    },
+    {
+      "title": "Risk & Performance Analytics Specialist",
+      "company": "UBS (formerly Credit Suisse)",
+      "location": "Raleigh, NC",
+      "start": "2016-11",
+      "end": "2017-11",
+      "highlights": [
+        "Designed and implemented comprehensive risk and performance dashboards in Tableau, reducing report generation time by over 50% for senior management.",
+        "Collaborated with global teams to standardize and automate reporting processes using Business Objects and VBA, ensuring consistent and reliable data delivery."
+      ]
+    },
+    {
+      "title": "Data Analyst",
       "company": "NetApp",
-      "start": "2013-01",
-      "end": "2014-01",
+      "location": "Raleigh, NC",
+      "start": "2016-05",
+      "end": "2016-11",
       "highlights": [
-        "Supported performance analysis and operational data workflows."
+        "Collaborated with Support Account Managers and sales teams on top enterprise customer accounts to provide accurate and timely customer-facing reports.",
+        "Created custom Oracle BI reports and dashboards to extract data, analyze results using statistical techniques, and provide weekly and monthly reporting."
       ]
     }
   ],
@@ -69,28 +125,111 @@
     "SQL",
     "Python",
     "dbt",
-    "ETL",
-    "ELT",
-    "GenAI",
+    "ETL/ELT",
+    "Gen AI",
     "Git",
+    "Bash",
     "CI/CD",
     "Measurement",
+    "Data Visualization",
+    "A/B Testing",
+    "VS Code",
     "Tableau",
     "Power BI",
     "Snowflake",
     "AWS",
     "Databricks",
-    "Docker"
+    "Jupyter Notebook",
+    "Excel",
+    "Docker",
+    "Agile"
   ],
   "certifications": [
-    "Tableau Certified Data Analyst",
-    "DataCamp certifications (multiple)",
-    "Databricks accreditations (multiple)"
+    "Certified Tableau Data Analyst - Tableau",
+    "Certified AI Engineer for Developers Associate - DataCamp",
+    "Certified Python Data Associate - DataCamp",
+    "Certified Data Scientist Associate - DataCamp",
+    "Certified SQL Associate - DataCamp",
+    "Academy Accreditation - Platform Administrator - Databricks",
+    "Academy Accreditation - Generative AI Fundamentals - Databricks",
+    "Python Data Structures - University of Michigan",
+    "Part 107 UAS Remote Pilot License - Federal Aviation Administration (FAA)"
+  ],
+  "certificationDetails": [
+    {
+      "name": "Certified Tableau Data Analyst",
+      "issuer": "Tableau"
+    },
+    {
+      "name": "Certified AI Engineer for Developers Associate",
+      "issuer": "DataCamp"
+    },
+    {
+      "name": "Certified Python Data Associate",
+      "issuer": "DataCamp"
+    },
+    {
+      "name": "Certified Data Scientist Associate",
+      "issuer": "DataCamp"
+    },
+    {
+      "name": "Certified SQL Associate",
+      "issuer": "DataCamp"
+    },
+    {
+      "name": "Academy Accreditation - Platform Administrator",
+      "issuer": "Databricks"
+    },
+    {
+      "name": "Academy Accreditation - Generative AI Fundamentals",
+      "issuer": "Databricks"
+    },
+    {
+      "name": "Python Data Structures",
+      "issuer": "University of Michigan"
+    },
+    {
+      "name": "Part 107 UAS Remote Pilot License",
+      "issuer": "Federal Aviation Administration (FAA)"
+    }
+  ],
+  "proofBullets": [
+    "Business Analyst III, TEKsystems at Cisco (Sep 2025 - Present) delivering analytics and measurement support.",
+    "Data Engineer at Peraton (Sep 2024 - Sep 2025) building production data pipelines.",
+    "Hands-on delivery across SQL, Python, dbt, ETL/ELT, Gen AI, Git."
   ],
   "skillClusters": {
-    "data": ["SQL", "Python", "dbt", "ETL", "ELT", "Snowflake", "AWS", "Databricks"],
-    "analytics": ["Measurement", "Experimentation", "Statistics", "Tableau", "Power BI"],
-    "ai": ["GenAI", "LLM app workflows", "Prompt/system design", "AI-enabled automation"],
-    "dev": ["Git", "CI/CD", "Docker", "Testing", "Production observability"]
+    "data": [
+      "SQL",
+      "Python",
+      "dbt",
+      "ETL/ELT",
+      "Snowflake",
+      "AWS",
+      "Databricks",
+      "Data modeling",
+      "Pipeline reliability"
+    ],
+    "analytics": [
+      "Measurement",
+      "Data Visualization",
+      "A/B Testing",
+      "Tableau",
+      "Power BI",
+      "Experiment design"
+    ],
+    "ai": [
+      "Gen AI",
+      "AI workflow design"
+    ],
+    "dev": [
+      "Git",
+      "Bash",
+      "CI/CD",
+      "Docker",
+      "Agile",
+      "Testing",
+      "Deployment discipline"
+    ]
   }
 }

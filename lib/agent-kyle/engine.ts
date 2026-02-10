@@ -63,12 +63,21 @@ function fallbackScorecardSummary(input: {
   role?: string;
   industry?: string;
   topSkills: string[];
+  topEvidenceTitles: string[];
 }): string {
-  const role = input.role?.trim() ? input.role.trim() : "target role";
-  const industry = input.industry?.trim() ? ` in ${input.industry.trim()}` : "";
-  return `Agent Kyle evaluated portfolio evidence against ${role}${industry}. Strongest signal appears in ${input.topSkills
-    .slice(0, 3)
-    .join(", ")}, with proof concentrated in projects and resume artifacts.`;
+  const role = input.role?.trim() ? input.role.trim() : "the target role";
+  const industry = input.industry?.trim() ? input.industry.trim() : "the target industry";
+  const topSkills = input.topSkills.slice(0, 3).join(", ") || "core analytics engineering skills";
+  const evidenceExamples = input.topEvidenceTitles.slice(0, 2).join(" and ");
+
+  return [
+    `For ${role} in ${industry}, portfolio signal is strongest around ${topSkills}.`,
+    evidenceExamples
+      ? `Evidence from ${evidenceExamples} reinforces delivery across data systems, analytics execution, and cross-functional ownership.`
+      : "Evidence from projects and resume artifacts reinforces delivery across data systems and analytics execution.",
+    "Primary risk is uneven depth in specialized role-tailored artifacts, especially when requirements call for niche tooling.",
+    "Best next move: add one targeted case study that mirrors the target role language and includes measurable business impact."
+  ].join(" ");
 }
 
 function normalizeSkill(value: string): string {
@@ -114,14 +123,15 @@ export async function generateSignalScorecard(
   let summary = fallbackScorecardSummary({
     role: input.role,
     industry: input.industry,
-    topSkills: prioritySkills
+    topSkills: prioritySkills,
+    topEvidenceTitles: evidence.slice(0, 4).map((item) => item.title)
   });
 
   let capabilityRadar = fallbackRadar;
 
   try {
     const parsed = scorecardModelSchema.parse(parseJsonObject(completion.content));
-    summary = sanitizeFreeText(parsed.summary, 420);
+    summary = sanitizeFreeText(parsed.summary, 920);
 
     if (parsed.capabilityRadar?.length) {
       const bySkill = new Map(fallbackRadar.map((item) => [normalizeSkill(item.skill), item]));

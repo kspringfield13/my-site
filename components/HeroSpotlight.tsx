@@ -1,16 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent as ReactMouseEvent,
+  type PointerEvent as ReactPointerEvent
+} from "react";
 import { THEME_RGB } from "@/lib/theme/palette";
 import styles from "./HeroSpotlight.module.css";
 
-const INSTAGRAM_URL = "https://instagram.com/kspringfpv";
 const X_URL = "https://x.com/kspringfield13";
 
 const DESKTOP_LERP_FACTOR = 0.11;
 const MOBILE_LERP_FACTOR = 0.18;
 const MAX_TRAILS = 14;
+const MODE_TRANSITION_MS = 1180;
+const MODE_SWAP_RATIO = 0.44;
 const MATRIX_CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*+-";
 const EMPTY_PLASMA_MASK =
   "radial-gradient(circle 1px at -9999px -9999px, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 100%)";
@@ -99,6 +107,7 @@ export function HeroSpotlight() {
   const nameRef = useRef<HTMLDivElement>(null);
   const innovatorRef = useRef<HTMLDivElement>(null);
   const socialsRef = useRef<HTMLDivElement>(null);
+  const profileToggleRef = useRef<HTMLButtonElement>(null);
 
   const viewportRef = useRef({ width: 0, height: 0 });
   const heroOffsetRef = useRef({ left: 0, top: 0 });
@@ -112,6 +121,8 @@ export function HeroSpotlight() {
 
   const rafRef = useRef<number | null>(null);
   const matrixRafRef = useRef<number | null>(null);
+  const modeTransitionTimerRef = useRef<number | null>(null);
+  const modeSwapTimerRef = useRef<number | null>(null);
   const hasPointerRef = useRef(false);
   const touchActiveRef = useRef(false);
   const mobileViewportRef = useRef(false);
@@ -138,8 +149,22 @@ export function HeroSpotlight() {
   const [revealActive, setRevealActive] = useState(false);
   const [topLayerHovered, setTopLayerHovered] = useState(false);
   const [agentMode, setAgentMode] = useState(false);
+  const [modeTransitionActive, setModeTransitionActive] = useState(false);
+  const [modeTransitionBurstId, setModeTransitionBurstId] = useState(0);
+  const [modeTransitionToAgent, setModeTransitionToAgent] = useState(true);
   const [tones, setTones] = useState<ToneState>({ name: false, innovator: false, socials: false });
   const matrixActive = true;
+
+  const clearModeTransitionTimers = useCallback(() => {
+    if (modeTransitionTimerRef.current !== null) {
+      window.clearTimeout(modeTransitionTimerRef.current);
+      modeTransitionTimerRef.current = null;
+    }
+    if (modeSwapTimerRef.current !== null) {
+      window.clearTimeout(modeSwapTimerRef.current);
+      modeSwapTimerRef.current = null;
+    }
+  }, []);
 
   const resetTones = useCallback(() => {
     const prev = toneRef.current;
@@ -636,6 +661,83 @@ export function HeroSpotlight() {
     lastRawRef.current = null;
   }, []);
 
+  const onProfileToggleClick = useCallback(
+    (_event: ReactMouseEvent<HTMLButtonElement>) => {
+      const nextMode = !agentMode;
+      setModeTransitionToAgent(nextMode);
+
+      const hero = heroRef.current;
+      const button = profileToggleRef.current;
+      if (!hero || !button) {
+        setAgentMode((previous) => !previous);
+        return;
+      }
+
+      const heroRect = hero.getBoundingClientRect();
+      const buttonRect = button.getBoundingClientRect();
+      const originX = clamp(buttonRect.left + buttonRect.width / 2 - heroRect.left, 0, heroRect.width || 1);
+      const originY = clamp(buttonRect.top + buttonRect.height / 2 - heroRect.top, 0, heroRect.height || 1);
+      hero.style.setProperty("--mode-origin-x", `${originX.toFixed(2)}px`);
+      hero.style.setProperty("--mode-origin-y", `${originY.toFixed(2)}px`);
+      hero.style.setProperty("--mode-direction", nextMode ? "1" : "-1");
+
+      targetRef.current = { x: originX, y: originY };
+      setRevealActiveState(true);
+      setTopLayerHovered(true);
+      setModeTransitionBurstId((value) => value + 1);
+      setModeTransitionActive(true);
+
+      const centerX = heroRect.width * 0.5;
+      const centerY = heroRect.height * 0.52;
+      const forwardBoostX = (centerX - originX) * (coarsePointerRef.current ? 3.4 : 4.8);
+      const forwardBoostY = (centerY - originY) * (coarsePointerRef.current ? 3.4 : 4.8);
+      const reduced = reduceMotionRef.current;
+
+      if (!reduced) {
+        const burstCount = coarsePointerRef.current ? 7 : 11;
+        for (let index = 0; index < burstCount; index += 1) {
+          const angle = (Math.PI * 2 * index) / burstCount + (Math.random() - 0.5) * 0.42;
+          const speed = (coarsePointerRef.current ? 480 : 700) * (0.74 + Math.random() * 0.52);
+          const vx = Math.cos(angle) * speed + forwardBoostX * (0.48 + Math.random() * 0.2);
+          const vy = Math.sin(angle) * speed + forwardBoostY * (0.48 + Math.random() * 0.2);
+          spawnTrail(originX, originY, vx, vy, 1.08 + Math.random() * 0.58);
+        }
+
+        const streamerCount = coarsePointerRef.current ? 3 : 5;
+        for (let index = 1; index <= streamerCount; index += 1) {
+          const t = index / (streamerCount + 1);
+          const x = originX + (centerX - originX) * t + (Math.random() - 0.5) * 28;
+          const y = originY + (centerY - originY) * t + (Math.random() - 0.5) * 28;
+          const vx = (centerX - x) * (2.8 + Math.random() * 1.2);
+          const vy = (centerY - y) * (2.8 + Math.random() * 1.2);
+          spawnTrail(x, y, vx, vy, 0.82 + Math.random() * 0.32);
+        }
+      }
+
+      plasmaIntensityRef.current = Math.max(plasmaIntensityRef.current, reduced ? 0.44 : 1);
+      plasmaTurbulenceRef.current = Math.max(plasmaTurbulenceRef.current, reduced ? 0.32 : 1.1);
+      lastTrailSpawnAtRef.current = performance.now();
+
+      clearModeTransitionTimers();
+      const transitionMs = reduced ? 280 : MODE_TRANSITION_MS;
+      const swapMs = Math.round(transitionMs * MODE_SWAP_RATIO);
+      modeSwapTimerRef.current = window.setTimeout(() => {
+        modeSwapTimerRef.current = null;
+        setAgentMode(nextMode);
+      }, swapMs);
+
+      modeTransitionTimerRef.current = window.setTimeout(() => {
+        modeTransitionTimerRef.current = null;
+        setModeTransitionActive(false);
+        setTopLayerHovered(false);
+        if (!hasPointerRef.current || mobileViewportRef.current) {
+          setRevealActiveState(false);
+        }
+      }, transitionMs);
+    },
+    [agentMode, clearModeTransitionTimers, setRevealActiveState, spawnTrail]
+  );
+
   const onPointerMove = useCallback(
     (event: ReactPointerEvent<HTMLElement>) => {
       if (event.pointerType === "touch") {
@@ -725,6 +827,8 @@ export function HeroSpotlight() {
       cancelled = true;
     };
   }, [measureTopPortraitBounds, syncTopLayerHover]);
+
+  useEffect(() => () => clearModeTransitionTimers(), [clearModeTransitionTimers]);
 
   useEffect(() => {
     measureTopPortraitBounds();
@@ -824,6 +928,7 @@ export function HeroSpotlight() {
 
     rafRef.current = window.requestAnimationFrame(tick);
     return () => {
+      clearModeTransitionTimers();
       if (rafRef.current !== null) {
         window.cancelAnimationFrame(rafRef.current);
       }
@@ -832,13 +937,19 @@ export function HeroSpotlight() {
       resetPlasmaStyles();
       lastTickAtRef.current = 0;
     };
-  }, [applyScene, resetPlasmaStyles, stopMatrix]);
+  }, [applyScene, clearModeTransitionTimers, resetPlasmaStyles, stopMatrix]);
 
   return (
     <section
       id="hero-spotlight"
       ref={heroRef}
-      className={[styles.hero, agentMode ? styles.agentMode : ""].filter(Boolean).join(" ")}
+      className={[
+        styles.hero,
+        agentMode ? styles.agentMode : "",
+        modeTransitionActive ? styles.modeTransitionActive : ""
+      ]
+        .filter(Boolean)
+        .join(" ")}
       onPointerEnter={onPointerEnter}
       onPointerMove={onPointerMove}
       onPointerDown={onPointerDown}
@@ -848,20 +959,47 @@ export function HeroSpotlight() {
       aria-label="Kyle Springfield hero"
     >
       <div
-        className={[styles.matrixLayer, matrixActive ? styles.matrixLayerActive : ""].filter(Boolean).join(" ")}
+        className={[
+          styles.matrixLayer,
+          matrixActive ? styles.matrixLayerActive : "",
+          modeTransitionActive ? styles.matrixLayerSurge : ""
+        ]
+          .filter(Boolean)
+          .join(" ")}
         aria-hidden="true"
       >
         <canvas ref={matrixCanvasRef} className={styles.matrixCanvas} />
       </div>
 
-      <div className={styles.gridOverlay} aria-hidden="true" />
+      <div className={[styles.gridOverlay, modeTransitionActive ? styles.gridOverlaySurge : ""].join(" ")} aria-hidden="true" />
       <div
-        className={[styles.layer, styles.topLayer, revealActive && topLayerHovered ? styles.topLayerReveal : ""]
+        className={[
+          styles.layer,
+          styles.topLayer,
+          revealActive && topLayerHovered ? styles.topLayerReveal : "",
+          modeTransitionActive ? styles.topLayerSurge : ""
+        ]
           .filter(Boolean)
           .join(" ")}
       />
       <div
-        className={[styles.layer, styles.plasmaRevealLayer, revealActive ? styles.plasmaRevealLayerActive : ""]
+        className={[
+          styles.layer,
+          styles.plasmaRevealLayer,
+          revealActive ? styles.plasmaRevealLayerActive : "",
+          modeTransitionActive ? styles.plasmaRevealLayerSurge : ""
+        ]
+          .filter(Boolean)
+          .join(" ")}
+        aria-hidden="true"
+      />
+      <div
+        key={modeTransitionBurstId}
+        className={[
+          styles.modeTransitionLayer,
+          modeTransitionActive ? styles.modeTransitionLayerActive : "",
+          modeTransitionToAgent ? styles.modeTransitionToAgent : styles.modeTransitionToKyle
+        ]
           .filter(Boolean)
           .join(" ")}
         aria-hidden="true"
@@ -877,9 +1015,10 @@ export function HeroSpotlight() {
         </div>
 
         <button
+          ref={profileToggleRef}
           type="button"
           className={`${styles.profileToggle} ${agentMode ? styles.profileToggleActive : ""}`}
-          onClick={() => setAgentMode((previous) => !previous)}
+          onClick={onProfileToggleClick}
           aria-label={agentMode ? "Switch to Kyle mode" : "Switch to Agent Kyle mode"}
           aria-pressed={agentMode}
         >
@@ -899,19 +1038,6 @@ export function HeroSpotlight() {
         </div>
 
         <div ref={socialsRef} className={`${styles.socialRow} ${tones.socials ? styles.toneLight : styles.toneDark}`}>
-          <a
-            className={styles.socialIconLink}
-            href={INSTAGRAM_URL}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Instagram"
-          >
-            <svg className={styles.socialIcon} viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.087 3.269.222 2.76.42A3.9 3.9 0 0 0 1.353 1.353 3.9 3.9 0 0 0 .42 2.76c-.198.509-.333 1.09-.372 1.943C.01 5.556 0 5.83 0 8.001s.01 2.444.048 3.297c.039.853.174 1.434.372 1.943a3.9 3.9 0 0 0 .933 1.408 3.9 3.9 0 0 0 1.408.933c.509.198 1.09.333 1.943.372.853.038 1.126.048 3.297.048s2.444-.01 3.297-.048c.853-.039 1.434-.174 1.943-.372a4 4 0 0 0 2.341-2.341c.198-.509.333-1.09.372-1.943.038-.853.048-1.126.048-3.297s-.01-2.444-.048-3.297c-.039-.853-.174-1.434-.372-1.943a4 4 0 0 0-2.341-2.341c-.509-.198-1.09-.333-1.943-.372C10.444.01 10.171 0 8 0m0 1.441c2.134 0 2.387.008 3.232.047.782.036 1.206.166 1.488.275.374.145.64.319.92.6.281.28.456.546.601.92.109.282.239.706.275 1.488.038.845.046 1.098.046 3.231 0 2.134-.008 2.387-.046 3.232-.036.782-.166 1.206-.275 1.488a2.46 2.46 0 0 1-.601.92 2.46 2.46 0 0 1-.92.601c-.282.109-.706.239-1.488.275-.845.038-1.098.046-3.232.046-2.133 0-2.386-.008-3.231-.046-.782-.036-1.206-.166-1.488-.275a2.46 2.46 0 0 1-.92-.601 2.46 2.46 0 0 1-.601-.92c-.109-.282-.239-.706-.275-1.488C1.449 10.387 1.44 10.134 1.44 8c0-2.133.009-2.386.047-3.231.036-.782.166-1.206.275-1.488.145-.374.319-.64.6-.92.28-.281.546-.456.92-.601.282-.109.706-.239 1.488-.275C5.614 1.449 5.867 1.44 8 1.44m0 2.456A4.103 4.103 0 1 0 8 12.103 4.103 4.103 0 0 0 8 3.897m0 6.767a2.663 2.663 0 1 1 0-5.326 2.663 2.663 0 0 1 0 5.326m5.23-6.93a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92" />
-            </svg>
-            <span className={styles.srOnly}>Instagram</span>
-          </a>
-
           <a className={styles.socialIconLink} href={X_URL} target="_blank" rel="noreferrer" aria-label="X">
             <svg className={styles.socialIcon} viewBox="0 0 24 24" aria-hidden="true">
               <path d="M18.901 1.153h3.68l-8.041 9.191L24 22.847h-7.405l-5.8-7.584-6.639 7.584H.474l8.601-9.831L0 1.154h7.594l5.243 6.932zM17.61 20.644h2.039L6.486 3.241H4.298z" />

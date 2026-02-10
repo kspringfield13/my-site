@@ -1,6 +1,6 @@
 # Kyle Springfield Personal Site
 
-Editorial portfolio focused on projects, writing, and AI workflows.
+Editorial portfolio focused on projects, now updates, and AI workflows.
 
 ## Stack
 - Next.js App Router + TypeScript
@@ -45,6 +45,7 @@ npm audit
 - `GITHUB_TOKEN` (optional but recommended): Personal Access Token used by ingestion scripts to call GitHub REST/GraphQL APIs with higher rate limits and pinned-repo support.
 - `NEXT_PUBLIC_SITE_URL`: canonical site URL used for metadata/sitemap (for example `https://kylespringfield.dev`).
 - `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` (optional): enables Plausible analytics.
+- `NEXT_PUBLIC_FOOTER_VIDEO_URL` (optional): public video URL used as the background video for the home page contact/footer section (`.mp4` preferred, `.mov` supported if browser codec-compatible).
 
 ### What is `GITHUB_TOKEN`?
 `GITHUB_TOKEN` here means a GitHub Personal Access Token (PAT) that you create in your GitHub account.
@@ -87,6 +88,7 @@ NEXT_PUBLIC_PLAUSIBLE_DOMAIN=kylespringfield.dev
 4. Configure environment variables in Vercel project settings:
 - `NEXT_PUBLIC_SITE_URL` = your production URL (custom domain or `https://<project>.vercel.app`)
 - `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` = optional analytics domain
+- `NEXT_PUBLIC_FOOTER_VIDEO_URL` = optional hosted video URL (for example from Vercel Blob)
 - `GITHUB_TOKEN` = optional (needed only if you run ingestion in CI/server-side workflows)
 5. Deploy.
 
@@ -99,7 +101,6 @@ Recommended flow:
 - `content/resume/resume.md` (authoritative resume input)
 - `content/projects/projects.json` + `content/projects/*.mdx`
 - `content/now/entries.json`
-- `content/writing/*.mdx`
 
 ## Notes
 - Ingestion scripts are non-destructive: existing case-study MDX files are never overwritten.

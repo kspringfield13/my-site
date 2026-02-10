@@ -1,4 +1,4 @@
-import { getNowEntries, getProjectIndex, getResumeDerived, getSearchDocs, getWritingIndex } from "@/lib/content";
+import { getNowEntries, getProjectIndex, getResumeDerived, getSearchDocs } from "@/lib/content";
 import { sanitizeFreeText, toTitleCase } from "@/lib/agent-kyle/sanitize";
 import type { CapabilityHeatmapCell, EvidenceItem } from "@/lib/agent-kyle/types";
 import type { ProjectMeta } from "@/lib/types";
@@ -115,11 +115,10 @@ function buildResumeEvidence(resume: Awaited<ReturnType<typeof getResumeDerived>
 }
 
 export async function buildEvidenceContext(): Promise<AgentEvidenceContext> {
-  const [projectIndex, nowFeed, resume, writing, searchDocs] = await Promise.all([
+  const [projectIndex, nowFeed, resume, searchDocs] = await Promise.all([
     getProjectIndex(),
     getNowEntries(),
     getResumeDerived(),
-    getWritingIndex(),
     getSearchDocs()
   ]);
 
@@ -133,15 +132,6 @@ export async function buildEvidenceContext(): Promise<AgentEvidenceContext> {
     sourceType: "now",
     snippet: compactSnippet(`${entry.tried} ${entry.outcome} ${entry.nextStep}`),
     tags: tokenize(`${entry.category} ${entry.title} ${entry.outcome}`).slice(0, 12)
-  }));
-
-  const writingEvidence: EvidenceItem[] = writing.slice(0, 18).map((post) => ({
-    id: `writing:${post.slug}`,
-    title: post.title,
-    url: `/writing/${post.slug}`,
-    sourceType: "writing",
-    snippet: compactSnippet(post.summary),
-    tags: tokenize(`${post.title} ${post.summary}`).slice(0, 14)
   }));
 
   const sectionEvidence: EvidenceItem[] = searchDocs
@@ -159,7 +149,6 @@ export async function buildEvidenceContext(): Promise<AgentEvidenceContext> {
     ...projectEvidence,
     ...resumeEvidence,
     ...nowEvidence,
-    ...writingEvidence,
     ...sectionEvidence
   ]);
 

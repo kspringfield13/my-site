@@ -21,6 +21,12 @@ interface AgentKylePanelProps {
   onClose: () => void;
 }
 
+interface ScorecardRequestContext {
+  role?: string;
+  industry?: string;
+  prioritySkills: string[];
+}
+
 const defaultStatus: AgentStatusResponse = {
   available: false,
   reason: "rate_limited",
@@ -47,6 +53,21 @@ function toLocalTimestamp(value: string): string {
   return date.toLocaleString();
 }
 
+function parsePrioritySkills(value: string): string[] {
+  return Array.from(
+    new Set(
+      value
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
+    )
+  ).slice(0, 12);
+}
+
+function labelSourceType(value: string): string {
+  return value ? `${value[0].toUpperCase()}${value.slice(1)}` : value;
+}
+
 export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: AgentKylePanelProps) {
   const [tab, setTab] = useState<AgentKyleTab>(initialTab);
   const [status, setStatus] = useState<AgentStatusResponse>(defaultStatus);
@@ -59,6 +80,7 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
   const [scorecardLoading, setScorecardLoading] = useState(false);
   const [scorecardError, setScorecardError] = useState<string | null>(null);
   const [scorecardResult, setScorecardResult] = useState<SignalScorecardResponse | null>(null);
+  const [scorecardContext, setScorecardContext] = useState<ScorecardRequestContext | null>(null);
 
   const [jobDescription, setJobDescription] = useState("");
   const [fitLoading, setFitLoading] = useState(false);
@@ -126,13 +148,11 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
 
     setScorecardLoading(true);
     try {
+      const parsedPrioritySkills = parsePrioritySkills(prioritySkills);
       const payload = {
         role: role.trim() || undefined,
         industry: industry.trim() || undefined,
-        prioritySkills: prioritySkills
-          .split(",")
-          .map((item) => item.trim())
-          .filter(Boolean)
+        prioritySkills: parsedPrioritySkills
       };
 
       const response = await fetch("/api/agent-kyle/signal-scorecard", {
@@ -158,6 +178,11 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
       }
 
       setScorecardResult(parsed.data);
+      setScorecardContext({
+        role: payload.role,
+        industry: payload.industry,
+        prioritySkills: parsedPrioritySkills
+      });
       refreshStatus();
     } catch {
       setScorecardError("Signal Scorecard is temporarily unavailable. Try again in a moment.");
@@ -220,6 +245,31 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
     return `${status.usageWindow.remainingInWindow} req / 10m · ${status.usageWindow.sessionRemaining} req left today · ${status.usageWindow.remainingTokens} tokens left`;
   }, [status]);
 
+  const scorecardInsights = useMemo(() => {
+    if (!scorecardResult) return null;
+
+    const rankedSkills = [...scorecardResult.capabilityRadar].sort((a, b) => b.score - a.score);
+    const topSkill = rankedSkills[0];
+    const avgSkillScore = Math.round(
+      rankedSkills.reduce((total, item) => total + item.score, 0) / Math.max(1, rankedSkills.length)
+    );
+    const projectCoverage = new Set(scorecardResult.heatmap.map((item) => item.projectSlug)).size;
+    const skillCoverage = new Set(scorecardResult.heatmap.map((item) => item.skill)).size;
+    const focusSkills = scorecardContext?.prioritySkills.length
+      ? scorecardContext.prioritySkills.slice(0, 6)
+      : rankedSkills.slice(0, 6).map((item) => item.skill);
+
+    return {
+      avgSkillScore,
+      topSkillLabel: topSkill?.skill || "N/A",
+      topSkillScore: Math.round(topSkill?.score || 0),
+      evidenceCount: scorecardResult.evidence.length,
+      projectCoverage,
+      skillCoverage,
+      focusSkills
+    };
+  }, [scorecardContext, scorecardResult]);
+
   if (!open) {
     return null;
   }
@@ -277,11 +327,50 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
             Opportunity Fit Matcher
           </button>
         </div>
+        {tab === "scorecard" ? (
+          <div className="mt-2 rounded-lg border border-border bg-surface-1 px-3 py-2">
+            <p className="text-[0.65rem] uppercase tracking-[0.14em] text-faint">Why Use Signal Scorecard</p>
+            <p className="mt-1 text-xs leading-5 text-muted">
+              Recruiters, hiring managers, founders, and collaborators can use this for a fast, evidence-backed read on how my strengths map to a target role and business context.
+            </p>
+            <ul className="mt-2 space-y-1 text-xs text-muted">
+              <li>
+                <span className="text-fg">What you learn:</span> Whether my strongest capabilities align with the priorities that matter most for your team.
+              </li>
+              <li>
+                <span className="text-fg">Why it is credible:</span> Every signal is tied to concrete portfolio evidence, not generic claims.
+              </li>
+              <li>
+                <span className="text-fg">Best time to use it:</span> Early screening, interview prep, or evaluating fit for startup/founding-stage scope.
+              </li>
+            </ul>
+          </div>
+        ) : null}
+
+        {tab === "fit" ? (
+          <div className="mt-2 rounded-lg border border-border bg-surface-1 px-3 py-2">
+            <p className="text-[0.65rem] uppercase tracking-[0.14em] text-faint">Why Use Opportunity Fit Matcher</p>
+            <p className="mt-1 text-xs leading-5 text-muted">
+              Use this when you have a specific role in mind and want a practical view of fit against the actual requirements.
+            </p>
+            <ul className="mt-2 space-y-1 text-xs text-muted">
+              <li>
+                <span className="text-fg">What you learn:</span> A direct fit read with confidence for that exact role, not a generic career summary.
+              </li>
+              <li>
+                <span className="text-fg">Why it is actionable:</span> It surfaces matched evidence, clear gaps, and targeted next steps in one view.
+              </li>
+              <li>
+                <span className="text-fg">Best time to use it:</span> Hiring calibration, interview planning, or deciding if now is the right time to engage.
+              </li>
+            </ul>
+          </div>
+        ) : null}
       </div>
 
-      <div className="flex-1 overflow-auto px-4 py-4">
+      <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden px-4 py-4">
         {tab === "scorecard" ? (
-          <div className="space-y-4">
+          <div className="min-w-0 space-y-4">
             <form className="card-base grid gap-3 md:grid-cols-3" onSubmit={submitScorecard}>
               <label className="text-sm text-muted">
                 Role focus
@@ -322,20 +411,75 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
 
             {scorecardResult ? (
               <div className="space-y-4">
-                <article className="card-base">
-                  <p className="text-sm text-muted">{scorecardResult.summary}</p>
-                  <p className="mt-2 text-xs text-faint">
-                    Generated {toLocalTimestamp(scorecardResult.generatedAt)} · Model {scorecardResult.model}
-                  </p>
+                <article className="card-base overflow-hidden p-0">
+                  <div className="bg-[radial-gradient(circle_at_82%_18%,color-mix(in_srgb,var(--c-link-hover)_16%,transparent)_0%,transparent_42%)] p-5 md:p-6">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <p className="eyebrow">Signal Scorecard</p>
+                      </div>
+                      <span className="tag-chip">Evidence-grounded narrative</span>
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {scorecardContext?.role ? (
+                        <span className="tag-chip break-words">Role: {scorecardContext.role}</span>
+                      ) : null}
+                      {scorecardContext?.industry ? (
+                        <span className="tag-chip break-words">Industry: {scorecardContext.industry}</span>
+                      ) : null}
+                      {scorecardInsights?.focusSkills.map((skill) => (
+                        <span key={skill} className="tag-chip">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+
+                    <p className="mt-4 max-w-4xl whitespace-pre-line break-words text-sm leading-7 text-muted">
+                      {scorecardResult.summary}
+                    </p>
+
+                    <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                      <div className="rounded-lg border border-border bg-surface-1 px-3 py-2">
+                        <p className="text-[0.64rem] uppercase tracking-[0.12em] text-faint">Top Skill</p>
+                        <p className="mt-1 text-sm font-semibold text-fg">{scorecardInsights?.topSkillLabel}</p>
+                        <p className="text-xs text-muted">{scorecardInsights?.topSkillScore}% signal</p>
+                      </div>
+                      <div className="rounded-lg border border-border bg-surface-1 px-3 py-2">
+                        <p className="text-[0.64rem] uppercase tracking-[0.12em] text-faint">Average Skill Score</p>
+                        <p className="mt-1 text-sm font-semibold text-fg">{scorecardInsights?.avgSkillScore}%</p>
+                        <p className="text-xs text-muted">Across radar dimensions</p>
+                      </div>
+                      <div className="rounded-lg border border-border bg-surface-1 px-3 py-2">
+                        <p className="text-[0.64rem] uppercase tracking-[0.12em] text-faint">Project Coverage</p>
+                        <p className="mt-1 text-sm font-semibold text-fg">{scorecardInsights?.projectCoverage} projects</p>
+                        <p className="text-xs text-muted">{scorecardInsights?.skillCoverage} mapped skills</p>
+                      </div>
+                      <div className="rounded-lg border border-border bg-surface-1 px-3 py-2">
+                        <p className="text-[0.64rem] uppercase tracking-[0.12em] text-faint">Evidence Inputs</p>
+                        <p className="mt-1 text-sm font-semibold text-fg">{scorecardInsights?.evidenceCount} links</p>
+                        <p className="text-xs text-muted">Ranked supporting artifacts</p>
+                      </div>
+                    </div>
+
+                    <p className="mt-4 text-xs text-faint">
+                      Generated {toLocalTimestamp(scorecardResult.generatedAt)} · Model {scorecardResult.model}
+                    </p>
+                  </div>
                 </article>
 
-                <div className="grid gap-4 xl:grid-cols-2">
-                  <article className="card-base">
-                    <h3 className="text-sm font-semibold">Capability Radar</h3>
+                <div className="grid gap-4 lg:grid-cols-2">
+                  <article className="card-base min-w-0">
+                    <div className="mb-3">
+                      <h3 className="text-base font-semibold">Capability Radar</h3>
+                      <p className="text-xs text-faint">Confidence-weighted capability profile against focus skills.</p>
+                    </div>
                     <CapabilityRadarChart data={scorecardResult.capabilityRadar} />
                   </article>
-                  <article className="card-base">
-                    <h3 className="text-sm font-semibold">Skill-Project Evidence Matrix</h3>
+                  <article className="card-base min-w-0">
+                    <div className="mb-3">
+                      <h3 className="text-base font-semibold">Project Evidence Strength</h3>
+                      <p className="text-xs text-faint">Relative coverage by project, with top-skill context.</p>
+                    </div>
                     <EvidenceHeatmap data={scorecardResult.heatmap} />
                   </article>
                 </div>
@@ -344,9 +488,14 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
                   <h3 className="text-sm font-semibold">Evidence Links</h3>
                   <ul className="mt-3 grid gap-2 md:grid-cols-2">
                     {scorecardResult.evidence.map((item: SignalScorecardResponse["evidence"][number]) => (
-                      <li key={item.id} className="rounded-lg border border-border bg-surface-1 p-3">
-                        <p className="text-sm font-medium text-fg">{item.title}</p>
-                        <p className="mt-1 text-xs text-muted">{item.snippet}</p>
+                      <li key={item.id} className="min-w-0 rounded-lg border border-border bg-surface-1 p-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <p className="min-w-0 break-words text-sm font-medium text-fg">{item.title}</p>
+                          <span className="tag-chip shrink-0 px-2 py-0.5 text-[0.62rem] tracking-[0.06em]">
+                            {labelSourceType(item.sourceType)}
+                          </span>
+                        </div>
+                        <p className="mt-1 break-words text-xs text-muted">{item.snippet}</p>
                         <a
                           href={item.url}
                           className="mt-2 inline-flex text-xs text-link hover:text-link-hover"
@@ -363,15 +512,15 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
             ) : null}
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="min-w-0 space-y-4">
             <form className="card-base space-y-3" onSubmit={submitFit}>
               <label className="text-sm text-muted">
-                Paste job description
+                Job description
                 <textarea
                   value={jobDescription}
                   onChange={(event) => setJobDescription(event.target.value)}
                   rows={7}
-                  placeholder="Paste the role description here..."
+                  placeholder="Paste the job description here..."
                   className="mt-1 w-full rounded-lg border border-border bg-surface-1 px-3 py-2 text-sm text-fg"
                 />
               </label>
@@ -384,25 +533,49 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
             {fitError ? <p className="text-sm text-muted">{fitError}</p> : null}
 
             {fitResult ? (
-              <div className="space-y-4">
-                <article className="card-base">
-                  <div className="flex flex-wrap items-end justify-between gap-3">
-                    <div>
-                      <p className="eyebrow">Fit score</p>
-                      <p className="mt-1 text-5xl font-display font-semibold">{fitResult.fitScore}</p>
+              <div className="min-w-0 space-y-4">
+                <article className="card-base w-full max-w-full overflow-hidden p-0">
+                  <div className="bg-[radial-gradient(circle_at_84%_18%,color-mix(in_srgb,var(--c-link-hover)_18%,transparent)_0%,transparent_42%)] p-5 md:p-6">
+                    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_14rem] lg:items-center">
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                          <p className="eyebrow">Fit score</p>
+                          <span className="tag-chip px-2 py-0.5 text-[0.62rem] tracking-[0.06em] md:px-[0.65rem] md:py-[0.2rem] md:text-[0.75rem] md:tracking-[0.08em]">
+                            {fitResult.fitScore >= 85 ? "Strong match" : fitResult.fitScore >= 70 ? "Viable match" : "Needs work"}
+                          </span>
+                          <span className="tag-chip px-2 py-0.5 text-[0.62rem] tracking-[0.06em] md:px-[0.65rem] md:py-[0.2rem] md:text-[0.75rem] md:tracking-[0.08em]">
+                            {fitResult.matchingEvidence.length} evidence matches
+                          </span>
+                        </div>
+                        <p className="mt-2 text-center text-6xl font-display font-semibold leading-none text-fg lg:text-left">
+                          {fitResult.fitScore}
+                        </p>
+                        <p className="mt-4 max-w-3xl break-words text-sm leading-6 text-muted">{fitResult.rationale}</p>
+                      </div>
+                      <div className="rounded-2xl border border-border bg-surface-1 px-4 py-3">
+                        <ConfidenceGauge confidence={fitResult.confidence} />
+                      </div>
                     </div>
-                    <div className="w-52">
-                      <ConfidenceGauge confidence={fitResult.confidence} />
+
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      <p className="max-w-full break-words rounded-full border border-border bg-surface-1 px-3 py-1 text-xs text-faint">
+                        Generated {toLocalTimestamp(fitResult.generatedAt)}
+                      </p>
+                      <p className="max-w-full break-words rounded-full border border-border bg-surface-1 px-3 py-1 text-xs text-faint">
+                        Model {fitResult.model}
+                      </p>
                     </div>
                   </div>
-                  <p className="mt-3 text-sm text-muted">{fitResult.rationale}</p>
-                  <p className="mt-2 text-xs text-faint">
-                    Generated {toLocalTimestamp(fitResult.generatedAt)} · Model {fitResult.model}
-                  </p>
                 </article>
 
                 <article className="card-base">
-                  <h3 className="text-sm font-semibold">Fit Breakdown</h3>
+                  <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
+                    <div>
+                      <h3 className="text-base font-semibold">Fit Breakdown</h3>
+                      <p className="text-xs text-faint">All metrics are normalized on a 0-100 scale.</p>
+                    </div>
+                    <span className="tag-chip">At-a-glance comparison</span>
+                  </div>
                   <FitBreakdownBar
                     fitScore={fitResult.fitScore}
                     confidence={fitResult.confidence}
@@ -411,14 +584,34 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
                 </article>
 
                 <article className="card-base">
-                  <h3 className="text-sm font-semibold">Matching Evidence</h3>
-                  <ul className="mt-3 grid gap-2 md:grid-cols-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="text-base font-semibold">Matching Evidence</h3>
+                    <span className="tag-chip">{fitResult.matchingEvidence.length} items</span>
+                  </div>
+                  <ul className="mt-4 grid w-full min-w-0 gap-3 md:grid-cols-2">
                     {fitResult.matchingEvidence.map((item: OpportunityFitResponse["matchingEvidence"][number]) => (
-                      <li key={item.evidenceId} className="rounded-lg border border-border bg-surface-1 p-3">
-                        <p className="text-sm font-medium text-fg">{item.title}</p>
-                        <p className="mt-1 text-xs text-muted">{item.reason}</p>
-                        <p className="mt-1 text-xs text-faint">Relevance: {item.relevance}</p>
-                        <a href={item.url} className="mt-2 inline-flex text-xs text-link hover:text-link-hover">
+                      <li key={item.evidenceId} className="min-w-0 rounded-xl border border-border bg-surface-1 p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="min-w-0 break-words text-sm font-semibold text-fg">{item.title}</p>
+                          <span className="tag-chip shrink-0 whitespace-nowrap px-2 py-0.5 text-[0.62rem] tracking-[0.06em] md:px-[0.55rem] md:text-[0.7rem] md:tracking-[0.08em]">
+                            Relevance {item.relevance}%
+                          </span>
+                        </div>
+                        <p className="mt-2 break-words text-sm leading-6 text-muted">{item.reason}</p>
+
+                        <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-surface-3">
+                          <div
+                            className="h-full rounded-full bg-[linear-gradient(90deg,var(--c-accent-700),var(--c-link-hover))]"
+                            style={{ width: `${Math.max(8, Math.min(100, Math.round(item.relevance)))}%` }}
+                          />
+                        </div>
+
+                        <a
+                          href={item.url}
+                          className="mt-3 inline-flex text-xs text-link hover:text-link-hover"
+                          target={item.url.startsWith("http") ? "_blank" : undefined}
+                          rel={item.url.startsWith("http") ? "noreferrer" : undefined}
+                        >
                           Open evidence
                         </a>
                       </li>
@@ -428,20 +621,32 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
 
                 <div className="grid gap-4 md:grid-cols-2">
                   <article className="card-base">
-                    <h3 className="text-sm font-semibold">Gaps</h3>
-                    <ul className="mt-2 space-y-2 text-sm text-muted">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h3 className="text-base font-semibold">Gaps</h3>
+                      <span className="tag-chip">{fitResult.gaps.length}</span>
+                    </div>
+                    <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-muted">
                       {fitResult.gaps.length > 0 ? (
-                        fitResult.gaps.map((gap: string) => <li key={gap}>- {gap}</li>)
+                        fitResult.gaps.map((gap: string) => (
+                          <li key={gap} className="break-words">
+                            {gap}
+                          </li>
+                        ))
                       ) : (
-                        <li>- No major gaps identified.</li>
+                        <li>No major gaps identified.</li>
                       )}
                     </ul>
                   </article>
                   <article className="card-base">
-                    <h3 className="text-sm font-semibold">Recommendations</h3>
-                    <ul className="mt-2 space-y-2 text-sm text-muted">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h3 className="text-base font-semibold">Recommendations</h3>
+                      <span className="tag-chip">{fitResult.recommendations.length}</span>
+                    </div>
+                    <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-muted">
                       {fitResult.recommendations.map((recommendation: string) => (
-                        <li key={recommendation}>- {recommendation}</li>
+                        <li key={recommendation} className="break-words">
+                          {recommendation}
+                        </li>
                       ))}
                     </ul>
                   </article>

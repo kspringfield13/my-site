@@ -4,6 +4,7 @@ import { cache } from "react";
 
 interface SiteConfig {
   name: string;
+  footerVideoUrl?: string;
   contact: {
     email: string;
     github: string;

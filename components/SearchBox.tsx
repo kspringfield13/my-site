@@ -87,7 +87,7 @@ export function SearchBox() {
           }
         }}
         autoComplete="off"
-        placeholder="Search projects, writing, sections"
+        placeholder="Search here"
         className="w-full rounded-full border border-border bg-surface-2 px-4 py-2 text-sm text-fg placeholder:text-faint"
       />
       {open && query.trim() ? (

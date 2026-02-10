@@ -9,9 +9,7 @@ import type {
   ProofMetrics,
   ResumeDerived,
   SearchDoc,
-  WeeklySummary,
-  WritingFrontmatter,
-  WritingIndexItem
+  WeeklySummary
 } from "@/lib/types";
 
 const fallbackProjectIndex: ProjectIndex = {
@@ -20,10 +18,15 @@ const fallbackProjectIndex: ProjectIndex = {
 };
 
 const fallbackResume: ResumeDerived = {
+  name: "Kyle Springfield",
+  contact: {},
   about: "Data and AI engineer focused on turning noisy datasets into measurable decisions.",
+  highlights: [],
+  education: [],
   experience: [],
   skills: [],
   certifications: [],
+  certificationDetails: [],
   proofBullets: [],
   skillClusters: {
     data: [],
@@ -124,47 +127,6 @@ export const getFlagshipProjects = cache(async (limit = 6) => {
   return source.slice(0, limit);
 });
 
-async function getWritingSlugs(): Promise<string[]> {
-  try {
-    const dir = getContentPath("writing");
-    const files = await fs.readdir(dir);
-    return files.filter((file) => file.endsWith(".mdx")).map((file) => file.replace(/\.mdx$/, ""));
-  } catch {
-    return [];
-  }
-}
-
-export const getWritingIndex = cache(async (): Promise<WritingIndexItem[]> => {
-  const slugs = await getWritingSlugs();
-  const posts = await Promise.all(
-    slugs.map(async (slug) => {
-      const file = getContentPath("writing", `${slug}.mdx`);
-      const mdx = await loadMdxFile<WritingFrontmatter>(file);
-      return {
-        title: mdx.frontmatter.title,
-        slug: mdx.frontmatter.slug || slug,
-        date: mdx.frontmatter.date,
-        summary: mdx.frontmatter.summary
-      };
-    })
-  );
-
-  return posts.sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
-});
-
-export const getWritingBySlug = cache(async (slug: string) => {
-  const filePath = getContentPath("writing", `${slug}.mdx`);
-  try {
-    const mdx = await loadMdxFile<WritingFrontmatter>(filePath);
-    return {
-      frontmatter: mdx.frontmatter,
-      content: mdx.content
-    };
-  } catch {
-    return null;
-  }
-});
-
 export function getProjectTag(project: ProjectMeta): "ai" | "data" | "fullstack" {
   if (project.tags.includes("ai")) return "ai";
   if (project.tags.includes("fullstack")) return "fullstack";
@@ -183,7 +145,7 @@ export const getSearchDocs = cache(async (): Promise<SearchDoc[]> => {
     return fromFile;
   }
 
-  const [projects, nowEntries, writing] = await Promise.all([getProjectIndex(), getNowEntries(), getWritingIndex()]);
+  const [projects, nowEntries] = await Promise.all([getProjectIndex(), getNowEntries()]);
   const projectDocs = projects.projects.map((project) => ({
     id: `project:${project.slug}`,
     type: "Project" as const,
@@ -218,15 +180,7 @@ export const getSearchDocs = cache(async (): Promise<SearchDoc[]> => {
       body: "Flagship projects and artifacts."
     }
   ];
-  const writingDocs: SearchDoc[] = writing.map((post) => ({
-    id: `writing:${post.slug}`,
-    type: "Writing",
-    title: post.title,
-    url: `/writing/${post.slug}`,
-    tags: ["writing"],
-    body: post.summary
-  }));
-  return [...projectDocs, ...nowDocs, ...sectionDocs, ...writingDocs];
+  return [...projectDocs, ...nowDocs, ...sectionDocs];
 });
 
 export async function fileExists(relativePath: string) {

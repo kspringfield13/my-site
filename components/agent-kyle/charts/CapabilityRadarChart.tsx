@@ -17,15 +17,20 @@ export function CapabilityRadarChart({ data }: { data: CapabilityRadarPoint[] })
   }
 
   return (
-    <div className="h-80 w-full">
+    <div className="h-[24rem] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <RadarChart data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <RadarChart data={data} margin={{ top: 34, right: 48, bottom: 26, left: 48 }} outerRadius="67%">
           <PolarGrid stroke="var(--c-border)" />
-          <PolarAngleAxis dataKey="skill" tick={{ fill: "var(--c-text-muted)", fontSize: 12 }} />
+          <PolarAngleAxis
+            dataKey="skill"
+            tickSize={14}
+            tick={{ fill: "var(--c-text-muted)", fontSize: 14, fontWeight: 600 }}
+            axisLine={false}
+          />
           <PolarRadiusAxis
-            angle={90}
+            angle={30}
             domain={[0, 100]}
-            tick={{ fill: "var(--c-text-faint)", fontSize: 11 }}
+            tick={{ fill: "var(--c-text-faint)", fontSize: 12 }}
             stroke="var(--c-border)"
           />
           <Radar
@@ -42,6 +47,8 @@ export function CapabilityRadarChart({ data }: { data: CapabilityRadarPoint[] })
               background: "var(--c-surface-2)",
               color: "var(--c-text)"
             }}
+            labelStyle={{ color: "var(--c-text)" }}
+            itemStyle={{ color: "var(--c-text)" }}
           />
         </RadarChart>
       </ResponsiveContainer>

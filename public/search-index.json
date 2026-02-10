@@ -4,55 +4,99 @@
     "type": "Project",
     "title": "xenosync",
     "url": "/projects/xenosync",
-    "tags": ["ai", "fullstack", "orchestration"],
-    "body": "Multi-agent AI orchestration platform coordinating parallel Claude Code sessions."
+    "tags": [
+      "ai",
+      "fullstack",
+      "TypeScript",
+      "Node.js",
+      "LLM APIs",
+      "Automation"
+    ],
+    "body": "Multi-agent AI orchestration platform coordinating parallel Claude Code sessions. Coordinates parallel coding agents, reconciles outputs, and improves throughput for multi-threaded implementation work. Coordinates parallel coding sessions across specialized agents. Includes orchestration controls for retries and merge workflows. Built to improve throughput while preserving output quality. \n## Context\nParallel coding and analysis sessions create coordination overhead and merge conflicts.\n\n## Approach\nDesigned a controller pattern to assign tasks to specialized agents and collect outputs into a structured merge queue.\n\n## Architecture\nCoordinator service -> session workers -> merge/reconciliation layer -> final artifact pipeline.\n\n## Results\nImproved throughput for multi-thread implementation work while reducing failed joins.\n\n## Lessons\nAgent orchestration quality depends more on control-plane design than prompt quality alone.\n\n## Artifacts\n- Repo: https://github.com/kspringfield13/xenosync\n\n## If I had 2 more weeks...\nAdd conflict scoring and detailed run telemetry dashboards."
   },
   {
     "id": "project:chatdeb",
     "type": "Project",
     "title": "chatdeb",
     "url": "/projects/chatdeb",
-    "tags": ["ai", "data", "fullstack", "fastapi", "dbt"],
-    "body": "Full-stack chatbot for analyzing business data with FastAPI, OpenAI/LangChain, DuckDB/dbt, and React/Next."
+    "tags": [
+      "ai",
+      "data",
+      "fullstack",
+      "FastAPI",
+      "OpenAI",
+      "LangChain",
+      "DuckDB"
+    ],
+    "body": "Full-stack chatbot for analyzing business data. Combines FastAPI, OpenAI/LangChain, DuckDB/dbt, and React/Next for data-aware conversational analysis. Conversational layer grounded in business data models. Full-stack architecture with API and modern frontend. Supports practical exploration of KPI and trend questions. \n## Context\nBusiness users need conversational analytics that still respects modeled data contracts.\n\n## Approach\nBuilt a full-stack assistant with FastAPI + OpenAI/LangChain on top of DuckDB/dbt models and a React/Next interface.\n\n## Architecture\nUI query layer -> API orchestration -> retrieval + LLM response synthesis -> dbt-modeled warehouse tables.\n\n## Results\nEnabled faster exploratory analysis while maintaining traceability to governed data models.\n\n## Lessons\nConversation UX improves only when response grounding and metric definitions are explicit.\n\n## Artifacts\n- Repo: https://github.com/kspringfield13/chatdeb\n\n## If I had 2 more weeks...\nShip richer source citations and query execution observability."
   },
   {
     "id": "project:ecommerce-dbt",
     "type": "Project",
     "title": "ecommerce-dbt",
     "url": "/projects/ecommerce-dbt",
-    "tags": ["data", "dbt", "duckdb", "ci"],
-    "body": "End-to-end dbt pipeline on DuckDB with schema tests, docs, and CI."
+    "tags": [
+      "data",
+      "dbt",
+      "DuckDB",
+      "SQL",
+      "CI/CD"
+    ],
+    "body": "End-to-end dbt pipeline on DuckDB with tests, docs, and CI. Demonstrates dbt best practices: schema tests, data documentation, and CI enforcement in a realistic e-commerce domain. End-to-end warehouse modeling with dbt. Schema tests and docs integrated into CI. Patterns designed for maintainable analytics engineering. \n## Context\nAnalytics teams need reproducible dbt patterns that cover modeling, testing, docs, and CI from day one.\n\n## Approach\nCreated an end-to-end e-commerce pipeline on DuckDB with layered models, schema tests, and docs generation in CI.\n\n## Architecture\nRaw staging -> intermediate transforms -> marts -> schema tests/docs -> CI validation.\n\n## Results\nProduced a reusable analytics engineering starter that emphasizes reliability and maintainability.\n\n## Lessons\nAutomated testing and docs are not polish; they are core delivery infrastructure.\n\n## Artifacts\n- Repo: https://github.com/kspringfield13/ecommerce-dbt\n\n## If I had 2 more weeks...\nAdd semantic layer examples and freshness SLA checks."
   },
   {
     "id": "project:elt-pipeline",
     "type": "Project",
     "title": "elt-pipeline",
     "url": "/projects/elt-pipeline",
-    "tags": ["data", "dbt", "snowflake", "elt"],
-    "body": "dbt + Snowflake ELT pipeline patterns for maintainable transformations."
+    "tags": [
+      "data",
+      "dbt",
+      "Snowflake",
+      "SQL",
+      "Python"
+    ],
+    "body": "dbt + Snowflake ELT pipeline patterns. Reference implementation for ELT workflows on Snowflake with modular transformations and production-friendly conventions. Production-minded ELT structure for Snowflake. Reusable transformation layers and model patterns. Focuses on reliability and maintainability. \n## Context\nTeams adopting Snowflake often need reference ELT patterns beyond isolated SQL scripts.\n\n## Approach\nDeveloped modular dbt + Snowflake pipeline conventions for reliable ingestion and transformation.\n\n## Architecture\nSource ingestion -> Snowflake staging -> dbt model layers -> curated marts and outputs.\n\n## Results\nDelivered a maintainable blueprint for analytics engineering workflows in Snowflake.\n\n## Lessons\nModel layering and naming discipline prevent long-term complexity blowups.\n\n## Artifacts\n- Repo: https://github.com/kspringfield13/elt-pipeline\n\n## If I had 2 more weeks...\nPackage reusable macros for cross-domain standardization."
   },
   {
     "id": "project:xbot",
     "type": "Project",
     "title": "xbot",
     "url": "/projects/xbot",
-    "tags": ["ai", "fullstack", "automation"],
-    "body": "OpenAI-powered automation bot for generating posts and images to X/Discord."
+    "tags": [
+      "ai",
+      "fullstack",
+      "Python",
+      "OpenAI API",
+      "Automation",
+      "APIs"
+    ],
+    "body": "OpenAI-powered automation bot for generating posts and images to X/Discord. Automates social content workflows using LLM prompting and media generation with cross-platform posting. Generates and publishes content automatically. Combines text and image generation flows. Targets practical automation across multiple channels. \n## Context\nManual content generation and distribution can bottleneck experiments and audience iteration.\n\n## Approach\nImplemented an OpenAI-powered automation workflow generating text/images and posting to X and Discord.\n\n## Architecture\nPrompt templates -> generation services -> media pipeline -> channel posting adapters.\n\n## Results\nReduced manual publishing overhead and increased iteration speed for content experiments.\n\n## Lessons\nAutomation quality improves when editorial constraints are encoded up front.\n\n## Artifacts\n- Repo: https://github.com/kspringfield13/xbot\n\n## If I had 2 more weeks...\nAdd policy guardrails and per-channel adaptive tone tuning."
   },
   {
     "id": "project:xagg",
     "type": "Project",
     "title": "xagg",
     "url": "/projects/xagg",
-    "tags": ["data", "fullstack", "streamlit"],
-    "body": "Streamlit news aggregator combining headlines and market data."
+    "tags": [
+      "data",
+      "fullstack",
+      "Python",
+      "Streamlit",
+      "APIs",
+      "Data aggregation"
+    ],
+    "body": "Streamlit news aggregator combining headlines and market data. Aggregates and presents market context by combining news signals with financial data feeds. Combines headlines with market data for quick situational awareness. Interactive dashboard for exploration and filtering. Shows practical integration of multiple external sources. \n## Context\nAnalysts tracking market context need faster signal aggregation across news and financial inputs.\n\n## Approach\nBuilt a Streamlit app combining headline streams and market data feeds into one exploration interface.\n\n## Architecture\nData connectors -> normalization layer -> scoring/filter logic -> Streamlit presentation.\n\n## Results\nCreated a rapid context dashboard for monitoring topical and market movement.\n\n## Lessons\nSignal usefulness depends on ranking and filtering, not just source volume.\n\n## Artifacts\n- Repo: https://github.com/kspringfield13/xagg\n\n## If I had 2 more weeks...\nAdd alerting thresholds and persistent watchlists."
   },
   {
     "id": "section:hero",
     "type": "Section",
     "title": "Hero",
     "url": "/#hero",
-    "tags": ["positioning", "proof"],
+    "tags": [
+      "positioning",
+      "proof"
+    ],
     "body": "Kyle builds data pipelines, analytics systems, and AI-powered apps."
   },
   {
@@ -60,31 +104,64 @@
     "type": "Section",
     "title": "Proof",
     "url": "/#proof",
-    "tags": ["timeline", "skills", "metrics"],
-    "body": "Impact timeline, skills graph, and systems shipped counters."
+    "tags": [
+      "timeline",
+      "skills",
+      "metrics"
+    ],
+    "body": "Impact timeline, skills graph, and systems counters."
   },
   {
-    "id": "section:skills",
+    "id": "section:projects",
     "type": "Section",
-    "title": "Skills",
-    "url": "/#skills",
-    "tags": ["sql", "python", "dbt", "genai"],
-    "body": "Practical clusters across Data Engineering, Analytics, AI, and delivery."
+    "title": "Projects",
+    "url": "/#projects",
+    "tags": [
+      "portfolio",
+      "flagship",
+      "case studies"
+    ],
+    "body": "Curated flagship projects with repository artifacts and case studies."
+  },
+  {
+    "id": "section:now",
+    "type": "Section",
+    "title": "Now",
+    "url": "/#now",
+    "tags": [
+      "experiments",
+      "iterations"
+    ],
+    "body": "Current experiments with outcomes and next steps."
   },
   {
     "id": "now:2026-02-04-multi-agent-reliability",
     "type": "Now",
     "title": "Multi-agent reliability sweep",
     "url": "/#now",
-    "tags": ["models", "ai"],
-    "body": "Benchmarked retry and reconciliation strategies for parallel coding sessions."
+    "tags": [
+      "models"
+    ],
+    "body": "Benchmarked retry and reconciliation strategies for parallel coding sessions. Queue-based retries improved successful merges and reduced dead-end sessions. Add conflict scoring and weighted merge heuristics."
   },
   {
-    "id": "writing:first-principles-analytics",
-    "type": "Writing",
-    "title": "First-principles analytics systems",
-    "url": "/writing/first-principles-analytics",
-    "tags": ["analytics", "systems", "decision-making"],
-    "body": "A short note on building analytics systems that hold up under ambiguity."
+    "id": "now:2026-01-31-dbt-governance-pattern",
+    "type": "Now",
+    "title": "dbt governance pattern tests",
+    "url": "/#now",
+    "tags": [
+      "tools"
+    ],
+    "body": "Compared model contracts and test suites for e-commerce-style marts. Contract-first modeling caught breaking changes earlier in CI. Extend checks into cross-domain semantic layers."
+  },
+  {
+    "id": "now:2025-11-15-context-window-ops",
+    "type": "Now",
+    "title": "Context-window operations notes",
+    "url": "/#now",
+    "tags": [
+      "ideas"
+    ],
+    "body": "Documented prompt packing patterns for analytics copilots. Prompt budgets were easier to tune with structured retrieval chunks. Package patterns into reusable toolkit modules."
   }
 ]

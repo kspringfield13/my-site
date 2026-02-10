@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getSiteConfig } from "@/lib/site-config";
+import { FooterVideoBackground } from "@/components/FooterVideoBackground";
 
 function GitHubIcon() {
   return (
@@ -31,34 +32,40 @@ function LinkedInIcon() {
 
 export async function SectionContact() {
   const site = await getSiteConfig();
+  const footerVideoSrc = site.footerVideoUrl || process.env.NEXT_PUBLIC_FOOTER_VIDEO_URL;
+
   return (
-    <section id="contact" className="section-wrap pt-14 pb-28 md:pb-32">
-      <p className="eyebrow">Contact</p>
-      <h2 className="subhead mt-2">Let&apos;s talk data platforms, measurement, and AI product acceleration.</h2>
-      <div className="mt-8 flex flex-wrap gap-3">
-        <Link href={`mailto:${site.contact.email}`} className="btn-primary">
-          {site.contact.email}
-        </Link>
-        <Link
-          href={site.contact.github}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex h-11 w-11 items-center justify-center p-0 text-muted transition-colors hover:text-link-hover"
-          aria-label="GitHub"
-        >
-          <GitHubIcon />
-          <span className="sr-only">GitHub</span>
-        </Link>
-        <Link
-          href={site.contact.linkedin}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex h-11 w-11 items-center justify-center p-0 text-muted transition-colors hover:text-link-hover"
-          aria-label="LinkedIn"
-        >
-          <LinkedInIcon />
-          <span className="sr-only">LinkedIn</span>
-        </Link>
+    <section id="contact" className="contact-video-shell mt-8 border-t border-border-strong">
+      <FooterVideoBackground src={footerVideoSrc} />
+
+      <div className="section-wrap relative z-[1] pt-6 md:pt-6">
+        <p className="eyebrow">Contact</p>
+        <h2 className="subhead mt-2">Let&apos;s talk data platforms, measurement, and AI product acceleration.</h2>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link href={`mailto:${site.contact.email}`} className="btn-primary">
+            {site.contact.email}
+          </Link>
+          <Link
+            href={site.contact.github}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex h-11 w-11 items-center justify-center p-0 text-muted transition-colors hover:text-link-hover"
+            aria-label="GitHub"
+          >
+            <GitHubIcon />
+            <span className="sr-only">GitHub</span>
+          </Link>
+          <Link
+            href={site.contact.linkedin}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex h-11 w-11 items-center justify-center p-0 text-muted transition-colors hover:text-link-hover"
+            aria-label="LinkedIn"
+          >
+            <LinkedInIcon />
+            <span className="sr-only">LinkedIn</span>
+          </Link>
+        </div>
       </div>
     </section>
   );

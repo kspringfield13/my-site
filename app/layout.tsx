@@ -14,6 +14,11 @@ export const metadata: Metadata = {
     template: "%s | Kyle Springfield"
   },
   description: "Kyle Springfield builds data pipelines, analytics systems, and AI-powered apps.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico"
+  },
   keywords: [
     "data engineering",
     "analytics engineering",

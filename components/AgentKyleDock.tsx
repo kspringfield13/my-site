@@ -5,15 +5,14 @@ import { usePathname } from "next/navigation";
 import { AgentKylePanel } from "@/components/agent-kyle/AgentKylePanel";
 
 export function AgentKyleDock() {
-  const HERO_EXIT_OFFSET_PX = 800;
   const pathname = usePathname();
   const isHomeRoute = pathname === "/";
-  const [isPastHero, setIsPastHero] = useState(false);
+  const [hasReachedProjects, setHasReachedProjects] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     if (!isHomeRoute) {
-      setIsPastHero(false);
+      setHasReachedProjects(false);
       setIsExpanded(false);
       return;
     }
@@ -22,10 +21,8 @@ export function AgentKyleDock() {
     let rafId: number | null = null;
 
     const connectObserver = () => {
-      const hero =
-        document.getElementById("hero-spotlight") ??
-        document.querySelector<HTMLElement>('section[aria-label="Kyle Springfield hero"]');
-      if (!hero) {
+      const projects = document.getElementById("projects");
+      if (!projects) {
         rafId = window.requestAnimationFrame(connectObserver);
         return;
       }
@@ -35,19 +32,20 @@ export function AgentKyleDock() {
           const entry = entries[0];
           if (!entry) return;
 
-          const heroVisible = entry.isIntersecting;
-          setIsPastHero(!heroVisible);
-          if (heroVisible) {
+          // Show the dock when the visitor reaches Projects, and hide it again above that section.
+          const reachedProjects = entry.isIntersecting || entry.boundingClientRect.top < 0;
+          setHasReachedProjects(reachedProjects);
+          if (!reachedProjects) {
             setIsExpanded(false);
           }
         },
         {
           threshold: 0,
-          rootMargin: `${-HERO_EXIT_OFFSET_PX}px 0px 0px 0px`
+          rootMargin: "0px 0px -10% 0px"
         }
       );
 
-      observer.observe(hero);
+      observer.observe(projects);
     };
 
     connectObserver();
@@ -60,7 +58,7 @@ export function AgentKyleDock() {
     };
   }, [isHomeRoute]);
 
-  const isVisible = isHomeRoute && isPastHero;
+  const isVisible = isHomeRoute && hasReachedProjects;
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {

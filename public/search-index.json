@@ -106,7 +106,7 @@
   {
     "id": "project:sams-studio",
     "type": "Project",
-    "title": "Sam's Studio",
+    "title": "sams-studio",
     "url": "/projects/sams-studio",
     "tags": [
       "fullstack",
@@ -115,7 +115,7 @@
       "Stripe",
       "Capacitor"
     ],
-    "body": "Full-stack studio management platform (Next.js, Supabase, Stripe, Capacitor) with scheduling, bookings, memberships, waivers, reporting, and role-based admin/instructor/client workflows. Full-stack studio management platform (Next.js, Supabase, Stripe, Capacitor) with scheduling, bookings, memberships, waivers, reporting, and role-based admin/instructor/client workflows. Unified scheduling, bookings, and membership workflows in one platform. Role-based views for admins, instructors, and clients. Integrated waivers, payments, and reporting with Stripe + Supabase. \n## Context\nStudio operations often split scheduling, bookings, payments, waivers, and reporting across disconnected tools.\n\n## Approach\nBuilt a unified platform to centralize operations with role-specific workflows for admins, instructors, and clients.\n\n## Architecture\nNext.js app + Supabase data/auth + Stripe billing + Capacitor mobile packaging.\n\n## Results\nTeams can manage the full client lifecycle from booking through payments and attendance reporting in one system.\n\n## Lessons\nOperational products become far more useful when role permissions and day-to-day workflows are first-class in the architecture.\n\n## Artifacts\n- Product: https://samsstudio.xyz\n\n## If I had 2 more weeks...\nExpand automation around retention nudges, cohort analytics, and instructor workload optimization."
+    "body": "Full-stack studio management platform with scheduling, bookings, memberships, reporting, and role-based admin/instructor/client workflows. Full-stack studio management platform (Next.js, Supabase, Stripe, Capacitor) with scheduling, bookings, memberships, waivers, reporting, and role-based admin/instructor/client workflows. Unified scheduling, bookings, and membership workflows in one platform. Role-based views for admins, instructors, and clients. Integrated waivers, payments, and reporting with Stripe + Supabase. \n## Context\nStudio operations often split scheduling, bookings, payments, waivers, and reporting across disconnected tools.\n\n## Approach\nBuilt a unified platform to centralize operations with role-specific workflows for admins, instructors, and clients.\n\n## Architecture\nNext.js app + Supabase data/auth + Stripe billing + Capacitor mobile packaging.\n\n## Results\nTeams can manage the full client lifecycle from booking through payments and attendance reporting in one system.\n\n## Lessons\nOperational products become far more useful when role permissions and day-to-day workflows are first-class in the architecture.\n\n## Artifacts\n- Product: https://samsstudio.xyz\n\n## If I had 2 more weeks...\nExpand automation around retention nudges, cohort analytics, and instructor workload optimization."
   },
   {
     "id": "section:hero",

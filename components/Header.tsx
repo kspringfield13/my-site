@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { SearchBox } from "@/components/SearchBox";
 
 const navItems = [
@@ -9,6 +12,56 @@ const navItems = [
 ];
 
 export function Header() {
+  const pathname = usePathname();
+  const isAboutRoute = pathname === "/about";
+
+  if (isAboutRoute) {
+    return (
+      <header className="sticky top-0 z-40 border-b border-border-strong bg-bg backdrop-blur-md">
+        <div className="section-wrap py-4">
+          <div className="flex items-center justify-between gap-4">
+            <Link href="/" className="font-mono text-xs uppercase tracking-[0.22em] text-faint transition hover:text-link">
+              Kyle Springfield
+            </Link>
+
+            <div className="hidden items-center gap-6 sm:flex">
+              <nav aria-label="Primary" className="flex items-center gap-4 overflow-x-auto text-sm">
+                {navItems.map((item) => (
+                  <Link key={item.href} href={item.href} className="text-muted transition hover:text-link-hover">
+                    {item.label}
+                  </Link>
+                ))}
+                <Link href="/resume" className="text-muted transition hover:text-link-hover">
+                  Resume
+                </Link>
+              </nav>
+              <SearchBox />
+            </div>
+          </div>
+
+          <div className="relative mt-3 flex items-center justify-center sm:hidden">
+            <nav
+              aria-label="Primary"
+              className="mx-auto flex max-w-full items-center justify-center gap-4 overflow-x-auto whitespace-nowrap pr-12 text-sm"
+            >
+              {navItems.map((item) => (
+                <Link key={item.href} href={item.href} className="text-muted transition hover:text-link-hover">
+                  {item.label}
+                </Link>
+              ))}
+              <Link href="/resume" className="text-muted transition hover:text-link-hover">
+                Resume
+              </Link>
+            </nav>
+            <div className="absolute right-0 top-1/2 -translate-y-1/2">
+              <SearchBox compactOnMobile />
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b border-border-strong bg-bg backdrop-blur-md">
       <div className="section-wrap flex flex-wrap items-center justify-between gap-4 py-4">

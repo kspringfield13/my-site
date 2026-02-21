@@ -218,10 +218,39 @@ a:hover {
   background: var(--c-surface-3);
 }
 
+.btn-samsstudio {
+  gap: 0.55rem;
+  border-color: #aa6d2f;
+  background: color-mix(in srgb, var(--c-button-secondary-bg) 78%, #cc7f2f);
+  color: color-mix(in srgb, var(--c-text) 88%, #ffd7a5);
+  font-weight: 700;
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+}
+
+.btn-samsstudio:hover {
+  border-color: #be8244;
+  background: color-mix(in srgb, var(--c-surface-3) 74%, #d48936);
+  color: color-mix(in srgb, var(--c-link-hover) 85%, #ffcc8a);
+}
+
+.btn-samsstudio-logo-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(255, 245, 228, 0.98);
+  border: 1px solid rgba(212, 147, 79, 0.72);
+  padding: 0.12rem;
+  line-height: 0;
+}
+
 .btn-primary:disabled,
 .btn-secondary:disabled,
+.btn-samsstudio:disabled,
 .btn-primary[aria-disabled="true"],
-.btn-secondary[aria-disabled="true"] {
+.btn-secondary[aria-disabled="true"],
+.btn-samsstudio[aria-disabled="true"] {
   cursor: not-allowed;
   opacity: 0.55;
 }
@@ -289,10 +318,6 @@ a:hover {
   border-left: 2px solid var(--c-border-accent);
   padding-left: 1rem;
   color: var(--c-text-muted);
-}
-
-.section-highlight {
-  animation: pulse-border 1400ms ease;
 }
 
 .token-hover-wash {
@@ -381,15 +406,6 @@ a:hover {
   }
   50% {
     opacity: 0.64;
-  }
-}
-
-@keyframes pulse-border {
-  0% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--c-border-accent) 28%, transparent);
-  }
-  100% {
-    box-shadow: 0 0 0 16px transparent;
   }
 }
 

@@ -4,9 +4,11 @@ import { getProjectBySlug, getProjectIndex } from "@/lib/content";
 import Link from "next/link";
 
 interface Params {
-  params: {
-    slug: string;
-  };
+  slug: string;
+}
+
+interface PageProps {
+  params: Promise<Params>;
 }
 
 export async function generateStaticParams() {
@@ -14,8 +16,9 @@ export async function generateStaticParams() {
   return projects.projects.map((project) => ({ slug: project.slug }));
 }
 
-export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const project = await getProjectBySlug(params.slug);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
   if (!project) {
     return {
       title: "Project not found"
@@ -27,13 +30,14 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     openGraph: {
       title: project.frontmatter.title ?? project.meta.name,
       description: project.meta.description,
-      url: `/projects/${params.slug}`
+      url: `/projects/${slug}`
     }
   };
 }
 
-export default async function ProjectDetailPage({ params }: Params) {
-  const project = await getProjectBySlug(params.slug);
+export default async function ProjectDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
   if (!project) {
     notFound();
   }

@@ -234,7 +234,7 @@ function deriveClusters(skills: string[]) {
     ],
     analytics: [
       ...new Set([
-        ...has(/measurement|tableau|power bi|data visualization|a\/b testing|stat|experiment/i),
+        ...has(/measurement|tableau|streamlit|data visualization|a\/b testing|stat|experiment/i),
         "Experiment design"
       ])
     ],
@@ -263,16 +263,18 @@ async function main() {
 
   const latestRole = experience[0];
   const priorRole = experience[1];
+  const latestRoleHighlight = latestRole?.highlights?.[0];
+  const priorRoleHighlight = priorRole?.highlights?.[0];
 
   const about =
     "Data and AI engineer building reliable analytics systems across SQL, Python, dbt, Snowflake, and AWS with a focus on experimentation and decision-ready execution.";
 
   const proofBullets = [
     latestRole
-      ? `${formatRoleIdentity(latestRole)} (${toMonthYear(latestRole.start)} - ${toMonthYear(latestRole.end)}) delivering analytics and measurement support.`
+      ? `${formatRoleIdentity(latestRole)} (${toMonthYear(latestRole.start)} - ${toMonthYear(latestRole.end)}): ${latestRoleHighlight ?? "delivering analytics and measurement support."}`
       : "",
     priorRole
-      ? `${formatRoleIdentity(priorRole)} (${toMonthYear(priorRole.start)} - ${toMonthYear(priorRole.end)}) building production data pipelines.`
+      ? `${formatRoleIdentity(priorRole)} (${toMonthYear(priorRole.start)} - ${toMonthYear(priorRole.end)}): ${priorRoleHighlight ?? "building production data pipelines."}`
       : "",
     `Hands-on delivery across ${skills.slice(0, 6).join(", ")}.`
   ].filter(Boolean);

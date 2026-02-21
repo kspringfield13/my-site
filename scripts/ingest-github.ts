@@ -24,6 +24,7 @@ interface ProjectMeta {
   repoUrl: string;
   demoUrl?: string;
   pinned: boolean;
+  homepageRank?: number;
   stars: number;
   forks: number;
   language: string;
@@ -41,7 +42,7 @@ interface ProjectMeta {
 }
 
 const USERNAME = "kspringfield13";
-const REQUIRED_REPOS = ["xenosync", "chatdeb", "ecommerce-dbt", "elt-pipeline", "xbot", "xagg"];
+const REQUIRED_REPOS = ["intercoach", "xenosync", "chatdeb", "ecommerce-dbt", "xbot"];
 const BASE = process.cwd();
 
 function inferTags(text: string): Array<"ai" | "data" | "fullstack"> {
@@ -295,6 +296,7 @@ async function main() {
       tags: previous?.tags?.length ? previous.tags : normalized.tags,
       stack: previous?.stack?.length ? previous.stack : normalized.stack,
       pinned: pinnedNames.includes(normalized.slug) || REQUIRED_REPOS.includes(normalized.slug),
+      homepageRank: previous?.homepageRank,
       readmeHighlights: normalized.readmeHighlights.length
         ? normalized.readmeHighlights
         : previous?.readmeHighlights ?? []

@@ -24,10 +24,13 @@ export async function SectionNow() {
           return (
             <article key={entry.id} className={`card-base ${stale ? "opacity-65" : ""}`}>
               <p className="eyebrow">{new Date(entry.date).toLocaleDateString()} · {entry.category}</p>
-              <h3 className="mt-2 text-xl font-semibold">{entry.title}</h3>
-              <p className="mt-3 text-sm"><strong>Tried:</strong> {entry.tried}</p>
-              <p className="mt-1 text-sm"><strong>Outcome:</strong> {entry.outcome}</p>
-              <p className="mt-1 text-sm"><strong>Next:</strong> {entry.nextStep}</p>
+              <div className="mt-3 space-y-2">
+                {entry.details.map((paragraph, index) => (
+                  <p key={`${entry.id}-${index}`} className="text-sm text-muted">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             </article>
           );
         })}

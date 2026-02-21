@@ -191,6 +191,21 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
     }
   }
 
+  function resetScorecard() {
+    setRole("");
+    setIndustry("");
+    setPrioritySkills("");
+    setScorecardError(null);
+    setScorecardResult(null);
+    setScorecardContext(null);
+  }
+
+  function resetOpportunityFit() {
+    setJobDescription("");
+    setFitError(null);
+    setFitResult(null);
+  }
+
   async function submitFit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFitError(null);
@@ -288,15 +303,27 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
             <h2 className="text-xl font-semibold">Mission Control</h2>
           </div>
 
-          <span
-            className={`rounded-full border px-3 py-1 text-xs ${
-              status.available
-                ? "border-border-accent bg-surface-3 text-link-hover"
-                : "border-border bg-surface-3 text-muted"
-            }`}
-          >
-            {statusLoading ? "Checking..." : statusLabel(status)}
-          </span>
+          <div className="flex items-center gap-2">
+            <span
+              className={`rounded-full border px-3 py-1 text-xs ${
+                status.available
+                  ? "border-border-accent bg-surface-3 text-link-hover"
+                  : "border-border bg-surface-3 text-muted"
+              }`}
+            >
+              {statusLoading ? "Checking..." : statusLabel(status)}
+            </span>
+            <button
+              type="button"
+              className="inline-flex h-7 w-7 pb-0.5 items-center justify-center rounded-full border border-border bg-surface-3 text-muted transition hover:border-border-accent hover:text-link-hover"
+              aria-label="Close Agent Kyle"
+              onClick={onClose}
+            >
+              <span aria-hidden="true" className="text-lg leading-none">
+                ×
+              </span>
+            </button>
+          </div>
         </div>
 
         <p className="mt-2 text-xs text-faint">{remainingLabel}</p>
@@ -401,9 +428,33 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
               </label>
 
               <div className="md:col-span-3">
-                <button type="submit" className="btn-primary" disabled={scorecardLoading || !status.available}>
-                  {scorecardLoading ? "Generating scorecard..." : "Generate Signal Scorecard"}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button type="submit" className="btn-primary" disabled={scorecardLoading || !status.available}>
+                    {scorecardLoading ? "Generating scorecard..." : "Generate Signal Scorecard"}
+                  </button>
+                  {scorecardResult ? (
+                    <button
+                      type="button"
+                      onClick={resetScorecard}
+                      aria-label="Reset scorecard"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface-2 text-muted transition hover:border-border-accent hover:bg-surface-3 hover:text-link-hover"
+                    >
+                      <svg
+                        className="h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M3 12a9 9 0 1 0 3-6.7" />
+                        <path d="M3 4v5h5" />
+                      </svg>
+                    </button>
+                  ) : null}
+                </div>
               </div>
             </form>
 
@@ -525,9 +576,33 @@ export function AgentKylePanel({ open, initialTab = "scorecard", onClose }: Agen
                 />
               </label>
 
-              <button type="submit" className="btn-primary" disabled={fitLoading || !status.available}>
-                {fitLoading ? "Scoring opportunity..." : "Run Opportunity Fit Matcher"}
-              </button>
+              <div className="flex items-center gap-2">
+                <button type="submit" className="btn-primary" disabled={fitLoading || !status.available}>
+                  {fitLoading ? "Scoring opportunity..." : "Run Opportunity Fit Matcher"}
+                </button>
+                {fitResult ? (
+                  <button
+                    type="button"
+                    onClick={resetOpportunityFit}
+                    aria-label="Reset opportunity fit matcher"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface-2 text-muted transition hover:border-border-accent hover:bg-surface-3 hover:text-link-hover"
+                  >
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M3 12a9 9 0 1 0 3-6.7" />
+                      <path d="M3 4v5h5" />
+                    </svg>
+                  </button>
+                ) : null}
+              </div>
             </form>
 
             {fitError ? <p className="text-sm text-muted">{fitError}</p> : null}

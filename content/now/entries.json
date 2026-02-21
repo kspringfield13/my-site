@@ -2,33 +2,49 @@
   "expireDays": 45,
   "entries": [
     {
-      "id": "2026-02-04-multi-agent-reliability",
-      "date": "2026-02-04",
+      "id": "2026-02-20-models",
+      "date": "2026-02-20",
       "category": "models",
-      "title": "Multi-agent reliability sweep",
-      "tried": "Benchmarked retry and reconciliation strategies for parallel coding sessions.",
-      "outcome": "Queue-based retries improved successful merges and reduced dead-end sessions.",
-      "nextStep": "Add conflict scoring and weighted merge heuristics.",
-      "links": ["https://github.com/kspringfield13/xenosync"]
+      "details": [
+        "Designing scalable data models that turn raw inputs into decision-ready infrastructure.",
+        "Using Snowflake and dbt, I'm building governed, tested datasets that support analytics, experimentation, and AI systems. Clean structures. Clear metrics. Reliable foundations.",
+        "Keep hardening model and metric definitions. If the model is wrong, everything built on top drifts."
+      ],
+      "links": [
+        "https://github.com/kspringfield13/ecommerce-dbt",
+        "https://github.com/kspringfield13/elt-pipeline"
+      ]
     },
     {
-      "id": "2026-01-31-dbt-governance-pattern",
-      "date": "2026-01-31",
+      "id": "2026-02-20-tools",
+      "date": "2026-02-20",
       "category": "tools",
-      "title": "dbt governance pattern tests",
-      "tried": "Compared model contracts and test suites for e-commerce-style marts.",
-      "outcome": "Contract-first modeling caught breaking changes earlier in CI.",
-      "nextStep": "Extend checks into cross-domain semantic layers.",
-      "links": ["https://github.com/kspringfield13/ecommerce-dbt"]
+      "details": [
+        "Using SQL, Python, Snowflake, dbt, and Streamlit to turn models into working systems.",
+        "Leaning heavily into AI-assisted engineering with Cursor and advanced models to refactor code, accelerate transformations, and automate repetitive analytics work.",
+        "Continue reducing friction between question and answer by systematizing repeatable analytics workflows."
+      ]
     },
     {
-      "id": "2025-11-15-context-window-ops",
-      "date": "2025-11-15",
+      "id": "2026-02-20-ideas",
+      "date": "2026-02-20",
       "category": "ideas",
-      "title": "Context-window operations notes",
-      "tried": "Documented prompt packing patterns for analytics copilots.",
-      "outcome": "Prompt budgets were easier to tune with structured retrieval chunks.",
-      "nextStep": "Package patterns into reusable toolkit modules."
+      "details": [
+        "Writing and thinking about AI as a compounding system that is starting to automate its own improvement.",
+        "A year ago AI helped polish emails. Today it helps refactor systems, build one-shot apps, generate production-ready data models, and orchestrate multi-step workflows.",
+        "Keep exploring what this structural acceleration means for builders, teams, and the people who adapt."
+      ]
+    },
+    {
+      "id": "2026-02-20-ventures",
+      "date": "2026-02-20",
+      "category": "ventures",
+      "details": [
+        "Building and supporting products and businesses across finance AI, coaching, and fitness studio operations.",
+        "Pantheon is an autonomous hedge fund concept with 12 specialized AI agents running staggered 15-minute cycles from ingestion to execution and reporting.",
+        "InterCoach is an AI interview prep platform using conversational avatars and real-time feedback with WebRTC.",
+        "Sam's Studio is a yoga and barre business platform built with Next.js, Supabase, Stripe, scheduling, waitlists, and a mobile app via Capacitor."
+      ]
     }
   ]
 }

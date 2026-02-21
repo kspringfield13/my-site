@@ -44,6 +44,7 @@
           "repoUrl": { "type": "string", "format": "uri" },
           "demoUrl": { "type": "string" },
           "pinned": { "type": "boolean" },
+          "homepageRank": { "type": "integer" },
           "stars": { "type": "integer" },
           "forks": { "type": "integer" },
           "language": { "type": "string" },

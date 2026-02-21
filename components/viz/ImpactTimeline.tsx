@@ -33,13 +33,13 @@ function clampUnit(value: number): number {
 
 function getLogoForLabel(label: string): TimelineLogo {
   const lower = label.toLowerCase();
-  if (lower.includes("netapp")) return { src: "/company-logos/netapp.png", alt: "NetApp logo placeholder" };
-  if (lower.includes("ubs")) return { src: "/company-logos/ubs.png", alt: "UBS logo placeholder" };
-  if (lower.includes("rrd")) return { src: "/company-logos/rrd.png", alt: "RRD logo placeholder" };
-  if (lower.includes("freelance")) return { src: "/company-logos/freelance.png", alt: "Freelance logo placeholder" };
-  if (lower.includes("peraton")) return { src: "/company-logos/peraton.png", alt: "Peraton logo placeholder" };
-  if (lower.includes("cisco")) return { src: "/company-logos/cisco.png", alt: "Cisco logo placeholder" };
-  return { src: "/company-logos/company.png", alt: "Company logo placeholder" };
+  if (lower.includes("netapp")) return { src: "/company-logos/netapp.png", alt: "NetApp logo" };
+  if (lower.includes("ubs")) return { src: "/company-logos/ubs.png", alt: "UBS logo" };
+  if (lower.includes("rrd") || lower.includes("vericast")) return { src: "/company-logos/rrd.png", alt: "Vericast logo" };
+  if (lower.includes("freelance")) return { src: "/company-logos/freelance.png", alt: "Freelance work logo" };
+  if (lower.includes("peraton")) return { src: "/company-logos/peraton.png", alt: "Peraton logo" };
+  if (lower.includes("cisco")) return { src: "/company-logos/cisco.png", alt: "Cisco logo" };
+  return { src: "/company-logos/company.png", alt: "Company logo" };
 }
 
 function getDetailForLabel(label: string): TimelineDetail {
@@ -49,81 +49,85 @@ function getDetailForLabel(label: string): TimelineDetail {
     return {
       role: "Business Analyst III",
       companyLine: "TEKsystems at Cisco",
-      dateLocation: "09/2025 – Present | Raleigh, NC",
+      dateLocation: "Sep 2025 - Present | Raleigh, NC",
       bullets: [
-        "Build and ship Tableau dashboards and self-serve metrics for Global Sales Enablement; transform training and survey data from Snowflake into decision-ready insights for leaders.",
-        "Partner with PMs and Sales Directors to prioritize analytics, define KPIs, and surface adoption/impact trends that inform enablement strategy, content, and field rollout.",
+        "Partner with sales leadership to translate business needs into governed datasets and decision-ready reporting, building Tableau dashboards and Streamlit apps for go-to-market strategy, pipeline visibility, and performance measurement.",
+        "Design and maintain scalable dbt models in Snowflake to improve visibility into pipeline health, sales productivity, and customer engagement trends across global sales teams.",
+        "Leverage Cursor daily to accelerate modeling, automate reporting logic, and design agentic processes that streamline data preparation, validation, and recurring analytics work.",
       ],
     };
   }
 
   if (lower.includes("netapp")) {
     return {
-      role: "Analytics Foundations (Placeholder)",
+      role: "Data Analyst",
       companyLine: "NetApp",
-      dateLocation: "2013 | Placeholder location",
+      dateLocation: "May 2016 - Nov 2016 | Raleigh, NC",
       bullets: [
-        "Placeholder detail: foundational analytics and reporting work from resume source data.",
-        "Placeholder detail: cross-functional partnership and data quality improvements.",
+        "Partnered with Support Account Managers and sales teams on top enterprise accounts to deliver accurate customer-facing reporting.",
+        "Built Oracle BI reports and dashboards; analyzed outputs using statistical techniques for weekly and monthly decision cycles.",
       ],
     };
   }
 
   if (lower.includes("ubs")) {
     return {
-      role: "Reporting + Analysis (Placeholder)",
-      companyLine: "UBS",
-      dateLocation: "2014 | Placeholder location",
+      role: "Risk & Performance Analytics Specialist",
+      companyLine: "UBS (formerly Credit Suisse)",
+      dateLocation: "Nov 2016 - Nov 2017 | Raleigh, NC",
       bullets: [
-        "Placeholder detail: built recurring reporting workflows for business stakeholders.",
-        "Placeholder detail: improved analysis turnaround and metric clarity.",
+        "Designed and implemented Tableau risk and performance dashboards that reduced report generation time by over 50% for senior leadership.",
+        "Collaborated with global teams to standardize and automate reporting workflows using Business Objects and VBA.",
       ],
     };
   }
 
-  if (lower.includes("rrd")) {
+  if (lower.includes("rrd") || lower.includes("vericast")) {
     return {
-      role: "Analytics to Data Engineering (Placeholder)",
-      companyLine: "RRD",
-      dateLocation: "2017 | Placeholder location",
+      role: "Data Analyst -> Data Engineer",
+      companyLine: "Vericast (formerly RRD)",
+      dateLocation: "Nov 2017 - Sep 2021 | Morrisville, NC",
       bullets: [
-        "Placeholder detail: expanded scope from analytics to data science and engineering.",
-        "Placeholder detail: delivered production-ready data assets and pipelines.",
+        "Progressed across Data Analyst, Marketing Data Scientist, Senior Data Scientist, and Data Engineer roles while shipping analytics and automation systems.",
+        "Built Python ETL and self-service automation (including Jira-integrated workflows) plus Tableau reporting used by major clients and stakeholders.",
+        "Refactored modular Python libraries for marketing-science models, cutting training and scoring runtime in half and improving model quality with testing and code review.",
       ],
     };
   }
 
   if (lower.includes("freelance")) {
     return {
-      role: "Freelance Systems Builder (Placeholder)",
-      companyLine: "Independent",
-      dateLocation: "2021 | Placeholder location",
+      role: "Python Developer",
+      companyLine: "Freelance",
+      dateLocation: "Sep 2021 - Sep 2024 | Raleigh, NC",
       bullets: [
-        "Placeholder detail: built Python-based systems and automations for clients.",
-        "Placeholder detail: focused on reliability, clarity, and delivery velocity.",
+        "Built and optimized data pipelines and workflows with Python, SQL, TypeScript, AWS, and Gen AI for client use cases.",
+        "Delivered lightweight React apps and Tableau dashboards that turned complex datasets into clear, decision-ready visuals.",
+        "Automated recurring reporting with parameterized Python jobs and validation checks, improving metric accuracy and trust.",
       ],
     };
   }
 
   if (lower.includes("peraton")) {
     return {
-      role: "Data Pipeline Delivery (Placeholder)",
+      role: "Data Engineer",
       companyLine: "Peraton",
-      dateLocation: "2024 | Placeholder location",
+      dateLocation: "Sep 2024 - Sep 2025 | Raleigh, NC",
       bullets: [
-        "Placeholder detail: implemented CMS FWA-oriented pipeline and analytics work.",
-        "Placeholder detail: coordinated with stakeholders on data priorities and quality.",
+        "Delivered high-quality data and reporting solutions supporting CMS fraud, waste, and abuse detection workflows.",
+        "Architected and maintained AWS pipelines with Python, SQL, and Bash to ingest, reconcile, and validate multi-source CMS and vendor data.",
+        "Curated clean datasets and metrics used in downstream investigations of suspicious provider and claims patterns.",
       ],
     };
   }
 
   return {
-    role: "Experience Detail (Placeholder)",
+    role: "Experience Detail",
     companyLine: label,
-    dateLocation: "Date range | Location",
+    dateLocation: "Timeline role context",
     bullets: [
-      "Placeholder detail from resume for this timeline node.",
-      "Additional placeholder bullet describing outcomes and scope.",
+      "Resume-backed details are available for this timeline node.",
+      "Open each card to view role scope, outcomes, and delivery context.",
     ],
   };
 }

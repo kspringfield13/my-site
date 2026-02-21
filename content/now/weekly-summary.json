@@ -1,9 +1,0 @@
-{
-  "weekOf": "2026-02-08",
-  "summary": "This week centered on making agent orchestration and dbt workflows more reliable under real operating constraints.",
-  "bullets": [
-    "Improved multi-agent merge reliability with queue-based retries.",
-    "Validated contract-first dbt model patterns to catch schema breaks in CI.",
-    "Refined context-packing notes for analytics copilots with tight token budgets."
-  ]
-}

@@ -90,10 +90,10 @@ async function main() {
     ...nowJson.entries.map((entry) => ({
       id: `now:${entry.id}`,
       type: "Now" as const,
-      title: entry.title,
+      title: String(entry.category).toUpperCase(),
       url: "/#now",
       tags: [entry.category],
-      body: `${entry.tried} ${entry.outcome} ${entry.nextStep}`
+      body: Array.isArray(entry.details) ? entry.details.join(" ") : ""
     }))
   );
 

@@ -9,15 +9,16 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "date", "category", "title", "tried", "outcome", "nextStep"],
+        "required": ["id", "date", "category", "details"],
         "properties": {
           "id": { "type": "string" },
           "date": { "type": "string", "format": "date" },
-          "category": { "enum": ["models", "tools", "ideas"] },
-          "title": { "type": "string" },
-          "tried": { "type": "string" },
-          "outcome": { "type": "string" },
-          "nextStep": { "type": "string" },
+          "category": { "enum": ["models", "tools", "ideas", "ventures"] },
+          "details": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
           "links": {
             "type": "array",
             "items": { "type": "string", "format": "uri" }

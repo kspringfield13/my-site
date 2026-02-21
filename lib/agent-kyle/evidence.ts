@@ -127,11 +127,11 @@ export async function buildEvidenceContext(): Promise<AgentEvidenceContext> {
 
   const nowEvidence: EvidenceItem[] = nowFeed.entries.slice(0, 16).map((entry) => ({
     id: `now:${entry.id}`,
-    title: entry.title,
+    title: entry.category.toUpperCase(),
     url: "/archive/now",
     sourceType: "now",
-    snippet: compactSnippet(`${entry.tried} ${entry.outcome} ${entry.nextStep}`),
-    tags: tokenize(`${entry.category} ${entry.title} ${entry.outcome}`).slice(0, 12)
+    snippet: compactSnippet(entry.details.join(" ")),
+    tags: tokenize(`${entry.category} ${entry.details.join(" ")}`).slice(0, 12)
   }));
 
   const sectionEvidence: EvidenceItem[] = searchDocs

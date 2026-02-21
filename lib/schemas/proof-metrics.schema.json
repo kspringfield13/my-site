@@ -2,17 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://kylespringfield.dev/schemas/proof-metrics.schema.json",
   "type": "object",
-  "required": ["systemsShipped", "timelineHighlights"],
+  "required": ["timelineHighlights"],
   "properties": {
-    "systemsShipped": {
-      "type": "object",
-      "required": ["pipelines", "dashboards", "apps"],
-      "properties": {
-        "pipelines": { "type": "integer", "minimum": 0 },
-        "dashboards": { "type": "integer", "minimum": 0 },
-        "apps": { "type": "integer", "minimum": 0 }
-      }
-    },
     "timelineHighlights": {
       "type": "array",
       "items": {

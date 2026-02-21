@@ -11,7 +11,7 @@ const tags: Array<{ key: "all" | ProjectTag; label: string }> = [
   { key: "fullstack", label: "Full-stack" }
 ];
 
-export function ProjectsGrid({ projects, showOpenCaseStudy = true }: { projects: ProjectMeta[]; showOpenCaseStudy?: boolean }) {
+export function ProjectsGrid({ projects }: { projects: ProjectMeta[] }) {
   const [selected, setSelected] = useState<"all" | ProjectTag>("all");
 
   const filtered = useMemo(
@@ -41,7 +41,7 @@ export function ProjectsGrid({ projects, showOpenCaseStudy = true }: { projects:
 
       <div className="mt-6 grid gap-6 md:grid-cols-2">
         {filtered.map((project) => (
-          <ProjectCard key={project.slug} project={project} showOpenCaseStudy={showOpenCaseStudy} />
+          <ProjectCard key={project.slug} project={project} />
         ))}
       </div>
     </div>

@@ -5,11 +5,9 @@ import { getContentPath, loadMdxFile } from "@/lib/mdx";
 import type {
   NowFeed,
   ProjectIndex,
-  ProjectMeta,
   ProofMetrics,
   ResumeDerived,
-  SearchDoc,
-  WeeklySummary
+  SearchDoc
 } from "@/lib/types";
 
 const fallbackProjectIndex: ProjectIndex = {
@@ -42,18 +40,7 @@ const fallbackNowFeed: NowFeed = {
 };
 
 const fallbackMetrics: ProofMetrics = {
-  systemsShipped: {
-    pipelines: 0,
-    dashboards: 0,
-    apps: 0
-  },
   timelineHighlights: []
-};
-
-const fallbackWeeklySummary: WeeklySummary = {
-  weekOf: "",
-  summary: "",
-  bullets: []
 };
 
 async function readJson<T>(filePath: string, fallback: T): Promise<T> {
@@ -79,10 +66,6 @@ export const getProjectIndex = cache(async () => {
 
 export const getNowEntries = cache(async () => {
   return readJson<NowFeed>(getContentPath("now", "entries.json"), fallbackNowFeed);
-});
-
-export const getWeeklySummary = cache(async () => {
-  return readJson<WeeklySummary>(getContentPath("now", "weekly-summary.json"), fallbackWeeklySummary);
 });
 
 export const getProofMetrics = cache(async () => {
@@ -124,14 +107,15 @@ export const getFlagshipProjects = cache(async (limit = 6) => {
   const pinned = index.projects.filter((project) => project.pinned);
   const fallback = index.projects;
   const source = pinned.length > 0 ? pinned : fallback;
-  return source.slice(0, limit);
+  return source
+    .slice()
+    .sort((a, b) => {
+      const rankA = a.homepageRank ?? Number.MAX_SAFE_INTEGER;
+      const rankB = b.homepageRank ?? Number.MAX_SAFE_INTEGER;
+      return rankA - rankB || b.stars - a.stars || a.name.localeCompare(b.name);
+    })
+    .slice(0, limit);
 });
-
-export function getProjectTag(project: ProjectMeta): "ai" | "data" | "fullstack" {
-  if (project.tags.includes("ai")) return "ai";
-  if (project.tags.includes("fullstack")) return "fullstack";
-  return "data";
-}
 
 export function getNowEntryAgeDays(date: string) {
   const ms = Date.now() - Date.parse(date);
@@ -157,10 +141,10 @@ export const getSearchDocs = cache(async (): Promise<SearchDoc[]> => {
   const nowDocs = nowEntries.entries.map((entry) => ({
     id: `now:${entry.id}`,
     type: "Now" as const,
-    title: entry.title,
+    title: entry.category.toUpperCase(),
     url: "/#now",
     tags: [entry.category],
-    body: `${entry.tried} ${entry.outcome} ${entry.nextStep}`
+    body: entry.details.join(" ")
   }));
   const sectionDocs: SearchDoc[] = [
     {
@@ -168,8 +152,8 @@ export const getSearchDocs = cache(async (): Promise<SearchDoc[]> => {
       type: "Section",
       title: "Proof",
       url: "/#proof",
-      tags: ["timeline", "skills", "metrics"],
-      body: "Impact timeline, systems counters, and skills graph."
+      tags: ["timeline", "experience", "milestones"],
+      body: "Career impact timeline with resume-grounded milestones."
     },
     {
       id: "section:projects",
@@ -182,12 +166,3 @@ export const getSearchDocs = cache(async (): Promise<SearchDoc[]> => {
   ];
   return [...projectDocs, ...nowDocs, ...sectionDocs];
 });
-
-export async function fileExists(relativePath: string) {
-  try {
-    await fs.access(path.join(process.cwd(), relativePath));
-    return true;
-  } catch {
-    return false;
-  }
-}

@@ -1,0 +1,27 @@
+---
+title: "intercoach"
+slug: "intercoach"
+tags: ["ai", "fullstack"]
+repoUrl: "https://github.com/kspringfield13/intercoach"
+---
+
+## Context
+Interview practice tools are often expensive, static, or disconnected from realistic voice-based conversation flow.
+
+## Approach
+Built an open-source coaching app that runs local-first with pluggable LLM/STT/TTS providers and a guided interview loop.
+
+## Architecture
+React + Vite frontend -> interview engine (SSE streaming) -> provider adapters (Ollama/OpenAI/Groq + Kokoro + Web Speech API) -> voice playback and avatar lip-sync.
+
+## Results
+Delivers real-time mock interviews, instant feedback, and natural voice interaction in one workflow designed for repeated practice.
+
+## Lessons
+Provider abstraction and local-first defaults reduce setup friction while keeping the system flexible for cloud and hybrid deployments.
+
+## Artifacts
+- Repo: https://github.com/kspringfield13/intercoach
+
+## If I had 2 more weeks...
+Add longitudinal performance tracking, role-specific rubric packs, and deeper behavioral answer scoring.

@@ -16,6 +16,7 @@ export interface ProjectMeta {
   repoUrl: string;
   demoUrl?: string;
   pinned: boolean;
+  homepageRank?: number;
   stars: number;
   forks: number;
   language: string;
@@ -33,16 +34,13 @@ export interface ProjectIndex {
   projects: ProjectMeta[];
 }
 
-export type NowCategory = "models" | "tools" | "ideas";
+export type NowCategory = "models" | "tools" | "ideas" | "ventures";
 
 export interface NowEntry {
   id: string;
   date: string;
   category: NowCategory;
-  title: string;
-  tried: string;
-  outcome: string;
-  nextStep: string;
+  details: string[];
   links?: string[];
 }
 
@@ -51,18 +49,7 @@ export interface NowFeed {
   entries: NowEntry[];
 }
 
-export interface WeeklySummary {
-  weekOf: string;
-  summary: string;
-  bullets: string[];
-}
-
 export interface ProofMetrics {
-  systemsShipped: {
-    pipelines: number;
-    dashboards: number;
-    apps: number;
-  };
   timelineHighlights: Array<{ year: number; label: string }>;
 }
 

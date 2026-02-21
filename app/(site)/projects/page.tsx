@@ -18,7 +18,7 @@ export default async function ProjectsPage() {
         Case studies focused on measurable outcomes: pipelines, analytics products, and AI-enabled workflows.
       </p>
       <div className="mt-10">
-        <ProjectsGrid projects={projects} showOpenCaseStudy />
+        <ProjectsGrid projects={projects} />
       </div>
       <div className="mt-10 text-sm text-muted">
         Looking for highlights first? Flagship case studies are marked on each card.

@@ -18,7 +18,6 @@ Editorial portfolio focused on projects, now updates, and AI workflows.
 - `npm run dev` - Start local dev server
 - `npm run ingest` - Pull GitHub metadata + parse resume to derived JSON
 - `npm run build:index` - Build `public/search-index.json`
-- `npm run summarize:weekly` - Generate cached weekly summary from now feed
 - `npm run build` - Production build
 
 ## Security (npm audit)

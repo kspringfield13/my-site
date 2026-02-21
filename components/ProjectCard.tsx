@@ -7,12 +7,12 @@ import type { ProjectMeta } from "@/lib/types";
 
 interface ProjectCardProps {
   project: ProjectMeta;
-  showOpenCaseStudy?: boolean;
 }
 
-export function ProjectCard({ project, showOpenCaseStudy = true }: ProjectCardProps) {
+export function ProjectCard({ project }: ProjectCardProps) {
   const [bannerFailed, setBannerFailed] = useState(false);
   const showBanner = Boolean(project.bannerImage) && !bannerFailed;
+  const isSamsStudio = project.slug === "sams-studio";
   const bannerPosition =
     project.bannerPosition === "top" ? "center top" : project.bannerPosition === "bottom" ? "center bottom" : "center";
 
@@ -71,29 +71,23 @@ export function ProjectCard({ project, showOpenCaseStudy = true }: ProjectCardPr
         </div>
       </div>
       <div className="flex flex-wrap gap-2 text-sm">
-        {showOpenCaseStudy ? (
-          <Link href={`/projects/${project.slug}`} className="btn-primary">
-            Open case study
-          </Link>
-        ) : null}
-        <Link href={project.repoUrl} className="btn-secondary" target="_blank" rel="noreferrer">
-          Repository
+        <Link
+          href={project.repoUrl}
+          className={isSamsStudio ? "btn-secondary btn-samsstudio" : "btn-secondary"}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {isSamsStudio ? (
+            <>
+              <span className="btn-samsstudio-logo-wrap">
+                <Image src="/logo.png" alt="" width={26} height={26} className="h-5 w-5 object-contain" />
+              </span>
+              <span>samsstudio.xyz</span>
+            </>
+          ) : (
+            "Repository"
+          )}
         </Link>
-        {project.demoUrl ? (
-          <Link href={project.demoUrl} className="btn-secondary" target="_blank" rel="noreferrer">
-            Demo
-          </Link>
-        ) : null}
-        {project.artifacts.diagrams[0] ? (
-          <Link href={project.artifacts.diagrams[0]} className="btn-secondary" target="_blank" rel="noreferrer">
-            Diagram
-          </Link>
-        ) : null}
-        {project.artifacts.screenshots[0] ? (
-          <Link href={project.artifacts.screenshots[0]} className="btn-secondary" target="_blank" rel="noreferrer">
-            Screenshot
-          </Link>
-        ) : null}
       </div>
     </article>
   );

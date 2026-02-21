@@ -89,6 +89,35 @@
     "body": "Streamlit news aggregator combining headlines and market data. Aggregates and presents market context by combining news signals with financial data feeds. Combines headlines with market data for quick situational awareness. Interactive dashboard for exploration and filtering. Shows practical integration of multiple external sources. \n## Context\nAnalysts tracking market context need faster signal aggregation across news and financial inputs.\n\n## Approach\nBuilt a Streamlit app combining headline streams and market data feeds into one exploration interface.\n\n## Architecture\nData connectors -> normalization layer -> scoring/filter logic -> Streamlit presentation.\n\n## Results\nCreated a rapid context dashboard for monitoring topical and market movement.\n\n## Lessons\nSignal usefulness depends on ranking and filtering, not just source volume.\n\n## Artifacts\n- Repo: https://github.com/kspringfield13/xagg\n\n## If I had 2 more weeks...\nAdd alerting thresholds and persistent watchlists."
   },
   {
+    "id": "project:intercoach",
+    "type": "Project",
+    "title": "intercoach",
+    "url": "/projects/intercoach",
+    "tags": [
+      "ai",
+      "fullstack",
+      "TypeScript",
+      "React",
+      "Vite",
+      "Express"
+    ],
+    "body": "Real-time AI mock interview app with voice conversations, guided question flow, and instant feedback. Open-source interview coaching platform combining adaptive AI interviewers, real-time voice interaction, and actionable post-answer feedback. Practice with an AI interviewer that adapts to your responses. Get instant analysis of answers with actionable improvement suggestions. Supports voice interaction with a 3D avatar and real-time lip-sync in the browser. \n## Context\nInterview practice tools are often expensive, static, or disconnected from realistic voice-based conversation flow.\n\n## Approach\nBuilt an open-source coaching app that runs local-first with pluggable LLM/STT/TTS providers and a guided interview loop.\n\n## Architecture\nReact + Vite frontend -> interview engine (SSE streaming) -> provider adapters (Ollama/OpenAI/Groq + Kokoro + Web Speech API) -> voice playback and avatar lip-sync.\n\n## Results\nDelivers real-time mock interviews, instant feedback, and natural voice interaction in one workflow designed for repeated practice.\n\n## Lessons\nProvider abstraction and local-first defaults reduce setup friction while keeping the system flexible for cloud and hybrid deployments.\n\n## Artifacts\n- Repo: https://github.com/kspringfield13/intercoach\n\n## If I had 2 more weeks...\nAdd longitudinal performance tracking, role-specific rubric packs, and deeper behavioral answer scoring."
+  },
+  {
+    "id": "project:sams-studio",
+    "type": "Project",
+    "title": "Sam's Studio",
+    "url": "/projects/sams-studio",
+    "tags": [
+      "fullstack",
+      "Next.js",
+      "Supabase",
+      "Stripe",
+      "Capacitor"
+    ],
+    "body": "Full-stack studio management platform (Next.js, Supabase, Stripe, Capacitor) with scheduling, bookings, memberships, waivers, reporting, and role-based admin/instructor/client workflows. Full-stack studio management platform (Next.js, Supabase, Stripe, Capacitor) with scheduling, bookings, memberships, waivers, reporting, and role-based admin/instructor/client workflows. Unified scheduling, bookings, and membership workflows in one platform. Role-based views for admins, instructors, and clients. Integrated waivers, payments, and reporting with Stripe + Supabase. \n## Context\nStudio operations often split scheduling, bookings, payments, waivers, and reporting across disconnected tools.\n\n## Approach\nBuilt a unified platform to centralize operations with role-specific workflows for admins, instructors, and clients.\n\n## Architecture\nNext.js app + Supabase data/auth + Stripe billing + Capacitor mobile packaging.\n\n## Results\nTeams can manage the full client lifecycle from booking through payments and attendance reporting in one system.\n\n## Lessons\nOperational products become far more useful when role permissions and day-to-day workflows are first-class in the architecture.\n\n## Artifacts\n- Product: https://samsstudio.xyz\n\n## If I had 2 more weeks...\nExpand automation around retention nudges, cohort analytics, and instructor workload optimization."
+  },
+  {
     "id": "section:hero",
     "type": "Section",
     "title": "Hero",
@@ -135,33 +164,43 @@
     "body": "Current experiments with outcomes and next steps."
   },
   {
-    "id": "now:2026-02-04-multi-agent-reliability",
+    "id": "now:2026-02-20-models",
     "type": "Now",
-    "title": "Multi-agent reliability sweep",
+    "title": "MODELS",
     "url": "/#now",
     "tags": [
       "models"
     ],
-    "body": "Benchmarked retry and reconciliation strategies for parallel coding sessions. Queue-based retries improved successful merges and reduced dead-end sessions. Add conflict scoring and weighted merge heuristics."
+    "body": "Designing scalable data models that turn raw inputs into decision-ready infrastructure. Using Snowflake and dbt, I'm building governed, tested datasets that support analytics, experimentation, and AI systems. Clean structures. Clear metrics. Reliable foundations. Keep hardening model and metric definitions. If the model is wrong, everything built on top drifts."
   },
   {
-    "id": "now:2026-01-31-dbt-governance-pattern",
+    "id": "now:2026-02-20-tools",
     "type": "Now",
-    "title": "dbt governance pattern tests",
+    "title": "TOOLS",
     "url": "/#now",
     "tags": [
       "tools"
     ],
-    "body": "Compared model contracts and test suites for e-commerce-style marts. Contract-first modeling caught breaking changes earlier in CI. Extend checks into cross-domain semantic layers."
+    "body": "Using SQL, Python, Snowflake, dbt, and Streamlit to turn models into working systems. Leaning heavily into AI-assisted engineering with Cursor and advanced models to refactor code, accelerate transformations, and automate repetitive analytics work. Continue reducing friction between question and answer by systematizing repeatable analytics workflows."
   },
   {
-    "id": "now:2025-11-15-context-window-ops",
+    "id": "now:2026-02-20-ideas",
     "type": "Now",
-    "title": "Context-window operations notes",
+    "title": "IDEAS",
     "url": "/#now",
     "tags": [
       "ideas"
     ],
-    "body": "Documented prompt packing patterns for analytics copilots. Prompt budgets were easier to tune with structured retrieval chunks. Package patterns into reusable toolkit modules."
+    "body": "Writing and thinking about AI as a compounding system that is starting to automate its own improvement. A year ago AI helped polish emails. Today it helps refactor systems, build one-shot apps, generate production-ready data models, and orchestrate multi-step workflows. Keep exploring what this structural acceleration means for builders, teams, and the people who adapt."
+  },
+  {
+    "id": "now:2026-02-20-ventures",
+    "type": "Now",
+    "title": "VENTURES",
+    "url": "/#now",
+    "tags": [
+      "ventures"
+    ],
+    "body": "Building and supporting products and businesses across finance AI, coaching, and fitness studio operations. Pantheon is an autonomous hedge fund concept with 12 specialized AI agents running staggered 15-minute cycles from ingestion to execution and reporting. InterCoach is an AI interview prep platform using conversational avatars and real-time feedback with WebRTC. Sam's Studio is a yoga and barre business platform built with Next.js, Supabase, Stripe, scheduling, waitlists, and a mobile app via Capacitor."
   }
 ]

@@ -11,7 +11,7 @@
 - Synthesize large, noisy datasets to uncover customer patterns, segment opportunities, and inform product and marketing strategy.
 
 ## Core Skills & Technologies
-SQL | Python | dbt | ETL/ELT | Gen AI | Git | Bash | CI/CD | Measurement | Data Visualization | A/B Testing | VS Code | Tableau | Power BI | Snowflake | AWS | Databricks | Jupyter Notebook | Excel | Docker | Agile
+SQL | Python | dbt | ETL/ELT | Gen AI | Git | Bash | CI/CD | Measurement | Data Visualization | A/B Testing | VS Code | Cursor | Claude Code | Codex | Tableau | Streamlit | Snowflake | AWS | Databricks | Jupyter Notebook | Excel | Docker | Agile
 
 ## Education
 ### Bachelor of Science in Business Information Technology
@@ -22,8 +22,9 @@ SQL | Python | dbt | ETL/ELT | Gen AI | Git | Bash | CI/CD | Measurement | Data 
 ### Business Analyst III - TEKsystems at Cisco
 - Dates: Sep 2025 - Present
 - Location: Raleigh, NC
-- Build and ship Tableau dashboards and self-serve metrics for Global Sales Enablement; transform training and survey data from Snowflake into decision-ready insights for leaders.
-- Partner with PMs and Sales Directors to prioritize analytics, define KPIs, and surface adoption/impact trends that inform enablement strategy, content, and field rollout.
+- Partner with sales leadership to translate business needs into governed datasets and decision-ready reporting, developing Tableau dashboards and Streamlit applications that support go-to-market strategy, pipeline visibility, and performance measurement.
+- Design and maintain scalable data models using dbt within Snowflake to improve visibility into pipeline health, sales productivity, and customer engagement trends across global sales teams.
+- Leverage Cursor in daily development workflows to accelerate modeling, automate reporting logic, and design agentic processes that streamline data preparation, validation, and recurring analytics tasks.
 
 ### Data Engineer - Peraton
 - Dates: Sep 2024 - Sep 2025

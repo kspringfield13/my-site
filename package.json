@@ -10,8 +10,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "ingest": "tsx scripts/ingest-github.ts && tsx scripts/parse-resume.ts && npm run build:index",
-    "build:index": "tsx scripts/build-search-index.ts",
-    "summarize:weekly": "tsx scripts/summarize-weekly.ts"
+    "build:index": "tsx scripts/build-search-index.ts"
   },
   "dependencies": {
     "geist": "^1.7.0",

@@ -26,8 +26,9 @@
       "start": "2025-09",
       "end": "Present",
       "highlights": [
-        "Build and ship Tableau dashboards and self-serve metrics for Global Sales Enablement; transform training and survey data from Snowflake into decision-ready insights for leaders.",
-        "Partner with PMs and Sales Directors to prioritize analytics, define KPIs, and surface adoption/impact trends that inform enablement strategy, content, and field rollout."
+        "Partner with sales leadership to translate business needs into governed datasets and decision-ready reporting, developing Tableau dashboards and Streamlit applications that support go-to-market strategy, pipeline visibility, and performance measurement.",
+        "Design and maintain scalable data models using dbt within Snowflake to improve visibility into pipeline health, sales productivity, and customer engagement trends across global sales teams.",
+        "Leverage Cursor in daily development workflows to accelerate modeling, automate reporting logic, and design agentic processes that streamline data preparation, validation, and recurring analytics tasks."
       ]
     },
     {
@@ -134,8 +135,11 @@
     "Data Visualization",
     "A/B Testing",
     "VS Code",
+    "Cursor",
+    "Claude Code",
+    "Codex",
     "Tableau",
-    "Power BI",
+    "Streamlit",
     "Snowflake",
     "AWS",
     "Databricks",
@@ -194,8 +198,8 @@
     }
   ],
   "proofBullets": [
-    "Business Analyst III, TEKsystems at Cisco (Sep 2025 - Present) delivering analytics and measurement support.",
-    "Data Engineer at Peraton (Sep 2024 - Sep 2025) building production data pipelines.",
+    "Business Analyst III, TEKsystems at Cisco (Sep 2025 - Present): Partner with sales leadership to translate business needs into governed datasets and decision-ready reporting, developing Tableau dashboards and Streamlit applications that support go-to-market strategy, pipeline visibility, and performance measurement.",
+    "Data Engineer at Peraton (Sep 2024 - Sep 2025): Delivered high-quality, efficient data solutions and reporting to support Centers for Medicare & Medicaid Services in detecting and preventing fraud, waste, and abuse within government-sponsored health programs.",
     "Hands-on delivery across SQL, Python, dbt, ETL/ELT, Gen AI, Git."
   ],
   "skillClusters": {
@@ -215,7 +219,7 @@
       "Data Visualization",
       "A/B Testing",
       "Tableau",
-      "Power BI",
+      "Streamlit",
       "Experiment design"
     ],
     "ai": [

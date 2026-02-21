@@ -13,22 +13,20 @@ export default async function NowArchivePage() {
       <h1 className="display">Now Archive</h1>
       <p className="lede mt-4 max-w-2xl">Past experiments are kept visible for continuity.</p>
       <div className="mt-10 space-y-4">
-        {now.entries.map((entry) => (
-          <article key={entry.id} className="card-base">
-            <p className="eyebrow">{new Date(entry.date).toLocaleDateString()}</p>
-            <h2 className="mt-2 text-xl font-semibold">{entry.title}</h2>
-            <p className="mt-2 text-sm text-muted">{entry.category}</p>
-            <p className="mt-3 text-sm">
-              <strong>Tried:</strong> {entry.tried}
-            </p>
-            <p className="mt-1 text-sm">
-              <strong>Outcome:</strong> {entry.outcome}
-            </p>
-            <p className="mt-1 text-sm">
-              <strong>Next:</strong> {entry.nextStep}
-            </p>
-          </article>
-        ))}
+        {now.entries.map((entry) => {
+          return (
+            <article key={entry.id} className="card-base">
+              <p className="eyebrow">{new Date(entry.date).toLocaleDateString()} · {entry.category}</p>
+              <div className="mt-3 space-y-2">
+                {entry.details.map((paragraph, index) => (
+                  <p key={`${entry.id}-${index}`} className="text-sm text-muted">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </article>
+          );
+        })}
       </div>
     </section>
   );

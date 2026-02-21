@@ -20,26 +20,34 @@ export function Header() {
     return (
       <header className="sticky top-0 z-40 border-b border-border-strong bg-bg backdrop-blur-md">
         <div className="section-wrap py-4">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center justify-between gap-4 sm:hidden">
             <Link href="/" className="font-mono text-xs uppercase tracking-[0.22em] text-faint transition hover:text-link">
               Kyle Springfield
             </Link>
 
-            <div className="sm:hidden">
-              <SearchBox compactOnMobile />
-            </div>
+            <SearchBox compactOnMobile />
+          </div>
 
-            <div className="hidden items-center gap-6 sm:flex">
-              <nav aria-label="Primary" className="flex items-center gap-4 overflow-x-auto text-sm">
-                {navItems.map((item) => (
-                  <Link key={item.href} href={item.href} className="text-muted transition hover:text-link-hover">
-                    {item.label}
-                  </Link>
-                ))}
-                <Link href="/resume" className="text-muted transition hover:text-link-hover">
-                  Resume
+          <div className="hidden grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-6 sm:grid">
+            <Link
+              href="/"
+              className="justify-self-start font-mono text-xs uppercase tracking-[0.22em] text-faint transition hover:text-link"
+            >
+              Kyle Springfield
+            </Link>
+
+            <nav aria-label="Primary" className="flex items-center justify-center gap-4 text-sm">
+              {navItems.map((item) => (
+                <Link key={item.href} href={item.href} className="text-muted transition hover:text-link-hover">
+                  {item.label}
                 </Link>
-              </nav>
+              ))}
+              <Link href="/resume" className="text-muted transition hover:text-link-hover">
+                Resume
+              </Link>
+            </nav>
+
+            <div className="justify-self-end">
               <SearchBox />
             </div>
           </div>

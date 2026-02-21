@@ -89,7 +89,7 @@ export const getProjectBySlug = cache(async (slug: string) => {
     return {
       meta,
       frontmatter: mdx.frontmatter,
-      content: mdx.content
+      source: mdx.source
     };
   } catch {
     return {
@@ -97,7 +97,7 @@ export const getProjectBySlug = cache(async (slug: string) => {
       frontmatter: {
         title: meta.name
       },
-      content: null
+      source: null
     };
   }
 });

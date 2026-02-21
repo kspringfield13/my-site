@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getProjectBySlug, getProjectIndex } from "@/lib/content";
 import Link from "next/link";
+import { MarkdownContent } from "@/components/MarkdownContent";
 
 interface Params {
   slug: string;
@@ -54,7 +55,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           </span>
         ))}
       </div>
-      <div className="prose-shell mt-10">{project.content}</div>
+      <div className="prose-shell mt-10">
+        {project.source ? <MarkdownContent source={project.source} /> : null}
+      </div>
       <section className="mt-12">
         <h2 className="subhead">Artifacts</h2>
         <div className="mt-4 flex flex-wrap gap-2">

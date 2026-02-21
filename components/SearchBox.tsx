@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { rankSearchResults } from "@/lib/search";
 import type { SearchDoc } from "@/lib/types";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,9 @@ interface SearchBoxProps {
 }
 
 export function SearchBox({ compactOnMobile = false }: SearchBoxProps) {
+  const inputBaseId = useId();
+  const desktopInputId = `${inputBaseId}-search`;
+  const mobileInputId = `${inputBaseId}-search-mobile`;
   const [query, setQuery] = useState("");
   const [docs, setDocs] = useState<SearchDoc[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -100,11 +103,11 @@ export function SearchBox({ compactOnMobile = false }: SearchBoxProps) {
   return (
     <div ref={boxRef} className={compactOnMobile ? "relative w-10 sm:w-full sm:max-w-[20rem]" : "relative w-full max-w-[20rem]"}>
       <div className={compactOnMobile ? "hidden sm:block" : undefined}>
-        <label className="sr-only" htmlFor="global-search">
+        <label className="sr-only" htmlFor={desktopInputId}>
           Search site
         </label>
         <input
-          id="global-search"
+          id={desktopInputId}
           value={query}
           onChange={(event) => {
             setQuery(event.target.value);
@@ -124,11 +127,11 @@ export function SearchBox({ compactOnMobile = false }: SearchBoxProps) {
               isCompactOpen ? "w-[12.5rem] opacity-100" : "w-0 opacity-0"
             }`}
           >
-            <label className="sr-only" htmlFor="global-search-mobile">
+            <label className="sr-only" htmlFor={mobileInputId}>
               Search site
             </label>
             <input
-              id="global-search-mobile"
+              id={mobileInputId}
               ref={mobileInputRef}
               value={query}
               onChange={(event) => {

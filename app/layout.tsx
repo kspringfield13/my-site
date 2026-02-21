@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 import { AgentKyleDock } from "@/components/AgentKyleDock";
 import { THEME_PALETTE } from "@/lib/theme/palette";
+import { Analytics } from "@vercel/analytics/next";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kylespringfield.dev";
 
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <AgentKyleDock />
         <AnalyticsProvider />
+        <Analytics />
       </body>
     </html>
   );

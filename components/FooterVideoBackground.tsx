@@ -20,32 +20,50 @@ function inferVideoMimeType(url: string): string | undefined {
 export function FooterVideoBackground({ src }: FooterVideoBackgroundProps) {
   const anchorRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isInView, setIsInView] = useState(false);
+  const [isActive, setIsActive] = useState(false);
   const sourceType = src ? inferVideoMimeType(src) : undefined;
 
   useEffect(() => {
-    if (!src) {
+    if (!src || isActive) {
       return;
     }
 
-    const section = anchorRef.current?.closest("section");
-    if (!section) {
+    const projectsSection = document.getElementById("projects");
+    const contactSection = anchorRef.current?.closest("section");
+    const targets = [projectsSection, contactSection].filter(Boolean) as Element[];
+
+    if (targets.length === 0) {
       return;
     }
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting && entry.intersectionRatio >= 0.28);
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) {
+            continue;
+          }
+
+          // Start as soon as Projects is reached; keep contact as a fallback trigger.
+          if (entry.target.id === "projects" && entry.intersectionRatio >= 0.08) {
+            setIsActive(true);
+            return;
+          }
+
+          if (entry.intersectionRatio >= 0.28) {
+            setIsActive(true);
+            return;
+          }
+        }
       },
       {
-        threshold: [0, 0.28, 0.5, 0.75],
+        threshold: [0, 0.08, 0.28, 0.5, 0.75],
         rootMargin: "0px 0px -8% 0px"
       }
     );
 
-    observer.observe(section);
+    targets.forEach((target) => observer.observe(target));
     return () => observer.disconnect();
-  }, [src]);
+  }, [isActive, src]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -53,13 +71,13 @@ export function FooterVideoBackground({ src }: FooterVideoBackgroundProps) {
       return;
     }
 
-    if (isInView) {
+    if (isActive) {
       video.play().catch(() => {});
       return;
     }
 
     video.pause();
-  }, [isInView, src]);
+  }, [isActive, src]);
 
   if (!src) {
     return null;
@@ -69,7 +87,7 @@ export function FooterVideoBackground({ src }: FooterVideoBackgroundProps) {
     <div ref={anchorRef} aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
       <video
         ref={videoRef}
-        className={`footer-video-layer ${isInView ? "is-active" : ""}`}
+        className={`footer-video-layer ${isActive ? "is-active" : ""}`}
         muted
         loop
         playsInline

@@ -43,7 +43,6 @@ npm audit
 ## Environment
 - `GITHUB_TOKEN` (optional but recommended): Personal Access Token used by ingestion scripts to call GitHub REST/GraphQL APIs with higher rate limits and pinned-repo support.
 - `NEXT_PUBLIC_SITE_URL`: canonical site URL used for metadata/sitemap (for example `https://kylespringfield.dev`).
-- `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` (optional): enables Plausible analytics.
 - `NEXT_PUBLIC_FOOTER_VIDEO_URL` (optional): public video URL used as the background video for the home page contact/footer section (`.mp4` preferred, `.mov` supported if browser codec-compatible).
 
 ### What is `GITHUB_TOKEN`?
@@ -66,27 +65,12 @@ This project uses it for:
 GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxx
 ```
 
-### What is Plausible?
-[Plausible](https://plausible.io) is a privacy-first web analytics tool (lightweight alternative to Google Analytics).
-
-In this project:
-- If `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` is set, the Plausible script is loaded.
-- If it is empty, analytics is disabled.
-
-Example:
-
-```bash
-# .env.local
-NEXT_PUBLIC_PLAUSIBLE_DOMAIN=kylespringfield.dev
-```
-
 ## Deploying to Vercel
 1. Push this repo to GitHub.
 2. In Vercel, click `Add New...` -> `Project` and import the repo.
 3. Vercel will detect Next.js automatically. Keep build command as default (`next build` via `npm run build`).
 4. Configure environment variables in Vercel project settings:
 - `NEXT_PUBLIC_SITE_URL` = your production URL (custom domain or `https://<project>.vercel.app`)
-- `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` = optional analytics domain
 - `NEXT_PUBLIC_FOOTER_VIDEO_URL` = optional hosted video URL (for example from Vercel Blob)
 - `GITHUB_TOKEN` = optional (needed only if you run ingestion in CI/server-side workflows)
 5. Deploy.

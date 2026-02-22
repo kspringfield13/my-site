@@ -21,6 +21,7 @@ export function FooterVideoBackground({ src }: FooterVideoBackgroundProps) {
   const anchorRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isActive, setIsActive] = useState(false);
+  const [shouldLoad, setShouldLoad] = useState(false);
   const sourceType = src ? inferVideoMimeType(src) : undefined;
 
   useEffect(() => {
@@ -44,20 +45,26 @@ export function FooterVideoBackground({ src }: FooterVideoBackgroundProps) {
           }
 
           // Start as soon as Projects is reached; keep contact as a fallback trigger.
-          if (entry.target.id === "projects" && entry.intersectionRatio >= 0.08) {
+          if (entry.target.id === "projects" && entry.intersectionRatio >= 0.06) {
+            setShouldLoad(true);
             setIsActive(true);
             return;
           }
 
-          if (entry.intersectionRatio >= 0.28) {
+          if (entry.intersectionRatio >= 0.04) {
+            setShouldLoad(true);
             setIsActive(true);
             return;
+          }
+
+          if (entry.isIntersecting) {
+            setShouldLoad(true);
           }
         }
       },
       {
-        threshold: [0, 0.08, 0.28, 0.5, 0.75],
-        rootMargin: "0px 0px -8% 0px"
+        threshold: [0, 0.04, 0.08, 0.28, 0.5],
+        rootMargin: "0px 0px 18% 0px"
       }
     );
 
@@ -66,9 +73,24 @@ export function FooterVideoBackground({ src }: FooterVideoBackgroundProps) {
   }, [isActive, src]);
 
   useEffect(() => {
+    if (!src) {
+      return;
+    }
+
+    if (window.matchMedia("(max-width: 768px)").matches) {
+      setShouldLoad(true);
+    }
+  }, [src]);
+
+  useEffect(() => {
     const video = videoRef.current;
     if (!video || !src) {
       return;
+    }
+
+    if (shouldLoad && video.preload === "none") {
+      video.preload = "metadata";
+      video.load();
     }
 
     if (isActive) {
@@ -77,7 +99,7 @@ export function FooterVideoBackground({ src }: FooterVideoBackgroundProps) {
     }
 
     video.pause();
-  }, [isActive, src]);
+  }, [isActive, shouldLoad, src]);
 
   if (!src) {
     return null;
@@ -91,7 +113,7 @@ export function FooterVideoBackground({ src }: FooterVideoBackgroundProps) {
         muted
         loop
         playsInline
-        preload="none"
+        preload={shouldLoad ? "metadata" : "none"}
       >
         <source src={src} type={sourceType} />
       </video>

@@ -84,35 +84,31 @@ export function FooterVideoBackground({ src }: FooterVideoBackgroundProps) {
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !src) {
+    if (!video || !src || !shouldLoad) {
       return;
     }
 
-    if (shouldLoad && video.preload === "none") {
+    if (video.preload === "none") {
       video.preload = "auto";
       video.load();
     }
 
-    if (isActive) {
-      const playWhenReady = () => {
-        video.play().catch(() => {});
-      };
+    const playWhenReady = () => {
+      video.play().catch(() => {});
+    };
 
-      if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
-        playWhenReady();
-      } else {
-        video.addEventListener("loadeddata", playWhenReady);
-        video.addEventListener("canplay", playWhenReady);
-      }
-
-      return () => {
-        video.removeEventListener("loadeddata", playWhenReady);
-        video.removeEventListener("canplay", playWhenReady);
-      };
+    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      playWhenReady();
+    } else {
+      video.addEventListener("loadeddata", playWhenReady);
+      video.addEventListener("canplay", playWhenReady);
     }
 
-    video.pause();
-  }, [isActive, shouldLoad, src]);
+    return () => {
+      video.removeEventListener("loadeddata", playWhenReady);
+      video.removeEventListener("canplay", playWhenReady);
+    };
+  }, [shouldLoad, src]);
 
   if (!src) {
     return null;
@@ -127,6 +123,9 @@ export function FooterVideoBackground({ src }: FooterVideoBackgroundProps) {
         loop
         playsInline
         autoPlay
+        controls={false}
+        disablePictureInPicture
+        disableRemotePlayback
         preload={shouldLoad ? "auto" : "none"}
       >
         <source src={src} type={sourceType} />

@@ -131,11 +131,11 @@ a:hover {
   margin-top: var(--home-rhythm-gap);
 }
 
-.home-rhythm > section:not(:last-child) {
+.home-rhythm > section:not(:last-child):not(:nth-last-child(2)) {
   position: relative;
 }
 
-.home-rhythm > section:not(:last-child)::after {
+.home-rhythm > section:not(:last-child):not(:nth-last-child(2))::after {
   content: "";
   position: absolute;
   left: 50%;

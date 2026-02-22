@@ -10,12 +10,14 @@ export default function HomePage() {
   return (
     <>
       <HeroSpotlight />
-      <IntroBridge />
-      <SectionProof />
-      <SectionProjects />
-      <SectionSkills />
-      <SectionNow />
-      <SectionContact />
+      <div className="home-rhythm">
+        <IntroBridge />
+        <SectionProof />
+        <SectionProjects />
+        <SectionSkills />
+        <SectionNow />
+        <SectionContact />
+      </div>
     </>
   );
 }

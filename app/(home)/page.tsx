@@ -1,4 +1,5 @@
 import { HeroSpotlight } from "@/components/HeroSpotlight";
+import { IntroBridge } from "@/components/IntroBridge";
 import { SectionProof } from "@/components/SectionProof";
 import { SectionProjects } from "@/components/SectionProjects";
 import { SectionSkills } from "@/components/SectionSkills";
@@ -9,6 +10,7 @@ export default function HomePage() {
   return (
     <>
       <HeroSpotlight />
+      <IntroBridge />
       <SectionProof />
       <SectionProjects />
       <SectionSkills />

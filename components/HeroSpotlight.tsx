@@ -153,6 +153,7 @@ export function HeroSpotlight() {
   const [modeTransitionBurstId, setModeTransitionBurstId] = useState(0);
   const [modeTransitionToAgent, setModeTransitionToAgent] = useState(true);
   const [tones, setTones] = useState<ToneState>({ name: false, innovator: false, socials: false });
+  const [showScrollCue, setShowScrollCue] = useState(true);
   const matrixActive = true;
 
   const clearModeTransitionTimers = useCallback(() => {
@@ -866,6 +867,7 @@ export function HeroSpotlight() {
           height: heroRect.height
         };
       }
+      setShowScrollCue(window.scrollY <= 0);
       measureBounds();
       measureTopPortraitBounds();
       syncTopLayerHover(
@@ -886,6 +888,7 @@ export function HeroSpotlight() {
     }
 
     syncViewport();
+    setShowScrollCue(window.scrollY <= 0);
 
     return () => {
       reduceMotion.removeEventListener("change", syncMedia);
@@ -1045,6 +1048,13 @@ export function HeroSpotlight() {
             <span className={styles.srOnly}>X</span>
           </a>
         </div>
+
+        {showScrollCue ? (
+          <div className={styles.scrollCue} aria-hidden="true">
+            <span className={styles.scrollCueLabel}>Scroll down</span>
+            <span className={styles.scrollCueArrow}>↓</span>
+          </div>
+        ) : null}
       </div>
     </section>
   );

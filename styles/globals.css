@@ -388,15 +388,9 @@ a:hover {
   inset-inline: 0;
   top: 0;
   height: clamp(88px, 26vh, 200px);
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--c-bg) 90%, transparent) 0%,
-    color-mix(in srgb, var(--c-bg) 70%, transparent) 42%,
-    color-mix(in srgb, var(--c-bg) 30%, transparent) 76%,
-    transparent 100%
-  );
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 @keyframes footer-video-breathe {

@@ -107,7 +107,7 @@ export function AgentKyleDock() {
               aria-label={isExpanded ? "Collapse Agent Kyle" : "Expand Agent Kyle"}
               aria-expanded={isExpanded}
               aria-controls="agent-kyle-dock-panel"
-              title={isExpanded ? "Collapse Agent Kyle (Ctrl/⌘+Shift+K)" : "Expand Agent Kyle (Ctrl/⌘+Shift+K)"}
+              title={isExpanded ? "Collapse Agent Kyle" : "Expand Agent Kyle"}
               onClick={() => setIsExpanded((value) => !value)}
             >
               <svg className="h-4 w-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
@@ -122,7 +122,7 @@ export function AgentKyleDock() {
               role="tooltip"
               className="pointer-events-none absolute bottom-full right-0 mb-2 w-max max-w-[15rem] rounded-md border border-border bg-surface-2 px-2.5 py-1.5 text-[0.65rem] uppercase tracking-[0.1em] text-faint opacity-0 shadow-panel transition group-hover:opacity-100 group-focus-within:opacity-100"
             >
-              {isExpanded ? "Collapse Agent Kyle" : "Expand Agent Kyle"} · Ctrl/⌘+Shift+K
+              {isExpanded ? "Collapse Agent Kyle" : "Expand Agent Kyle"}
             </span>
           </div>
         </div>

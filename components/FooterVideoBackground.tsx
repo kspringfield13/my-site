@@ -89,13 +89,26 @@ export function FooterVideoBackground({ src }: FooterVideoBackgroundProps) {
     }
 
     if (shouldLoad && video.preload === "none") {
-      video.preload = "metadata";
+      video.preload = "auto";
       video.load();
     }
 
     if (isActive) {
-      video.play().catch(() => {});
-      return;
+      const playWhenReady = () => {
+        video.play().catch(() => {});
+      };
+
+      if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+        playWhenReady();
+      } else {
+        video.addEventListener("loadeddata", playWhenReady);
+        video.addEventListener("canplay", playWhenReady);
+      }
+
+      return () => {
+        video.removeEventListener("loadeddata", playWhenReady);
+        video.removeEventListener("canplay", playWhenReady);
+      };
     }
 
     video.pause();
@@ -113,7 +126,8 @@ export function FooterVideoBackground({ src }: FooterVideoBackgroundProps) {
         muted
         loop
         playsInline
-        preload={shouldLoad ? "metadata" : "none"}
+        autoPlay
+        preload={shouldLoad ? "auto" : "none"}
       >
         <source src={src} type={sourceType} />
       </video>

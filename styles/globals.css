@@ -123,6 +123,38 @@ a:hover {
   width: min(1100px, calc(100% - 2rem));
 }
 
+.home-rhythm {
+  --home-rhythm-gap: clamp(1.25rem, 2.5vw, 2.75rem);
+}
+
+.home-rhythm > section + section {
+  margin-top: var(--home-rhythm-gap);
+}
+
+.home-rhythm > section:not(:last-child) {
+  position: relative;
+}
+
+.home-rhythm > section:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--home-rhythm-gap) * -0.55);
+  width: min(100%, 72rem);
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--c-border) 64%, transparent) 18%,
+    color-mix(in srgb, var(--c-border-accent) 50%, transparent) 50%,
+    color-mix(in srgb, var(--c-border) 64%, transparent) 82%,
+    transparent 100%
+  );
+  opacity: 0.75;
+  pointer-events: none;
+}
+
 .display {
   font-family: var(--font-display);
   font-size: clamp(2.2rem, 6vw, 4.8rem);

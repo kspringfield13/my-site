@@ -10,26 +10,26 @@ type Fragment = {
 };
 
 const FRAGMENTS: Fragment[] = [
-  { text: "Across domains,", threshold: 0.06, desktopCol: "md:col-start-2", mobileCol: "col-start-1" },
-  { text: "the interfaces change.", threshold: 0.16, desktopCol: "md:col-start-6", mobileCol: "col-start-2" },
+  { text: "Hey, glad you made it here.", threshold: 0.04, desktopCol: "md:col-start-2", mobileCol: "col-start-1" },
+  { text: "I built this site as a home base for my work.", threshold: 0.12, desktopCol: "md:col-start-6", mobileCol: "col-start-2" },
   {
-    text: "The constraints repeat:",
-    threshold: 0.31,
+    text: "After a bunch of projects, I wanted one place",
+    threshold: 0.24,
     desktopCol: "md:col-start-3",
     mobileCol: "col-start-1"
   },
-  { text: "latency", threshold: 0.44, desktopCol: "md:col-start-7", mobileCol: "col-start-2" },
-  { text: "ambiguity", threshold: 0.52, desktopCol: "md:col-start-9", mobileCol: "col-start-3" },
-  { text: "scale.", threshold: 0.6, desktopCol: "md:col-start-11", mobileCol: "col-start-4" },
+  { text: "to share what I'm building,", threshold: 0.37, desktopCol: "md:col-start-7", mobileCol: "col-start-2" },
+  { text: "what I'm learning,", threshold: 0.46, desktopCol: "md:col-start-9", mobileCol: "col-start-3" },
+  { text: "and where I'm headed.", threshold: 0.55, desktopCol: "md:col-start-11", mobileCol: "col-start-4" },
   {
-    text: "These projects are repeated passes",
-    threshold: 0.74,
+    text: "Scroll around and you'll get the real story:",
+    threshold: 0.66,
     desktopCol: "md:col-start-2",
     mobileCol: "col-start-1"
   },
   {
-    text: "through one system for decision-making.",
-    threshold: 0.86,
+    text: "practical work, honest experiments, and a lot of curiosity.",
+    threshold: 0.78,
     desktopCol: "md:col-start-6",
     mobileCol: "col-start-2"
   }
@@ -57,7 +57,7 @@ export function IntroBridge() {
       ([entry]) => {
         setInView(entry.isIntersecting);
       },
-      { rootMargin: "-20% 0px -20% 0px", threshold: [0, 0.2, 0.5, 0.8, 1] }
+      { rootMargin: "18% 0px -35% 0px", threshold: [0, 0.2, 0.5, 0.8, 1] }
     );
 
     observer.observe(node);
@@ -78,8 +78,8 @@ export function IntroBridge() {
 
       const rect = node.getBoundingClientRect();
       const viewport = window.innerHeight || 1;
-      const start = viewport * 0.9;
-      const end = -rect.height * 0.25;
+      const start = viewport * 1.15;
+      const end = -rect.height * 0.45;
       const raw = (start - rect.top) / (start - end);
       const next = Math.max(0, Math.min(raw, 1));
       setProgress((prev) => (Math.abs(prev - next) > 0.007 ? next : prev));

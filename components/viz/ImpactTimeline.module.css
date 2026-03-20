@@ -228,13 +228,14 @@
 .modalBackdrop {
   position: fixed;
   inset: 0;
-  z-index: 70;
+  z-index: 120;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
-  background: color-mix(in srgb, var(--c-bg) 72%, transparent);
-  backdrop-filter: blur(4px);
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+    max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  background: color-mix(in srgb, var(--c-bg) 62%, transparent);
+  backdrop-filter: blur(10px);
 }
 
 .modalPanel {
@@ -432,18 +433,10 @@
 }
 
 @media (max-width: 640px) {
-  .modalBackdrop {
-    align-items: flex-end;
-    padding: 0;
-  }
-
   .modalPanel {
-    width: 100%;
+    width: min(100%, 640px);
     max-height: min(88dvh, 820px);
-    border-radius: 1rem 1rem 0 0;
-    border-left: 0;
-    border-right: 0;
-    border-bottom: 0;
+    border-radius: 1rem;
     padding: 0.9rem 0.9rem 1.15rem;
   }
 

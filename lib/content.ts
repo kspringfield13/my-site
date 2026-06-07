@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
 import { getContentPath, loadMdxFile } from "@/lib/mdx";
+import { partitionNowEntries } from "@/lib/now";
 import type {
   NowFeed,
   ProjectIndex,
@@ -117,11 +118,6 @@ export const getFlagshipProjects = cache(async (limit = 6) => {
     .slice(0, limit);
 });
 
-export function getNowEntryAgeDays(date: string) {
-  const ms = Date.now() - Date.parse(date);
-  return Math.floor(ms / (24 * 60 * 60 * 1000));
-}
-
 export const getSearchDocs = cache(async (): Promise<SearchDoc[]> => {
   const filePath = path.join(process.cwd(), "public", "search-index.json");
   const fromFile = await readJson<SearchDoc[]>(filePath, []);
@@ -138,7 +134,16 @@ export const getSearchDocs = cache(async (): Promise<SearchDoc[]> => {
     tags: [...project.tags, ...project.stack.slice(0, 3)],
     body: [project.tagline, project.description, ...(project.readmeHighlights ?? [])].join(" ").trim()
   }));
-  const nowDocs = nowEntries.entries.map((entry) => ({
+  const { currentEntries, archivedEntries } = partitionNowEntries(nowEntries);
+  const currentNowDocs = currentEntries.map((entry) => ({
+    id: `now:${entry.id}`,
+    type: "Now" as const,
+    title: entry.title || entry.category.toUpperCase(),
+    url: "/#now",
+    tags: [entry.category],
+    body: entry.details.join(" ")
+  }));
+  const archivedNowDocs = archivedEntries.map((entry) => ({
     id: `now:${entry.id}`,
     type: "Now" as const,
     title: entry.title || entry.category.toUpperCase(),
@@ -164,5 +169,5 @@ export const getSearchDocs = cache(async (): Promise<SearchDoc[]> => {
       body: "Flagship projects and artifacts."
     }
   ];
-  return [...projectDocs, ...nowDocs, ...sectionDocs];
+  return [...projectDocs, ...currentNowDocs, ...archivedNowDocs, ...sectionDocs];
 });

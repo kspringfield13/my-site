@@ -1,4 +1,5 @@
 import { getNowEntries, getProjectIndex, getResumeDerived, getSearchDocs } from "@/lib/content";
+import { partitionNowEntries } from "@/lib/now";
 import { sanitizeFreeText, toTitleCase } from "@/lib/agent-kyle/sanitize";
 import type { CapabilityHeatmapCell, EvidenceItem } from "@/lib/agent-kyle/types";
 import type { ProjectMeta } from "@/lib/types";
@@ -124,15 +125,19 @@ export async function buildEvidenceContext(): Promise<AgentEvidenceContext> {
 
   const projectEvidence = buildProjectEvidence(projectIndex.projects);
   const resumeEvidence = buildResumeEvidence(resume);
+  const { currentEntries, archivedEntries } = partitionNowEntries(nowFeed);
 
-  const nowEvidence: EvidenceItem[] = nowFeed.entries.slice(0, 16).map((entry) => ({
-    id: `now:${entry.id}`,
-    title: entry.title || entry.category.toUpperCase(),
-    url: "/archive/now",
-    sourceType: "now",
-    snippet: compactSnippet(entry.details.join(" ")),
-    tags: tokenize(`${entry.category} ${entry.details.join(" ")}`).slice(0, 12)
-  }));
+  const nowEvidence: EvidenceItem[] = [
+    ...currentEntries.map((entry) => ({ entry, url: "/#now" })),
+    ...archivedEntries.map((entry) => ({ entry, url: "/archive/now" }))
+  ].slice(0, 16).map(({ entry, url }) => ({
+      id: `now:${entry.id}`,
+      title: entry.title || entry.category.toUpperCase(),
+      url,
+      sourceType: "now",
+      snippet: compactSnippet(entry.details.join(" ")),
+      tags: tokenize(`${entry.category} ${entry.details.join(" ")}`).slice(0, 12)
+    }));
 
   const sectionEvidence: EvidenceItem[] = searchDocs
     .filter((doc) => doc.type === "Section")

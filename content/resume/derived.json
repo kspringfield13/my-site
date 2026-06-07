@@ -4,7 +4,7 @@
     "email": "kspringfield13@gmail.com",
     "linkedin": "linkedin.com/in/kylespringfield"
   },
-  "about": "Data and AI engineer building reliable analytics systems across SQL, Python, dbt, Snowflake, and AWS with a focus on experimentation and decision-ready execution.",
+  "about": "Business Intelligence Manager building governed analytics systems and decision-ready reporting across Tableau, Snowflake, dbt, Python, and AI-assisted development workflows.",
   "highlights": [
     "Build and automate reliable AWS/Snowflake data pipelines with SQL, Python, and dbt; enforce version control, testing, and reproducible workflows.",
     "Apply statistical analysis and experimentation to uncover trends, measure lift, and strengthen data storytelling and metric design.",
@@ -20,15 +20,25 @@
   ],
   "experience": [
     {
+      "title": "Business Intelligence Manager",
+      "company": "Cisco",
+      "location": "Raleigh, NC",
+      "start": "2026-06",
+      "end": "Present",
+      "highlights": [
+        "Partner with sales operations leaders, program owners, and cross-functional stakeholders to translate complex business needs into governed datasets, executive-ready reporting, and actionable dashboards that support operational visibility and business decision-making.",
+        "Design, build, and maintain Tableau dashboards, GitHub Pages reporting surfaces, and Snowflake/dbt data models that integrate multiple data sources and improve visibility into program performance, survey insights, content governance, and sales operations trends.",
+        "Leverage Cursor and AI-assisted development workflows to accelerate analytics delivery, automate recurring reporting logic, strengthen data validation, and prototype scalable processes that improve reporting consistency, documentation, and stakeholder responsiveness."
+      ]
+    },
+    {
       "title": "Business Analyst III",
       "company": "TEKsystems at Cisco",
       "location": "Raleigh, NC",
       "start": "2025-09",
-      "end": "Present",
+      "end": "2026-06",
       "highlights": [
-        "Partner with sales leadership to translate business needs into governed datasets and decision-ready reporting, developing Tableau dashboards and Streamlit applications that support go-to-market strategy, pipeline visibility, and performance measurement.",
-        "Design and maintain scalable data models using dbt within Snowflake to improve visibility into pipeline health, sales productivity, and customer engagement trends across global sales teams.",
-        "Leverage Cursor in daily development workflows to accelerate modeling, automate reporting logic, and design agentic processes that streamline data preparation, validation, and recurring analytics tasks."
+        "Partner with sales leadership to translate business needs into governed datasets and decision-ready reporting, developing Tableau dashboards and Streamlit applications that support go-to-market strategy, pipeline visibility, and performance measurement."
       ]
     },
     {
@@ -198,8 +208,8 @@
     }
   ],
   "proofBullets": [
-    "Business Analyst III, TEKsystems at Cisco (Sep 2025 - Present): Partner with sales leadership to translate business needs into governed datasets and decision-ready reporting, developing Tableau dashboards and Streamlit applications that support go-to-market strategy, pipeline visibility, and performance measurement.",
-    "Data Engineer at Peraton (Sep 2024 - Sep 2025): Delivered high-quality, efficient data solutions and reporting to support Centers for Medicare & Medicaid Services in detecting and preventing fraud, waste, and abuse within government-sponsored health programs.",
+    "Business Intelligence Manager at Cisco (Jun 2026 - Present): Partner with sales operations leaders, program owners, and cross-functional stakeholders to translate complex business needs into governed datasets, executive-ready reporting, and actionable dashboards that support operational visibility and business decision-making.",
+    "Business Analyst III, TEKsystems at Cisco (Sep 2025 - Jun 2026): Partner with sales leadership to translate business needs into governed datasets and decision-ready reporting, developing Tableau dashboards and Streamlit applications that support go-to-market strategy, pipeline visibility, and performance measurement.",
     "Hands-on delivery across SQL, Python, dbt, ETL/ELT, Gen AI, Git."
   ],
   "skillClusters": {

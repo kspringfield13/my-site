@@ -267,7 +267,7 @@ async function main() {
   const priorRoleHighlight = priorRole?.highlights?.[0];
 
   const about =
-    "Data and AI engineer building reliable analytics systems across SQL, Python, dbt, Snowflake, and AWS with a focus on experimentation and decision-ready execution.";
+    "Business Intelligence Manager building governed analytics systems and decision-ready reporting across Tableau, Snowflake, dbt, Python, and AI-assisted development workflows.";
 
   const proofBullets = [
     latestRole

@@ -90,8 +90,8 @@ async function main() {
     ...nowJson.entries.map((entry) => ({
       id: `now:${entry.id}`,
       type: "Now" as const,
-      title: String(entry.category).toUpperCase(),
-      url: "/#now",
+      title: entry.title || String(entry.category).toUpperCase(),
+      url: "/archive/now",
       tags: [entry.category],
       body: Array.isArray(entry.details) ? entry.details.join(" ") : ""
     }))

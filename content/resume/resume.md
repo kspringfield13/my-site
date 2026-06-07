@@ -19,12 +19,17 @@ SQL | Python | dbt | ETL/ELT | Gen AI | Git | Bash | CI/CD | Measurement | Data 
 - School: Virginia Tech
 
 ## Experience
+### Business Intelligence Manager - Cisco
+- Dates: Jun 2026 - Present
+- Location: Raleigh, NC
+- Partner with sales operations leaders, program owners, and cross-functional stakeholders to translate complex business needs into governed datasets, executive-ready reporting, and actionable dashboards that support operational visibility and business decision-making.
+- Design, build, and maintain Tableau dashboards, GitHub Pages reporting surfaces, and Snowflake/dbt data models that integrate multiple data sources and improve visibility into program performance, survey insights, content governance, and sales operations trends.
+- Leverage Cursor and AI-assisted development workflows to accelerate analytics delivery, automate recurring reporting logic, strengthen data validation, and prototype scalable processes that improve reporting consistency, documentation, and stakeholder responsiveness.
+
 ### Business Analyst III - TEKsystems at Cisco
-- Dates: Sep 2025 - Present
+- Dates: Sep 2025 - Jun 2026
 - Location: Raleigh, NC
 - Partner with sales leadership to translate business needs into governed datasets and decision-ready reporting, developing Tableau dashboards and Streamlit applications that support go-to-market strategy, pipeline visibility, and performance measurement.
-- Design and maintain scalable data models using dbt within Snowflake to improve visibility into pipeline health, sales productivity, and customer engagement trends across global sales teams.
-- Leverage Cursor in daily development workflows to accelerate modeling, automate reporting logic, and design agentic processes that streamline data preparation, validation, and recurring analytics tasks.
 
 ### Data Engineer - Peraton
 - Dates: Sep 2024 - Sep 2025
@@ -49,7 +54,7 @@ SQL | Python | dbt | ETL/ELT | Gen AI | Git | Bash | CI/CD | Measurement | Data 
 ### Senior Data Scientist - Vericast
 - Dates: Feb 2020 - Jul 2021
 - Location: Morrisville, NC
-- Developed Python scripts for automation and data models within Jupyter Notebooks, streamlining digital campaign measurement workflows to significantly enhance operational efficiency.
+- Developed Python scripts for automation and data models within Jupyter Notebooks, streamlining digital campaign measurement workflows to significantly enance operational efficiency.
 - Applied machine learning to custom data models in Python and SQL, enhancing predictive analytics and campaign performance evaluations.
 
 ### Marketing Data Scientist - Vericast
@@ -76,7 +81,7 @@ SQL | Python | dbt | ETL/ELT | Gen AI | Git | Bash | CI/CD | Measurement | Data 
 - Collaborated with Support Account Managers and sales teams on top enterprise customer accounts to provide accurate and timely customer-facing reports.
 - Created custom Oracle BI reports and dashboards to extract data, analyze results using statistical techniques, and provide weekly and monthly reporting.
 
-## Certifications
+### Certifications
 - Certified Tableau Data Analyst - Tableau
 - Certified AI Engineer for Developers Associate - DataCamp
 - Certified Python Data Associate - DataCamp

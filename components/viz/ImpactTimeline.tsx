@@ -47,13 +47,13 @@ function getDetailForLabel(label: string): TimelineDetail {
 
   if (lower.includes("cisco")) {
     return {
-      role: "Business Analyst III",
-      companyLine: "TEKsystems at Cisco",
-      dateLocation: "Sep 2025 - Present | Raleigh, NC",
+      role: "Business Intelligence Manager",
+      companyLine: "Cisco",
+      dateLocation: "Jun 2026 - Present | Raleigh, NC",
       bullets: [
-        "Partner with sales leadership to translate business needs into governed datasets and decision-ready reporting, building Tableau dashboards and Streamlit apps for go-to-market strategy, pipeline visibility, and performance measurement.",
-        "Design and maintain scalable dbt models in Snowflake to improve visibility into pipeline health, sales productivity, and customer engagement trends across global sales teams.",
-        "Leverage Cursor daily to accelerate modeling, automate reporting logic, and design agentic processes that streamline data preparation, validation, and recurring analytics work.",
+        "Partner with sales operations leaders, program owners, and cross-functional stakeholders to translate complex business needs into governed datasets, executive-ready reporting, and actionable dashboards.",
+        "Design and maintain Tableau dashboards, GitHub Pages reporting surfaces, and Snowflake/dbt data models that improve visibility into program performance, survey insights, content governance, and sales operations trends.",
+        "Use Cursor and AI-assisted development workflows to accelerate analytics delivery, automate recurring reporting logic, strengthen validation, and prototype scalable processes.",
       ],
     };
   }

@@ -141,7 +141,7 @@ export function Header() {
         <div
           id={searchPanelId}
           aria-hidden={!searchOpen}
-          className={`absolute left-0 right-0 top-full z-50 border-b border-border-strong bg-bg px-0 pb-3 pt-2 shadow-panel backdrop-blur-md transition duration-200 motion-reduce:transition-none ${
+          className={`absolute left-0 right-0 top-full z-50 bg-bg px-0 pb-3 pt-2 shadow-panel backdrop-blur-md transition duration-200 motion-reduce:transition-none ${
             searchOpen
               ? "visible translate-y-0 opacity-100"
               : "pointer-events-none invisible -translate-y-2 opacity-0"
@@ -160,13 +160,13 @@ export function Header() {
         <div
           id={menuPanelId}
           aria-hidden={!menuOpen}
-          className={`absolute left-0 right-0 top-full z-40 border-b border-border-strong bg-bg pb-3 pt-2 shadow-panel backdrop-blur-md transition duration-200 motion-reduce:transition-none ${
+          className={`absolute left-0 right-0 top-full z-40 pb-3 pt-2 transition duration-200 motion-reduce:transition-none ${
             menuOpen
               ? "visible translate-y-0 opacity-100"
               : "pointer-events-none invisible -translate-y-2 opacity-0"
           }`}
         >
-          <nav aria-label="Primary" className="ml-auto w-full max-w-xs rounded-lg border border-border bg-surface-2 p-2">
+          <nav aria-label="Primary" className="ml-auto w-max min-w-[10rem] rounded-lg border border-border bg-surface-2 p-2 shadow-panel">
             {navItems.map((item) => (
               <Link
                 key={item.href}

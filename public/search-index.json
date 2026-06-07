@@ -209,37 +209,37 @@
     "title": "MODELS",
     "url": "/archive/now",
     "tags": [
-      "models"
+      "ventures"
     ],
-    "body": "Designing scalable data models that turn raw inputs into decision-ready infrastructure. Using Snowflake and dbt, I'm building governed, tested datasets that support analytics, experimentation, and AI systems. Clean structures. Clear metrics. Reliable foundations. Keep hardening model and metric definitions. If the model is wrong, everything built on top drifts."
+    "body": "Developing an enterprise Django hub designed to help salespeople around the world use internal AI tools more often and more effectively. The experience brings enablement into one place: sellers can complete practical tasks, earn badges, train on AI-assisted workflows, and share field-tested examples with their peers. The application is still in active development and depends on close collaboration across engineering, sales, and leadership."
   },
   {
-    "id": "now:2026-02-20-tools",
+    "id": "now:2026-06-07-tools",
     "type": "Now",
     "title": "TOOLS",
     "url": "/archive/now",
     "tags": [
       "tools"
     ],
-    "body": "Using SQL, Python, Snowflake, dbt, and Streamlit to turn models into working systems. Leaning heavily into AI-assisted engineering with Cursor and advanced models to refactor code, accelerate transformations, and automate repetitive analytics work. Continue reducing friction between question and answer by systematizing repeatable analytics workflows."
+    "body": "Using Cursor as my primary AI development assistant while building the Django application, with Claude Code helping maintain and evolve the supporting dbt models. The goal is to combine fast AI-assisted iteration with reliable data foundations as the product and its measurement needs take shape."
   },
   {
-    "id": "now:2026-02-20-ideas",
+    "id": "now:2026-06-07-ideas",
     "type": "Now",
     "title": "IDEAS",
     "url": "/archive/now",
     "tags": [
       "ideas"
     ],
-    "body": "Writing and thinking about AI as a compounding system that is starting to automate its own improvement. A year ago AI helped polish emails. Today it helps refactor systems, build one-shot apps, generate production-ready data models, and orchestrate multi-step workflows. Keep exploring what this structural acceleration means for builders, teams, and the people who adapt."
+    "body": "Exploring how activation, learning, and community can work together to make enterprise AI adoption practical rather than abstract. Sellers will learn where agents can take on repetitive work and how an AI sales assistant can accelerate research, deck building, and analysis, while shared field experiences help the most useful workflows spread."
   },
   {
-    "id": "now:2026-02-20-ventures",
+    "id": "now:2026-06-07-models",
     "type": "Now",
     "title": "VENTURES",
     "url": "/archive/now",
     "tags": [
-      "ventures"
+      "models"
     ],
     "body": "Building and supporting products and businesses across finance AI, coaching, and fitness studio operations. Pantheon is an autonomous hedge fund concept with 12 specialized AI agents running staggered 15-minute cycles from ingestion to execution and reporting. InterCoach is an AI interview prep platform using conversational avatars and real-time feedback with WebRTC. Sam's Studio is a yoga and barre business platform built with Next.js, Supabase, Stripe, scheduling, waitlists, and a mobile app via Capacitor."
   },

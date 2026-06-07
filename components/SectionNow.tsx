@@ -3,7 +3,10 @@ import { getNowEntries, getNowEntryAgeDays } from "@/lib/content";
 
 export async function SectionNow() {
   const now = await getNowEntries();
-  const entries = [...now.entries].sort((a, b) => Date.parse(b.date) - Date.parse(a.date)).slice(0, 6);
+  const entries = [...now.entries]
+    .filter((entry) => getNowEntryAgeDays(entry.date) <= now.expireDays)
+    .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
+    .slice(0, 6);
 
   return (
     <section id="now" className="section-wrap py-14">
@@ -19,10 +22,8 @@ export async function SectionNow() {
 
       <div className="mt-8 grid gap-4 md:grid-cols-2">
         {entries.map((entry) => {
-          const age = getNowEntryAgeDays(entry.date);
-          const stale = age > now.expireDays;
           return (
-            <article key={entry.id} className={`card-base ${stale ? "opacity-65" : ""}`}>
+            <article key={entry.id} className="card-base">
               <p className="eyebrow">{new Date(entry.date).toLocaleDateString()} · {entry.category}</p>
               <div className="mt-3 space-y-2">
                 {entry.details.map((paragraph, index) => (

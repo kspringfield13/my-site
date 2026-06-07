@@ -78,8 +78,9 @@
       "date": "2026-06-07",
       "category": "models",
       "details": [
-        "Designing the data layer needed to understand seller engagement, learning progress, task completion, badge attainment, and the AI workflows that create meaningful value.",
-        "The application will also embed AI directly into the experience so content can become more engaging and personalized to each seller."
+        "At work, Claude Opus 4.8 is my default model in Cursor. In my experience, its reasoning is unmatched for building applications, debugging, refining interfaces, and turning loosely formed ideas into reliable implementations with fewer corrections.",
+        "Cursor's Auto mode is convenient, but I still prefer choosing Opus directly; handoffs to models such as Composer 2.5 have been less consistent for the complex work I give it.",
+        "Outside work, I gravitate toward ChatGPT for everyday questions, research, and browsing. I have also been impressed by GPT-5.5 in the Codex app, which gives me a powerful personal development workflow through a standard subscription without requiring the higher-cost plan I previously needed to get sustained value from Claude Code."
       ]
     },
     {

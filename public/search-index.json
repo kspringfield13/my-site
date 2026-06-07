@@ -202,45 +202,5 @@
       "models"
     ],
     "body": "Designing the data layer needed to understand seller engagement, learning progress, task completion, badge attainment, and the AI workflows that create meaningful value. The application will also embed AI directly into the experience so content can become more engaging and personalized to each seller."
-  },
-  {
-    "id": "now:2026-02-20-models",
-    "type": "Now",
-    "title": "MODELS",
-    "url": "/#now",
-    "tags": [
-      "models"
-    ],
-    "body": "Designing scalable data models that turn raw inputs into decision-ready infrastructure. Using Snowflake and dbt, I'm building governed, tested datasets that support analytics, experimentation, and AI systems. Clean structures. Clear metrics. Reliable foundations. Keep hardening model and metric definitions. If the model is wrong, everything built on top drifts."
-  },
-  {
-    "id": "now:2026-02-20-tools",
-    "type": "Now",
-    "title": "TOOLS",
-    "url": "/#now",
-    "tags": [
-      "tools"
-    ],
-    "body": "Using SQL, Python, Snowflake, dbt, and Streamlit to turn models into working systems. Leaning heavily into AI-assisted engineering with Cursor and advanced models to refactor code, accelerate transformations, and automate repetitive analytics work. Continue reducing friction between question and answer by systematizing repeatable analytics workflows."
-  },
-  {
-    "id": "now:2026-02-20-ideas",
-    "type": "Now",
-    "title": "IDEAS",
-    "url": "/#now",
-    "tags": [
-      "ideas"
-    ],
-    "body": "Writing and thinking about AI as a compounding system that is starting to automate its own improvement. A year ago AI helped polish emails. Today it helps refactor systems, build one-shot apps, generate production-ready data models, and orchestrate multi-step workflows. Keep exploring what this structural acceleration means for builders, teams, and the people who adapt."
-  },
-  {
-    "id": "now:2026-02-20-ventures",
-    "type": "Now",
-    "title": "VENTURES",
-    "url": "/#now",
-    "tags": [
-      "ventures"
-    ],
-    "body": "Building and supporting products and businesses across finance AI, coaching, and fitness studio operations. Pantheon is an autonomous hedge fund concept with 12 specialized AI agents running staggered 15-minute cycles from ingestion to execution and reporting. InterCoach is an AI interview prep platform using conversational avatars and real-time feedback with WebRTC. Sam's Studio is a yoga and barre business platform built with Next.js, Supabase, Stripe, scheduling, waitlists, and a mobile app via Capacitor."
   }
 ]

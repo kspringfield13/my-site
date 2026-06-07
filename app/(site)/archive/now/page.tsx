@@ -19,8 +19,7 @@ export default async function NowArchivePage() {
           return (
             <article key={entry.id} className="card-base">
               <p className="eyebrow">{formatNowEntryDate(entry.date)} · {entry.category}</p>
-              {entry.title ? <h2 className="mt-3 text-lg font-semibold">{entry.title}</h2> : null}
-              <div className={`${entry.title ? "mt-2" : "mt-3"} space-y-2`}>
+              <div className="mt-3 space-y-2">
                 {entry.details.map((paragraph, index) => (
                   <p key={`${entry.id}-${index}`} className="text-sm text-muted">
                     {paragraph}

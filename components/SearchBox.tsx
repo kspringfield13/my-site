@@ -1,26 +1,31 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useRouter } from "next/navigation";
 import { rankSearchResults } from "@/lib/search";
 import type { SearchDoc } from "@/lib/types";
-import { useRouter } from "next/navigation";
 
 interface SearchBoxProps {
-  compactOnMobile?: boolean;
+  autoFocus?: boolean;
+  className?: string;
+  onEscape?: () => void;
+  onNavigate?: () => void;
 }
 
-export function SearchBox({ compactOnMobile = false }: SearchBoxProps) {
-  const inputBaseId = useId();
-  const desktopInputId = `${inputBaseId}-search`;
-  const mobileInputId = `${inputBaseId}-search-mobile`;
+export function SearchBox({
+  autoFocus = false,
+  className = "",
+  onEscape,
+  onNavigate
+}: SearchBoxProps) {
+  const inputId = `${useId()}-search`;
   const [query, setQuery] = useState("");
   const [docs, setDocs] = useState<SearchDoc[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [open, setOpen] = useState(false);
-  const [isCompactOpen, setIsCompactOpen] = useState(false);
   const router = useRouter();
   const boxRef = useRef<HTMLDivElement>(null);
-  const mobileInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -42,23 +47,18 @@ export function SearchBox({ compactOnMobile = false }: SearchBoxProps) {
     function onClick(event: MouseEvent) {
       if (!boxRef.current?.contains(event.target as Node)) {
         setOpen(false);
-        if (compactOnMobile) {
-          setIsCompactOpen(false);
-        }
       }
     }
 
     window.addEventListener("mousedown", onClick);
     return () => window.removeEventListener("mousedown", onClick);
-  }, [compactOnMobile]);
+  }, []);
 
   useEffect(() => {
-    if (!compactOnMobile || !isCompactOpen) {
-      return;
+    if (autoFocus) {
+      inputRef.current?.focus();
     }
-
-    mobileInputRef.current?.focus();
-  }, [compactOnMobile, isCompactOpen]);
+  }, [autoFocus]);
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
@@ -75,9 +75,7 @@ export function SearchBox({ compactOnMobile = false }: SearchBoxProps) {
     router.push(target.url);
     setOpen(false);
     setQuery("");
-    if (compactOnMobile) {
-      setIsCompactOpen(false);
-    }
+    onNavigate?.();
   }
 
   function onInputKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -94,85 +92,31 @@ export function SearchBox({ compactOnMobile = false }: SearchBoxProps) {
       }
     } else if (event.key === "Escape") {
       setOpen(false);
-      if (compactOnMobile) {
-        setIsCompactOpen(false);
-      }
+      onEscape?.();
     }
   }
 
   return (
-    <div ref={boxRef} className={compactOnMobile ? "relative w-10 sm:w-full sm:max-w-[20rem]" : "relative w-full max-w-[20rem]"}>
-      <div className={compactOnMobile ? "hidden sm:block" : undefined}>
-        <label className="sr-only" htmlFor={desktopInputId}>
-          Search site
-        </label>
-        <input
-          id={desktopInputId}
-          value={query}
-          onChange={(event) => {
-            setQuery(event.target.value);
-            setOpen(true);
-          }}
-          onFocus={() => setOpen(true)}
-          onKeyDown={onInputKeyDown}
-          autoComplete="off"
-          placeholder="Search here"
-          className="w-full rounded-full border border-border bg-surface-2 px-4 py-2 text-sm text-fg placeholder:text-faint"
-        />
-      </div>
-      {compactOnMobile ? (
-        <div className="relative sm:hidden">
-          <div
-            className={`pointer-events-none absolute right-11 top-1/2 -translate-y-1/2 overflow-hidden transition-all duration-250 ${
-              isCompactOpen ? "w-[12.5rem] opacity-100" : "w-0 opacity-0"
-            }`}
-          >
-            <label className="sr-only" htmlFor={mobileInputId}>
-              Search site
-            </label>
-            <input
-              id={mobileInputId}
-              ref={mobileInputRef}
-              value={query}
-              onChange={(event) => {
-                setQuery(event.target.value);
-                setOpen(true);
-              }}
-              onFocus={() => setOpen(true)}
-              onKeyDown={onInputKeyDown}
-              autoComplete="off"
-              placeholder="Search"
-              className="pointer-events-auto w-[12.5rem] rounded-full border border-border bg-surface-2 px-4 py-2 text-sm text-fg placeholder:text-faint"
-            />
-          </div>
-          <button
-            type="button"
-            aria-label="Search site"
-            aria-expanded={isCompactOpen}
-            onClick={() => {
-              if (isCompactOpen) {
-                setIsCompactOpen(false);
-                setOpen(false);
-                return;
-              }
-              setIsCompactOpen(true);
-              setOpen(true);
-            }}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface-2 text-muted transition hover:border-border-accent hover:text-link-hover"
-          >
-            <svg viewBox="0 0 16 16" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-              <circle cx="7" cy="7" r="4.25" />
-              <path d="M10.4 10.4 14 14" strokeLinecap="round" />
-            </svg>
-          </button>
-        </div>
-      ) : null}
+    <div ref={boxRef} className={`relative w-full max-w-[20rem] ${className}`}>
+      <label className="sr-only" htmlFor={inputId}>
+        Search site
+      </label>
+      <input
+        id={inputId}
+        ref={inputRef}
+        value={query}
+        onChange={(event) => {
+          setQuery(event.target.value);
+          setOpen(true);
+        }}
+        onFocus={() => setOpen(true)}
+        onKeyDown={onInputKeyDown}
+        autoComplete="off"
+        placeholder="Search here"
+        className="w-full rounded-full border border-border bg-surface-2 px-4 py-2 text-sm text-fg placeholder:text-faint"
+      />
       {open && query.trim() ? (
-        <div
-          className={`absolute right-0 z-50 mt-2 rounded-xl border border-border-strong bg-surface-2 p-2 shadow-panel ${
-            compactOnMobile ? "w-[15.5rem] sm:w-full" : "w-full"
-          }`}
-        >
+        <div className="absolute right-0 z-50 mt-2 w-full rounded-lg border border-border-strong bg-surface-2 p-2 shadow-panel">
           {results.length === 0 ? (
             <p className="px-3 py-2 text-sm text-muted">No results.</p>
           ) : (
@@ -181,7 +125,7 @@ export function SearchBox({ compactOnMobile = false }: SearchBoxProps) {
                 <li key={result.id}>
                   <button
                     type="button"
-                    className={`w-full rounded-lg px-3 py-2 text-left text-sm ${
+                    className={`w-full rounded-md px-3 py-2 text-left text-sm ${
                       index === activeIndex ? "bg-surface-3" : "token-hover-wash"
                     }`}
                     onMouseEnter={() => setActiveIndex(index)}

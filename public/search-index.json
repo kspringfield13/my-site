@@ -164,6 +164,46 @@
     "body": "Current experiments with outcomes and next steps."
   },
   {
+    "id": "now:2026-06-07-ventures",
+    "type": "Now",
+    "title": "VENTURES",
+    "url": "/#now",
+    "tags": [
+      "ventures"
+    ],
+    "body": "Developing an enterprise Django hub designed to help salespeople around the world use internal AI tools more often and more effectively. The experience brings enablement into one place: sellers can complete practical tasks, earn badges, train on AI-assisted workflows, and share field-tested examples with their peers. The application is still in active development and depends on close collaboration across engineering, sales, and leadership."
+  },
+  {
+    "id": "now:2026-06-07-tools",
+    "type": "Now",
+    "title": "TOOLS",
+    "url": "/#now",
+    "tags": [
+      "tools"
+    ],
+    "body": "Using Cursor as my primary AI development assistant while building the Django application, with Claude Code helping maintain and evolve the supporting dbt models. The goal is to combine fast AI-assisted iteration with reliable data foundations as the product and its measurement needs take shape."
+  },
+  {
+    "id": "now:2026-06-07-ideas",
+    "type": "Now",
+    "title": "IDEAS",
+    "url": "/#now",
+    "tags": [
+      "ideas"
+    ],
+    "body": "Exploring how activation, learning, and community can work together to make enterprise AI adoption practical rather than abstract. Sellers will learn where agents can take on repetitive work and how an AI sales assistant can accelerate research, deck building, and analysis, while shared field experiences help the most useful workflows spread."
+  },
+  {
+    "id": "now:2026-06-07-models",
+    "type": "Now",
+    "title": "MODELS",
+    "url": "/#now",
+    "tags": [
+      "models"
+    ],
+    "body": "Designing the data layer needed to understand seller engagement, learning progress, task completion, badge attainment, and the AI workflows that create meaningful value. The application will also embed AI directly into the experience so content can become more engaging and personalized to each seller."
+  },
+  {
     "id": "now:2026-02-20-models",
     "type": "Now",
     "title": "MODELS",

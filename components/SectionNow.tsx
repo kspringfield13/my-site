@@ -1,25 +1,10 @@
 import Link from "next/link";
-import { getNowEntries, getNowEntryAgeDays } from "@/lib/content";
-import type { NowCategory, NowEntry } from "@/lib/types";
-
-const categoryOrder: NowCategory[] = ["ventures", "tools", "ideas", "models"];
-
-function getLatestEntryByCategory(entries: NowEntry[]) {
-  return categoryOrder.flatMap((category) => {
-    const latestEntry = entries
-      .filter((entry) => entry.category === category)
-      .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))[0];
-
-    return latestEntry ? [latestEntry] : [];
-  });
-}
+import { getNowEntries } from "@/lib/content";
+import { formatNowEntryDate, partitionNowEntries } from "@/lib/now";
 
 export async function SectionNow() {
   const now = await getNowEntries();
-  const entries = [...now.entries]
-    .filter((entry) => getNowEntryAgeDays(entry.date) <= now.expireDays)
-    .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
-    .slice(0, 6);
+  const { currentEntries } = partitionNowEntries(now);
 
   return (
     <section id="now" className="section-wrap py-14">
@@ -34,10 +19,10 @@ export async function SectionNow() {
       </div>
 
       <div className="mt-8 grid gap-4 md:grid-cols-2">
-        {entries.map((entry) => {
+        {currentEntries.map((entry) => {
           return (
             <article key={entry.id} className="card-base">
-              <p className="eyebrow">{new Date(entry.date).toLocaleDateString()} · {entry.category}</p>
+              <p className="eyebrow">{formatNowEntryDate(entry.date)} · {entry.category}</p>
               <div className="mt-3 space-y-2">
                 {entry.details.map((paragraph, index) => (
                   <p key={`${entry.id}-${index}`} className="text-sm text-muted">

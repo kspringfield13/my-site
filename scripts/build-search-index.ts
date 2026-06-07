@@ -2,6 +2,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
+import { partitionNowEntries } from "../lib/now";
+import type { NowFeed } from "../lib/types";
 
 interface SearchDoc {
   id: string;
@@ -26,7 +28,11 @@ async function main() {
   const projectsJson = await readJson<{ projects: any[] }>(path.join(base, "content", "projects", "projects.json"), {
     projects: []
   });
-  const nowJson = await readJson<{ entries: any[] }>(path.join(base, "content", "now", "entries.json"), { entries: [] });
+  const nowJson = await readJson<NowFeed>(path.join(base, "content", "now", "entries.json"), {
+    expireDays: 45,
+    entries: []
+  });
+  const { currentEntries, archivedEntries } = partitionNowEntries(nowJson);
 
   const docs: SearchDoc[] = await Promise.all(
     projectsJson.projects.map(async (project) => {
@@ -87,13 +93,21 @@ async function main() {
   );
 
   docs.push(
-    ...nowJson.entries.map((entry) => ({
+    ...currentEntries.map((entry) => ({
       id: `now:${entry.id}`,
       type: "Now" as const,
-      title: entry.title || String(entry.category).toUpperCase(),
+      title: entry.title || entry.category.toUpperCase(),
+      url: "/#now",
+      tags: [entry.category],
+      body: entry.details.join(" ")
+    })),
+    ...archivedEntries.map((entry) => ({
+      id: `now:${entry.id}`,
+      type: "Now" as const,
+      title: entry.title || entry.category.toUpperCase(),
       url: "/archive/now",
       tags: [entry.category],
-      body: Array.isArray(entry.details) ? entry.details.join(" ") : ""
+      body: entry.details.join(" ")
     }))
   );
 

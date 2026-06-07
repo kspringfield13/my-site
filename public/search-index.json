@@ -167,7 +167,7 @@
     "id": "now:2026-06-07-ventures",
     "type": "Now",
     "title": "VENTURES",
-    "url": "/#now",
+    "url": "/archive/now",
     "tags": [
       "ventures"
     ],
@@ -177,7 +177,7 @@
     "id": "now:2026-06-07-tools",
     "type": "Now",
     "title": "TOOLS",
-    "url": "/#now",
+    "url": "/archive/now",
     "tags": [
       "tools"
     ],
@@ -187,7 +187,7 @@
     "id": "now:2026-06-07-ideas",
     "type": "Now",
     "title": "IDEAS",
-    "url": "/#now",
+    "url": "/archive/now",
     "tags": [
       "ideas"
     ],
@@ -197,10 +197,80 @@
     "id": "now:2026-06-07-models",
     "type": "Now",
     "title": "MODELS",
-    "url": "/#now",
+    "url": "/archive/now",
     "tags": [
       "models"
     ],
     "body": "Designing the data layer needed to understand seller engagement, learning progress, task completion, badge attainment, and the AI workflows that create meaningful value. The application will also embed AI directly into the experience so content can become more engaging and personalized to each seller."
+  },
+  {
+    "id": "now:2026-02-20-models",
+    "type": "Now",
+    "title": "MODELS",
+    "url": "/archive/now",
+    "tags": [
+      "ventures"
+    ],
+    "body": "Developing an enterprise Django hub designed to help salespeople around the world use internal AI tools more often and more effectively. The experience brings enablement into one place: sellers can complete practical tasks, earn badges, train on AI-assisted workflows, and share field-tested examples with their peers. The application is still in active development and depends on close collaboration across engineering, sales, and leadership."
+  },
+  {
+    "id": "now:2026-06-07-tools",
+    "type": "Now",
+    "title": "TOOLS",
+    "url": "/archive/now",
+    "tags": [
+      "tools"
+    ],
+    "body": "Using Cursor as my primary AI development assistant while building the Django application, with Claude Code helping maintain and evolve the supporting dbt models. The goal is to combine fast AI-assisted iteration with reliable data foundations as the product and its measurement needs take shape."
+  },
+  {
+    "id": "now:2026-06-07-ideas",
+    "type": "Now",
+    "title": "IDEAS",
+    "url": "/archive/now",
+    "tags": [
+      "ideas"
+    ],
+    "body": "Exploring how activation, learning, and community can work together to make enterprise AI adoption practical rather than abstract. Sellers will learn where agents can take on repetitive work and how an AI sales assistant can accelerate research, deck building, and analysis, while shared field experiences help the most useful workflows spread."
+  },
+  {
+    "id": "now:2026-06-07-models",
+    "type": "Now",
+    "title": "VENTURES",
+    "url": "/archive/now",
+    "tags": [
+      "models"
+    ],
+    "body": "Building and supporting products and businesses across finance AI, coaching, and fitness studio operations. Pantheon is an autonomous hedge fund concept with 12 specialized AI agents running staggered 15-minute cycles from ingestion to execution and reporting. InterCoach is an AI interview prep platform using conversational avatars and real-time feedback with WebRTC. Sam's Studio is a yoga and barre business platform built with Next.js, Supabase, Stripe, scheduling, waitlists, and a mobile app via Capacitor."
+  },
+  {
+    "id": "now:2026-02-04-multi-agent-reliability",
+    "type": "Now",
+    "title": "Multi-agent reliability sweep",
+    "url": "/archive/now",
+    "tags": [
+      "models"
+    ],
+    "body": "Tried: Benchmarked retry and reconciliation strategies for parallel coding sessions. Outcome: Queue-based retries improved successful merges and reduced dead-end sessions. Next step: Add conflict scoring and weighted merge heuristics."
+  },
+  {
+    "id": "now:2026-01-31-dbt-governance-pattern",
+    "type": "Now",
+    "title": "dbt governance pattern tests",
+    "url": "/archive/now",
+    "tags": [
+      "tools"
+    ],
+    "body": "Tried: Compared model contracts and test suites for e-commerce-style marts. Outcome: Contract-first modeling caught breaking changes earlier in CI. Next step: Extend checks into cross-domain semantic layers."
+  },
+  {
+    "id": "now:2025-11-15-context-window-ops",
+    "type": "Now",
+    "title": "Context-window operations notes",
+    "url": "/archive/now",
+    "tags": [
+      "ideas"
+    ],
+    "body": "Tried: Documented prompt packing patterns for analytics copilots. Outcome: Prompt budgets were easier to tune with structured retrieval chunks. Next step: Package patterns into reusable toolkit modules."
   }
 ]

@@ -40,6 +40,7 @@ export interface NowEntry {
   id: string;
   date: string;
   category: NowCategory;
+  title?: string;
   details: string[];
   links?: string[];
 }

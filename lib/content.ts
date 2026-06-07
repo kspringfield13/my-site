@@ -141,8 +141,8 @@ export const getSearchDocs = cache(async (): Promise<SearchDoc[]> => {
   const nowDocs = nowEntries.entries.map((entry) => ({
     id: `now:${entry.id}`,
     type: "Now" as const,
-    title: entry.category.toUpperCase(),
-    url: "/#now",
+    title: entry.title || entry.category.toUpperCase(),
+    url: "/archive/now",
     tags: [entry.category],
     body: entry.details.join(" ")
   }));

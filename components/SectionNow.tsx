@@ -16,10 +16,10 @@ function getLatestEntryByCategory(entries: NowEntry[]) {
 
 export async function SectionNow() {
   const now = await getNowEntries();
-  const currentEntries = now.entries.filter(
-    (entry) => getNowEntryAgeDays(entry.date) <= now.expireDays
-  );
-  const entries = getLatestEntryByCategory(currentEntries);
+  const entries = [...now.entries]
+    .filter((entry) => getNowEntryAgeDays(entry.date) <= now.expireDays)
+    .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
+    .slice(0, 6);
 
   return (
     <section id="now" className="section-wrap py-14">

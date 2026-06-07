@@ -167,7 +167,7 @@
     "id": "now:2026-06-07-ventures",
     "type": "Now",
     "title": "VENTURES",
-    "url": "/archive/now",
+    "url": "/#now",
     "tags": [
       "ventures"
     ],
@@ -177,7 +177,7 @@
     "id": "now:2026-06-07-tools",
     "type": "Now",
     "title": "TOOLS",
-    "url": "/archive/now",
+    "url": "/#now",
     "tags": [
       "tools"
     ],
@@ -187,7 +187,7 @@
     "id": "now:2026-06-07-ideas",
     "type": "Now",
     "title": "IDEAS",
-    "url": "/archive/now",
+    "url": "/#now",
     "tags": [
       "ideas"
     ],
@@ -197,7 +197,7 @@
     "id": "now:2026-06-07-models",
     "type": "Now",
     "title": "MODELS",
-    "url": "/archive/now",
+    "url": "/#now",
     "tags": [
       "models"
     ],
@@ -242,15 +242,5 @@
       "ventures"
     ],
     "body": "Building and supporting products and businesses across finance AI, coaching, and fitness studio operations. Pantheon is an autonomous hedge fund concept with 12 specialized AI agents running staggered 15-minute cycles from ingestion to execution and reporting. InterCoach is an AI interview prep platform using conversational avatars and real-time feedback with WebRTC. Sam's Studio is a yoga and barre business platform built with Next.js, Supabase, Stripe, scheduling, waitlists, and a mobile app via Capacitor."
-  },
-  {
-    "id": "now:2026-02-04-multi-agent-reliability",
-    "type": "Now",
-    "title": "Multi-agent reliability sweep",
-    "url": "/archive/now",
-    "tags": [
-      "models"
-    ],
-    "body": "Tried: Benchmarked retry and reconciliation strategies for parallel coding sessions. Outcome: Queue-based retries improved successful merges and reduced dead-end sessions. Next step: Add conflict scoring and weighted merge heuristics."
   }
 ]

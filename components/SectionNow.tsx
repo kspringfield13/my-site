@@ -1,5 +1,18 @@
 import Link from "next/link";
 import { getNowEntries, getNowEntryAgeDays } from "@/lib/content";
+import type { NowCategory, NowEntry } from "@/lib/types";
+
+const categoryOrder: NowCategory[] = ["ventures", "tools", "ideas", "models"];
+
+function getLatestEntryByCategory(entries: NowEntry[]) {
+  return categoryOrder.flatMap((category) => {
+    const latestEntry = entries
+      .filter((entry) => entry.category === category)
+      .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))[0];
+
+    return latestEntry ? [latestEntry] : [];
+  });
+}
 
 export async function SectionNow() {
   const now = await getNowEntries();

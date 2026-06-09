@@ -5,8 +5,7 @@ import {
   agentChatResponseSchema,
   agentStatusResponseSchema,
   type AgentChatResponse,
-  type AgentStatusResponse,
-  type EvidenceSource
+  type AgentStatusResponse
 } from "@/lib/agent-kyle/types";
 
 interface AgentKylePanelProps {
@@ -46,18 +45,6 @@ const DEFAULT_STATUS: AgentStatusResponse = {
     resetAt: new Date().toISOString()
   }
 };
-
-function sourceLabel(source: EvidenceSource): string {
-  const labels: Record<EvidenceSource, string> = {
-    project: "Case study",
-    resume: "Resume",
-    now: "Now",
-    section: "Site",
-    github: "GitHub",
-    linkedin: "LinkedIn"
-  };
-  return labels[source];
-}
 
 function statusText(status: AgentStatusResponse, loading: boolean): string {
   if (loading) return "Connecting";
@@ -235,7 +222,6 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
                 {statusText(status, statusLoading)}
               </span>
             </div>
-            <p className="truncate text-xs text-muted">Public portfolio guide · Site + LinkedIn + GitHub</p>
           </div>
         </div>
 
@@ -279,29 +265,6 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
                 ) : null}
                 <p className="whitespace-pre-line">{turn.content}</p>
               </div>
-
-              {turn.result?.sources.length ? (
-                <div className="mt-4">
-                  <p className="mb-2 text-[0.65rem] uppercase tracking-[0.14em] text-faint">Sources used</p>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {turn.result.sources.map((source) => (
-                      <a
-                        key={source.id}
-                        href={source.url}
-                        target={source.url.startsWith("http") ? "_blank" : undefined}
-                        rel={source.url.startsWith("http") ? "noreferrer" : undefined}
-                        className="group rounded-xl border border-border bg-surface-2 p-3 transition hover:border-border-accent hover:bg-surface-3"
-                      >
-                        <span className="text-[0.62rem] uppercase tracking-[0.12em] text-faint">
-                          {sourceLabel(source.sourceType)}
-                        </span>
-                        <p className="mt-1 text-sm font-medium text-fg group-hover:text-link-hover">{source.title}</p>
-                        <p className="mt-1 line-clamp-2 text-xs leading-5 text-muted">{source.snippet}</p>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
 
               {turn.result?.actions.length ? (
                 <div className="mt-3 flex flex-wrap gap-2">

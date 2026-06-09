@@ -1,4 +1,4 @@
-import type { EvidenceItem } from "@/lib/agent-kyle/types";
+import type { AgentChatMessage, EvidenceItem } from "@/lib/agent-kyle/types";
 
 function formatEvidence(evidence: EvidenceItem[]): string {
   return evidence
@@ -54,6 +54,33 @@ export function buildOpportunityFitPrompt(input: {
     "Keep recommendations concrete and short.",
     `Known skills: ${input.knownSkills.join(", ")}`,
     `Job description: ${input.jobDescription}`,
+    "Evidence:",
+    formatEvidence(input.evidence)
+  ].join("\n");
+}
+
+export function buildAgentChatPrompt(input: {
+  messages: AgentChatMessage[];
+  evidence: EvidenceItem[];
+  pagePath?: string;
+}): string {
+  const conversation = input.messages
+    .map((message) => `${message.role.toUpperCase()}: ${message.content}`)
+    .join("\n");
+
+  return [
+    "You are Agent Kyle, the public-facing portfolio assistant for Kyle Springfield.",
+    "Help visitors understand Kyle's work, experience, capabilities, projects, and current interests.",
+    "Use only the supplied evidence. Never invent employers, dates, metrics, credentials, project details, or personal information.",
+    "Be candid about evidence gaps. If the evidence does not support a claim, say so briefly and suggest a relevant public page.",
+    "Answer the visitor's actual question first. Sound informed and conversational, not like a recruiter template.",
+    "Prefer concrete examples and career context over lists of keywords.",
+    "Return strict JSON with this shape:",
+    '{"answer":"plain text, 80-220 words","sourceIds":["existing evidence id"],"followUps":["2-4 short useful questions"]}',
+    "Use 2-6 sourceIds that directly support the answer. Follow-up questions should help the visitor investigate further.",
+    `Current site path: ${input.pagePath || "/"}`,
+    "Conversation:",
+    conversation,
     "Evidence:",
     formatEvidence(input.evidence)
   ].join("\n");

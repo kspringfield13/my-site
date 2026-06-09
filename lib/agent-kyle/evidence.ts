@@ -2,6 +2,7 @@ import { getNowEntries, getProjectIndex, getResumeDerived, getSearchDocs } from 
 import { partitionNowEntries } from "@/lib/now";
 import { sanitizeFreeText, toTitleCase } from "@/lib/agent-kyle/sanitize";
 import type { CapabilityHeatmapCell, EvidenceItem } from "@/lib/agent-kyle/types";
+import { getSiteConfig } from "@/lib/site-config";
 import type { ProjectMeta } from "@/lib/types";
 
 const STOP_WORDS = new Set([
@@ -82,18 +83,36 @@ function dedupeEvidence(items: EvidenceItem[]): EvidenceItem[] {
 }
 
 function buildProjectEvidence(projects: ProjectMeta[]): EvidenceItem[] {
-  return projects.map((project) => ({
-    id: `project:${project.slug}`,
-    title: project.name,
-    url: `/projects/${project.slug}`,
-    sourceType: "project",
-    snippet: compactSnippet(`${project.tagline || project.description} ${(project.readmeHighlights || []).join(" ")}`),
-    tags: [...project.tags, ...project.stack.slice(0, 8)].map((tag) => normalize(tag)).filter(Boolean),
-    projectSlug: project.slug
-  }));
+  return projects.flatMap((project) => {
+    const shared = {
+      snippet: compactSnippet(`${project.tagline || project.description} ${(project.readmeHighlights || []).join(" ")}`),
+      tags: [...project.tags, ...project.stack.slice(0, 8), ...project.topics].map((tag) => normalize(tag)).filter(Boolean),
+      projectSlug: project.slug
+    };
+
+    return [
+      {
+        id: `project:${project.slug}`,
+        title: `${project.name} case study`,
+        url: `/projects/${project.slug}`,
+        sourceType: "project" as const,
+        ...shared
+      },
+      {
+        id: `github:${project.slug}`,
+        title: `${project.name} on GitHub`,
+        url: project.repoUrl,
+        sourceType: "github" as const,
+        ...shared
+      }
+    ];
+  });
 }
 
-function buildResumeEvidence(resume: Awaited<ReturnType<typeof getResumeDerived>>): EvidenceItem[] {
+function buildResumeEvidence(
+  resume: Awaited<ReturnType<typeof getResumeDerived>>,
+  linkedinUrl: string
+): EvidenceItem[] {
   const clusterEvidence = Object.entries(resume.skillClusters).map(([cluster, items]) => ({
     id: `resume:cluster:${cluster}`,
     title: `${toTitleCase(cluster)} cluster`,
@@ -112,19 +131,36 @@ function buildResumeEvidence(resume: Awaited<ReturnType<typeof getResumeDerived>
     tags: tokenize(`${role.title} ${role.company} ${role.highlights.join(" ")}`).slice(0, 16)
   }));
 
-  return [...clusterEvidence, ...roleEvidence];
+  const linkedinEvidence: EvidenceItem[] = [
+    {
+      id: "linkedin:profile",
+      title: "Kyle Springfield on LinkedIn",
+      url: linkedinUrl,
+      sourceType: "linkedin",
+      snippet: compactSnippet(
+        `${resume.about} ${resume.experience
+          .slice(0, 4)
+          .map((role) => `${role.title} at ${role.company}`)
+          .join(". ")}`
+      ),
+      tags: tokenize(`${resume.about} ${resume.skills.join(" ")}`).slice(0, 24)
+    }
+  ];
+
+  return [...clusterEvidence, ...roleEvidence, ...linkedinEvidence];
 }
 
 export async function buildEvidenceContext(): Promise<AgentEvidenceContext> {
-  const [projectIndex, nowFeed, resume, searchDocs] = await Promise.all([
+  const [projectIndex, nowFeed, resume, searchDocs, siteConfig] = await Promise.all([
     getProjectIndex(),
     getNowEntries(),
     getResumeDerived(),
-    getSearchDocs()
+    getSearchDocs(),
+    getSiteConfig()
   ]);
 
   const projectEvidence = buildProjectEvidence(projectIndex.projects);
-  const resumeEvidence = buildResumeEvidence(resume);
+  const resumeEvidence = buildResumeEvidence(resume, siteConfig.contact.linkedin);
   const { currentEntries, archivedEntries } = partitionNowEntries(nowFeed);
 
   const nowEvidence: EvidenceItem[] = [

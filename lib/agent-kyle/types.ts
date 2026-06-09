@@ -3,7 +3,7 @@ import { z } from "zod";
 export const agentKyleTabSchema = z.enum(["scorecard", "fit"]);
 export type AgentKyleTab = z.infer<typeof agentKyleTabSchema>;
 
-export const evidenceSourceSchema = z.enum(["project", "resume", "now", "section"]);
+export const evidenceSourceSchema = z.enum(["project", "resume", "now", "section", "github", "linkedin"]);
 export type EvidenceSource = z.infer<typeof evidenceSourceSchema>;
 
 export const evidenceItemSchema = z.object({
@@ -75,6 +75,43 @@ export const opportunityFitResponseSchema = z.object({
   model: z.string().min(1)
 });
 export type OpportunityFitResponse = z.infer<typeof opportunityFitResponseSchema>;
+
+export const agentChatMessageSchema = z.object({
+  role: z.enum(["user", "assistant"]),
+  content: z.string().trim().min(1).max(6000)
+});
+export type AgentChatMessage = z.infer<typeof agentChatMessageSchema>;
+
+export const agentChatInputSchema = z.object({
+  messages: z
+    .array(agentChatMessageSchema)
+    .min(1)
+    .max(10)
+    .refine(
+      (messages) => messages.reduce((total, message) => total + message.content.length, 0) <= 18000,
+      "Conversation is too long."
+    ),
+  pagePath: z.string().trim().max(200).optional()
+});
+export type AgentChatInput = z.infer<typeof agentChatInputSchema>;
+
+export const agentChatActionSchema = z.object({
+  label: z.string().min(1),
+  description: z.string().min(1),
+  url: z.string().min(1),
+  kind: z.enum(["site", "github", "linkedin", "email"])
+});
+export type AgentChatAction = z.infer<typeof agentChatActionSchema>;
+
+export const agentChatResponseSchema = z.object({
+  answer: z.string().min(1),
+  sources: z.array(evidenceItemSchema).max(6),
+  followUps: z.array(z.string().min(1)).min(2).max(4),
+  actions: z.array(agentChatActionSchema).max(4),
+  generatedAt: z.string().min(1),
+  model: z.string().min(1)
+});
+export type AgentChatResponse = z.infer<typeof agentChatResponseSchema>;
 
 export interface RateLimitStatus {
   allowed: boolean;

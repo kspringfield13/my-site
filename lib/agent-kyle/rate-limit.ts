@@ -6,6 +6,12 @@ const WINDOW_LIMIT = 8;
 const SESSION_LIMIT = 20;
 const COOLDOWN_MS = 60 * 1000;
 
+export const AGENT_RATE_LIMITS = {
+  windowLimit: WINDOW_LIMIT,
+  sessionLimit: SESSION_LIMIT,
+  windowMinutes: WINDOW_MS / 60_000
+} as const;
+
 interface IpBucket {
   timestamps: number[];
   cooldownUntil: number;
@@ -92,7 +98,9 @@ function makeStatus(input: {
     reason: input.reason,
     retryAfterSec: input.retryAfterSec,
     remainingInWindow: Math.max(0, input.remainingInWindow),
-    sessionRemaining: Math.max(0, input.sessionRemaining)
+    sessionRemaining: Math.max(0, input.sessionRemaining),
+    windowLimit: WINDOW_LIMIT,
+    sessionLimit: SESSION_LIMIT
   };
 }
 

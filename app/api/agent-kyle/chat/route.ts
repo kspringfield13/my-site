@@ -38,6 +38,8 @@ export async function POST(request: NextRequest) {
         usageWindow: {
           remainingInWindow: rate.remainingInWindow,
           sessionRemaining: rate.sessionRemaining,
+          windowLimit: rate.windowLimit,
+          sessionLimit: rate.sessionLimit,
           remainingTokens: budget.remainingTokens,
           resetAt: budget.resetAt
         }

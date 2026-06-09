@@ -119,6 +119,8 @@ export interface RateLimitStatus {
   retryAfterSec?: number;
   remainingInWindow: number;
   sessionRemaining: number;
+  windowLimit: number;
+  sessionLimit: number;
 }
 
 export interface BudgetStatus {
@@ -136,6 +138,8 @@ export const agentStatusResponseSchema = z.object({
   usageWindow: z.object({
     remainingInWindow: z.number().int().nonnegative(),
     sessionRemaining: z.number().int().nonnegative(),
+    windowLimit: z.number().int().positive(),
+    sessionLimit: z.number().int().positive(),
     remainingTokens: z.number().int().nonnegative(),
     resetAt: z.string().min(1)
   })

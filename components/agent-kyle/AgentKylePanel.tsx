@@ -41,6 +41,8 @@ const DEFAULT_STATUS: AgentStatusResponse = {
   usageWindow: {
     remainingInWindow: 0,
     sessionRemaining: 0,
+    windowLimit: 8,
+    sessionLimit: 20,
     remainingTokens: 0,
     resetAt: new Date().toISOString()
   }
@@ -53,6 +55,23 @@ function statusText(status: AgentStatusResponse, loading: boolean): string {
   if (status.reason === "daily_budget_exceeded") return "Daily limit reached";
   if (status.reason === "missing_api_key") return "Offline";
   return "Unavailable";
+}
+
+function allowanceError(status: AgentStatusResponse): string {
+  if (status.usageWindow.sessionRemaining === 0) {
+    return `You've used all ${status.usageWindow.sessionLimit} Agent Kyle turns for this 24-hour session.`;
+  }
+
+  if (status.reason === "cooldown" || status.usageWindow.remainingInWindow === 0) {
+    const retry = status.retryAfterSec ? ` Try again in about ${status.retryAfterSec} seconds.` : "";
+    return `You've reached the short-term limit of ${status.usageWindow.windowLimit} turns per 10 minutes.${retry}`;
+  }
+
+  if (status.reason === "daily_budget_exceeded") {
+    return "Agent Kyle has reached its shared daily AI budget. Please try again later.";
+  }
+
+  return "Agent Kyle is unavailable right now. The public resume, projects, GitHub, and LinkedIn links are still available.";
 }
 
 function ArrowIcon() {
@@ -73,8 +92,8 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const refreshStatus = useCallback(async () => {
-    setStatusLoading(true);
+  const refreshStatus = useCallback(async (showLoading = true) => {
+    if (showLoading) setStatusLoading(true);
     try {
       const response = await fetch("/api/agent-kyle/status", { cache: "no-store" });
       const json = await response.json();
@@ -84,7 +103,7 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
     } catch {
       setStatus(DEFAULT_STATUS);
     } finally {
-      setStatusLoading(false);
+      if (showLoading) setStatusLoading(false);
     }
   }, []);
 
@@ -132,7 +151,7 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
     if (!content || sending) return;
 
     if (!status.available) {
-      setError("Agent Kyle is unavailable right now. The public resume, projects, GitHub, and LinkedIn links are still available.");
+      setError(allowanceError(status));
       return;
     }
 
@@ -160,7 +179,11 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
 
       if (!response.ok) {
         const parsedStatus = agentStatusResponseSchema.safeParse(json);
-        if (parsedStatus.success) setStatus(parsedStatus.data);
+        if (parsedStatus.success) {
+          setStatus(parsedStatus.data);
+          setError(allowanceError(parsedStatus.data));
+          return;
+        }
         throw new Error("Chat request failed");
       }
 
@@ -176,7 +199,7 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
           result: parsed.data
         }
       ]);
-      refreshStatus();
+      refreshStatus(false);
     } catch {
       setError("I couldn't answer that just now. Try again in a moment or use one of the public links below.");
     } finally {
@@ -344,6 +367,39 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
 
       <footer className="border-t border-border bg-surface-2/80 px-4 py-3 backdrop-blur md:px-5">
         <form onSubmit={submit} className="mx-auto max-w-3xl">
+          <div className="mb-2.5" aria-label={`${status.usageWindow.sessionRemaining} Agent Kyle turns remaining`}>
+            <div className="flex items-center justify-between gap-3 text-[0.65rem] text-faint">
+              <span className="uppercase tracking-[0.12em]">Turn allowance</span>
+              {statusLoading ? (
+                <span>Checking allowance...</span>
+              ) : (
+                <span>
+                  <strong className="font-medium text-muted">{status.usageWindow.sessionRemaining}</strong>
+                  {" / "}
+                  {status.usageWindow.sessionLimit} remaining
+                </span>
+              )}
+            </div>
+            <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-surface-3">
+              <div
+                className="h-full rounded-full bg-[linear-gradient(90deg,var(--c-accent-700),var(--c-link-hover))] transition-[width] duration-300"
+                style={{
+                  width: `${Math.max(
+                    0,
+                    Math.min(
+                      100,
+                      (status.usageWindow.sessionRemaining / Math.max(1, status.usageWindow.sessionLimit)) * 100
+                    )
+                  )}%`
+                }}
+              />
+            </div>
+            {statusLoading ? null : (
+              <p className="mt-1 text-right text-[0.62rem] text-faint">
+                {status.usageWindow.remainingInWindow} available now · up to {status.usageWindow.windowLimit} every 10 minutes
+              </p>
+            )}
+          </div>
           <div className="flex items-end gap-2 rounded-2xl border border-border bg-surface-1 p-2 focus-within:border-border-accent">
             <textarea
               ref={inputRef}

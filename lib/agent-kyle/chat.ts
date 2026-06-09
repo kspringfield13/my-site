@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { buildEvidenceContext, rankEvidenceByQuery } from "@/lib/agent-kyle/evidence";
+import { buildEvidenceContext } from "@/lib/agent-kyle/evidence";
 import { createGroqJsonCompletion } from "@/lib/agent-kyle/groq";
 import { buildAgentChatPrompt } from "@/lib/agent-kyle/prompts";
+import { selectChatEvidence } from "@/lib/agent-kyle/retrieval";
 import { sanitizeFreeText, stripMarkdownCodeFence } from "@/lib/agent-kyle/sanitize";
 import {
   agentChatResponseSchema,
@@ -123,7 +124,7 @@ export async function generateAgentChat(input: AgentChatInput): Promise<AgentGen
     .slice(-5)
     .map((message) => message.content)
     .join(" ");
-  const rankedEvidence = rankEvidenceByQuery(conversationQuery, context.evidence, 18);
+  const rankedEvidence = selectChatEvidence(conversationQuery, context.evidence);
 
   const completion = await createGroqJsonCompletion({
     systemPrompt: CHAT_SYSTEM_PROMPT,

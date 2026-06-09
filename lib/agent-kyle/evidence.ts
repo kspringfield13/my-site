@@ -1,36 +1,17 @@
 import { getNowEntries, getProjectIndex, getResumeDerived, getSearchDocs } from "@/lib/content";
 import { partitionNowEntries } from "@/lib/now";
 import { sanitizeFreeText, toTitleCase } from "@/lib/agent-kyle/sanitize";
+import {
+  evidenceOverlapScore as overlapScore,
+  normalizeEvidenceText as normalize,
+  rankEvidenceByQuery,
+  tokenizeEvidenceText as tokenize
+} from "@/lib/agent-kyle/retrieval";
 import type { CapabilityHeatmapCell, EvidenceItem } from "@/lib/agent-kyle/types";
 import { getSiteConfig } from "@/lib/site-config";
 import type { ProjectMeta } from "@/lib/types";
 
-const STOP_WORDS = new Set([
-  "and",
-  "the",
-  "with",
-  "for",
-  "from",
-  "that",
-  "this",
-  "into",
-  "your",
-  "their",
-  "have",
-  "has",
-  "will",
-  "build",
-  "built",
-  "using",
-  "across",
-  "through",
-  "about",
-  "our",
-  "you",
-  "are",
-  "job",
-  "role"
-]);
+export { rankEvidenceByQuery } from "@/lib/agent-kyle/retrieval";
 
 export interface AgentEvidenceContext {
   evidence: EvidenceItem[];
@@ -38,35 +19,10 @@ export interface AgentEvidenceContext {
   skillUniverse: string[];
 }
 
-function normalize(value: string): string {
-  return sanitizeFreeText(value.toLowerCase(), 5000);
-}
-
-function tokenize(value: string): string[] {
-  return normalize(value)
-    .split(/[^a-z0-9+#.]+/)
-    .filter((token) => token.length > 1 && !STOP_WORDS.has(token));
-}
-
-function overlapScore(needle: string[], haystack: string[]): number {
-  if (needle.length === 0 || haystack.length === 0) return 0;
-  const haystackSet = new Set(haystack);
-  let hits = 0;
-  for (const token of needle) {
-    if (haystackSet.has(token)) hits += 1;
-  }
-  return hits / needle.length;
-}
-
-function scoreEvidence(query: string, evidence: EvidenceItem): number {
-  const queryTokens = tokenize(query);
-  const haystack = tokenize(`${evidence.title} ${evidence.snippet} ${evidence.tags.join(" ")}`);
-  return overlapScore(queryTokens, haystack);
-}
-
-function compactSnippet(value: string): string {
-  const snippet = sanitizeFreeText(value, 190);
-  return snippet.length <= 180 ? snippet : `${snippet.slice(0, 177)}...`;
+function compactSnippet(value: string, maxLength = 190): string {
+  const snippet = sanitizeFreeText(value, maxLength);
+  const visibleLength = Math.max(1, maxLength - 10);
+  return snippet.length <= visibleLength ? snippet : `${snippet.slice(0, visibleLength - 3)}...`;
 }
 
 function dedupeEvidence(items: EvidenceItem[]): EvidenceItem[] {
@@ -171,8 +127,10 @@ export async function buildEvidenceContext(): Promise<AgentEvidenceContext> {
       title: entry.title || entry.category.toUpperCase(),
       url,
       sourceType: "now",
-      snippet: compactSnippet(entry.details.join(" ")),
-      tags: tokenize(`${entry.category} ${entry.details.join(" ")}`).slice(0, 12)
+      // Keep complete Now context available to the model. Tool and model names often
+      // appear late in an entry after the broader setup.
+      snippet: compactSnippet(entry.details.join(" "), 900),
+      tags: tokenize(`${entry.category} ${entry.details.join(" ")}`).slice(0, 40)
     }));
 
   const sectionEvidence: EvidenceItem[] = searchDocs
@@ -218,18 +176,6 @@ export async function buildEvidenceContext(): Promise<AgentEvidenceContext> {
     projects: projectIndex.projects,
     skillUniverse
   };
-}
-
-export function rankEvidenceByQuery(query: string, evidence: EvidenceItem[], limit = 10): EvidenceItem[] {
-  if (!query.trim()) {
-    return evidence.slice(0, limit);
-  }
-
-  return [...evidence]
-    .map((item) => ({ item, score: scoreEvidence(query, item) }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit)
-    .map((entry) => entry.item);
 }
 
 export function inferPrioritySkills(input: {

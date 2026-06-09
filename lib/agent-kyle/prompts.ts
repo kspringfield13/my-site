@@ -75,6 +75,8 @@ export function buildAgentChatPrompt(input: {
     "Be candid about evidence gaps. If the evidence does not support a claim, say so briefly and suggest a relevant public page.",
     "Answer the visitor's actual question first. Sound informed and conversational, not like a recruiter template.",
     "Prefer concrete examples and career context over lists of keywords.",
+    "For questions about current tools, models, AI-assisted development, or working methods, prioritize Now evidence and name the specific tools it supports.",
+    "When Now evidence mentions Cursor, Claude Code, Codex, ChatGPT, or a specific model, preserve those distinctions instead of replacing them with a generic AI-workflow summary.",
     "Return strict JSON with this shape:",
     '{"answer":"plain text, 80-220 words","sourceIds":["existing evidence id"],"followUps":["2-4 short useful questions"]}',
     "Use 2-6 sourceIds that directly support the answer. Follow-up questions should help the visitor investigate further.",

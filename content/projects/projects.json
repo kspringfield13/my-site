@@ -169,7 +169,7 @@
     },
     {
       "slug": "clear-capacity",
-      "name": "Clear Capacity",
+      "name": "clear-capacity",
       "tagline": "Local-first macOS workload intelligence and explainable capacity planning for analysts.",
       "description": "Turns calendar events and foreground-app activity into reviewable work blocks, explainable weekly allocation, and reliable capacity estimates for new work.",
       "tags": [

@@ -61,7 +61,7 @@
   {
     "id": "project:clear-capacity",
     "type": "Project",
-    "title": "Clear Capacity",
+    "title": "clear-capacity",
     "url": "/projects/clear-capacity",
     "tags": [
       "ai",

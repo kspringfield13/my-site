@@ -42,7 +42,8 @@ interface ProjectMeta {
 }
 
 const USERNAME = "kspringfield13";
-const REQUIRED_REPOS = ["intercoach", "xenosync", "chatdeb", "ecommerce-dbt", "xbot"];
+const REQUIRED_REPOS = ["intercoach", "xenosync", "chatdeb", "ecommerce-dbt", "clear-capacity"];
+const HOMEPAGE_EXCLUDED_REPOS = new Set(["xbot"]);
 const BASE = process.cwd();
 
 function inferTags(text: string): Array<"ai" | "data" | "fullstack"> {
@@ -295,7 +296,9 @@ async function main() {
       bannerPosition: previous?.bannerPosition,
       tags: previous?.tags?.length ? previous.tags : normalized.tags,
       stack: previous?.stack?.length ? previous.stack : normalized.stack,
-      pinned: pinnedNames.includes(normalized.slug) || REQUIRED_REPOS.includes(normalized.slug),
+      pinned:
+        !HOMEPAGE_EXCLUDED_REPOS.has(normalized.slug) &&
+        (pinnedNames.includes(normalized.slug) || REQUIRED_REPOS.includes(normalized.slug)),
       homepageRank: previous?.homepageRank,
       readmeHighlights: normalized.readmeHighlights.length
         ? normalized.readmeHighlights

@@ -1,0 +1,41 @@
+---
+title: "Clear Capacity"
+slug: "clear-capacity"
+tags: ["ai", "data", "fullstack"]
+repoUrl: "https://github.com/kspringfield13/clear-capacity"
+---
+
+## Context
+Analyst workload is split across planned projects, recurring reporting, meetings, reactive requests, debugging, and coordination. Task lists capture only part of that work, making it difficult to explain current allocation or estimate how much new work a team can reliably absorb.
+
+## Approach
+Built a local-first macOS prototype that combines foreground-app activity with Outlook calendar events. Clear Capacity groups those signals into candidate work sessions, then gives the user a Daily Review workflow to confirm, relabel, merge, exclude, or annotate the inferred work before it contributes to planning.
+
+## Architecture
+- React, TypeScript, and Vite power the review ledger, capacity views, audit history, and editable analyst and manager summaries.
+- Tauri and Rust provide the macOS menu-bar shell, foreground-window sampling, pause controls, native permissions, and optional OpenAI commands.
+- Shared domain packages model activity, work blocks, corrections, audit events, privacy levels, and weekly capacity snapshots.
+- Deterministic inference groups local activity samples and calculates capacity from recurring commitments, carryover risk, reactive load, fragmentation, and work in progress.
+- Optional AI workflows add work-block classification, review suggestions, forecasts, narratives, and opt-in visual context.
+
+## Results
+Produced an end-to-end workload intelligence workflow where every capacity estimate remains tied to reviewable evidence and user corrections. The prototype turns fragmented activity into an explainable estimate of weekly allocation and reliable capacity for new planned work.
+
+## Skills demonstrated
+- Local-first and privacy-aware product architecture
+- TypeScript and React application development
+- Rust and Tauri desktop integration for macOS
+- Activity sessionization and deterministic capacity modeling
+- Outlook `.ics` parsing and normalized domain design
+- OpenAI API integration with structured prompts and explicit user controls
+- Explainable AI, auditability, and human-in-the-loop review workflows
+
+## Lessons
+Capacity planning is more trustworthy when inference is treated as a draft rather than a verdict. Deterministic calculations, visible evidence, confidence scores, correction history, and clear privacy controls make the system easier to review and explain.
+
+## Artifacts
+- Repo: https://github.com/kspringfield13/clear-capacity
+- Privacy and data flow: https://github.com/kspringfield13/clear-capacity/blob/main/docs/PRIVACY.md
+
+## If I had 2 more weeks...
+Add focused tests for calendar parsing, session grouping, capacity calculations, and native command boundaries, then move prototype persistence from local webview storage to an encrypted local database.

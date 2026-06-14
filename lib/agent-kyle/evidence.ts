@@ -7,6 +7,7 @@ import {
   rankEvidenceByQuery,
   tokenizeEvidenceText as tokenize
 } from "@/lib/agent-kyle/retrieval";
+import { addProjectSkills, buildProjectEvidence } from "@/lib/agent-kyle/project-context";
 import type { CapabilityHeatmapCell, EvidenceItem } from "@/lib/agent-kyle/types";
 import { getSiteConfig } from "@/lib/site-config";
 import type { ProjectMeta } from "@/lib/types";
@@ -36,33 +37,6 @@ function dedupeEvidence(items: EvidenceItem[]): EvidenceItem[] {
   }
 
   return output;
-}
-
-function buildProjectEvidence(projects: ProjectMeta[]): EvidenceItem[] {
-  return projects.flatMap((project) => {
-    const shared = {
-      snippet: compactSnippet(`${project.tagline || project.description} ${(project.readmeHighlights || []).join(" ")}`),
-      tags: [...project.tags, ...project.stack.slice(0, 8), ...project.topics].map((tag) => normalize(tag)).filter(Boolean),
-      projectSlug: project.slug
-    };
-
-    return [
-      {
-        id: `project:${project.slug}`,
-        title: `${project.name} case study`,
-        url: `/projects/${project.slug}`,
-        sourceType: "project" as const,
-        ...shared
-      },
-      {
-        id: `github:${project.slug}`,
-        title: `${project.name} on GitHub`,
-        url: project.repoUrl,
-        sourceType: "github" as const,
-        ...shared
-      }
-    ];
-  });
 }
 
 function buildResumeEvidence(
@@ -159,12 +133,7 @@ export async function buildEvidenceContext(): Promise<AgentEvidenceContext> {
     }
   }
 
-  for (const project of projectIndex.projects) {
-    for (const stack of project.stack.slice(0, 8)) {
-      const normalized = normalize(stack);
-      if (normalized) skillUniverseSet.add(normalized);
-    }
-  }
+  addProjectSkills(skillUniverseSet, projectIndex.projects);
 
   const skillUniverse = Array.from(skillUniverseSet);
   if (skillUniverse.length === 0) {

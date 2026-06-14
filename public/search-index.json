@@ -59,6 +59,22 @@
     "body": "dbt + Snowflake ELT pipeline patterns. Reference implementation for ELT workflows on Snowflake with modular transformations and production-friendly conventions. Production-minded ELT structure for Snowflake. Reusable transformation layers and model patterns. Focuses on reliability and maintainability. \n## Context\nTeams adopting Snowflake often need reference ELT patterns beyond isolated SQL scripts.\n\n## Approach\nDeveloped modular dbt + Snowflake pipeline conventions for reliable ingestion and transformation.\n\n## Architecture\nSource ingestion -> Snowflake staging -> dbt model layers -> curated marts and outputs.\n\n## Results\nDelivered a maintainable blueprint for analytics engineering workflows in Snowflake.\n\n## Lessons\nModel layering and naming discipline prevent long-term complexity blowups.\n\n## Artifacts\n- Repo: https://github.com/kspringfield13/elt-pipeline\n\n## If I had 2 more weeks...\nPackage reusable macros for cross-domain standardization."
   },
   {
+    "id": "project:clear-capacity",
+    "type": "Project",
+    "title": "Clear Capacity",
+    "url": "/projects/clear-capacity",
+    "tags": [
+      "ai",
+      "data",
+      "fullstack",
+      "TypeScript",
+      "React",
+      "Tauri",
+      "Rust"
+    ],
+    "body": "Local-first macOS workload intelligence and explainable capacity planning for analysts. Turns calendar events and foreground-app activity into reviewable work blocks, explainable weekly allocation, and reliable capacity estimates for new work. Groups local foreground-app signals and Outlook calendar events into reviewable work sessions with confidence and evidence. Calculates reliable new-work capacity from recurring commitments, reactive load, carryover risk, fragmentation, and work in progress. Adds optional OpenAI-assisted classification, review suggestions, forecasts, and narratives while keeping raw activity data under user control. \n## Context\nAnalyst workload is split across planned projects, recurring reporting, meetings, reactive requests, debugging, and coordination. Task lists capture only part of that work, making it difficult to explain current allocation or estimate how much new work a team can reliably absorb.\n\n## Approach\nBuilt a local-first macOS prototype that combines foreground-app activity with Outlook calendar events. Clear Capacity groups those signals into candidate work sessions, then gives the user a Daily Review workflow to confirm, relabel, merge, exclude, or annotate the inferred work before it contributes to planning.\n\n## Architecture\n- React, TypeScript, and Vite power the review ledger, capacity views, audit history, and editable analyst and manager summaries.\n- Tauri and Rust provide the macOS menu-bar shell, foreground-window sampling, pause controls, native permissions, and optional OpenAI commands.\n- Shared domain packages model activity, work blocks, corrections, audit events, privacy levels, and weekly capacity snapshots.\n- Deterministic inference groups local activity samples and calculates capacity from recurring commitments, carryover risk, reactive load, fragmentation, and"
+  },
+  {
     "id": "project:xbot",
     "type": "Project",
     "title": "xbot",

@@ -1,9 +1,10 @@
 #!/usr/bin/env tsx
 import fs from "node:fs/promises";
 import path from "node:path";
+import { addProjectSkills, buildProjectEvidence } from "../lib/agent-kyle/project-context";
 import { selectChatEvidence, tokenizeEvidenceText } from "../lib/agent-kyle/retrieval";
 import type { EvidenceItem } from "../lib/agent-kyle/types";
-import type { NowFeed } from "../lib/types";
+import type { NowFeed, ProjectIndex } from "../lib/types";
 
 async function main() {
   const feedPath = path.join(process.cwd(), "content", "now", "entries.json");
@@ -34,7 +35,47 @@ async function main() {
     }
   }
 
-  console.log(`Agent retrieval check passed: ${selected.map((item) => item.id).join(", ")}`);
+  const projectsPath = path.join(process.cwd(), "content", "projects", "projects.json");
+  const projectIndex = JSON.parse(await fs.readFile(projectsPath, "utf8")) as ProjectIndex;
+  const clearCapacity = projectIndex.projects.find((project) => project.slug === "clear-capacity");
+  if (!clearCapacity) {
+    throw new Error("Agent retrieval check failed: Clear Capacity project is missing.");
+  }
+
+  const skillUniverse = new Set<string>();
+  addProjectSkills(skillUniverse, projectIndex.projects);
+  const expectedSkills = ["typescript", "react", "tauri", "rust", "openai api"];
+  for (const expected of expectedSkills) {
+    if (!skillUniverse.has(expected)) {
+      throw new Error(`Agent retrieval check failed: Clear Capacity skill missing from context: ${expected}.`);
+    }
+  }
+
+  const projectEvidence = buildProjectEvidence(projectIndex.projects).filter(
+    (item) => item.projectSlug === "clear-capacity"
+  );
+  const projectEvidenceIds = new Set(projectEvidence.map((item) => item.id));
+  for (const expectedId of ["project:clear-capacity", "github:clear-capacity"]) {
+    if (!projectEvidenceIds.has(expectedId)) {
+      throw new Error(`Agent retrieval check failed: missing ${expectedId}.`);
+    }
+  }
+
+  const clearCapacityContext = projectEvidence
+    .map((item) => `${item.title} ${item.snippet} ${item.tags.join(" ")}`)
+    .join(" ")
+    .toLowerCase();
+  for (const expected of ["local-first", "capacity", "outlook", "foreground-app"]) {
+    if (!clearCapacityContext.includes(expected)) {
+      throw new Error(`Agent retrieval check failed: Clear Capacity context missing ${expected}.`);
+    }
+  }
+
+  console.log(
+    `Agent retrieval check passed: ${selected.map((item) => item.id).join(", ")}; ${[
+      ...projectEvidenceIds
+    ].join(", ")}`
+  );
 }
 
 main().catch((error) => {

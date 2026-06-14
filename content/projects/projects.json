@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-21T00:59:51.831Z",
+  "updatedAt": "2026-06-14T11:31:19.000Z",
   "projects": [
     {
       "slug": "xenosync",
@@ -168,6 +168,60 @@
       "bannerPosition": "center"
     },
     {
+      "slug": "clear-capacity",
+      "name": "Clear Capacity",
+      "tagline": "Local-first macOS workload intelligence and explainable capacity planning for analysts.",
+      "description": "Turns calendar events and foreground-app activity into reviewable work blocks, explainable weekly allocation, and reliable capacity estimates for new work.",
+      "tags": [
+        "ai",
+        "data",
+        "fullstack"
+      ],
+      "stack": [
+        "TypeScript",
+        "React",
+        "Tauri",
+        "Rust",
+        "Vite",
+        "OpenAI API",
+        "Outlook ICS",
+        "macOS"
+      ],
+      "repoUrl": "https://github.com/kspringfield13/clear-capacity",
+      "demoUrl": "",
+      "pinned": true,
+      "stars": 0,
+      "forks": 0,
+      "language": "TypeScript",
+      "topics": [
+        "capacity-planning",
+        "local-first",
+        "macos",
+        "productivity",
+        "react",
+        "rust",
+        "tauri",
+        "typescript"
+      ],
+      "readmeHighlights": [
+        "Groups local foreground-app signals and Outlook calendar events into reviewable work sessions with confidence and evidence.",
+        "Calculates reliable new-work capacity from recurring commitments, reactive load, carryover risk, fragmentation, and work in progress.",
+        "Adds optional OpenAI-assisted classification, review suggestions, forecasts, and narratives while keeping raw activity data under user control."
+      ],
+      "artifacts": {
+        "screenshots": [],
+        "diagrams": [],
+        "docs": [
+          "https://github.com/kspringfield13/clear-capacity/blob/main/docs/PRIVACY.md"
+        ]
+      },
+      "bannerImage": "/projects/banners/xbot.png",
+      "bannerAlt": "Clear Capacity workload intelligence dashboard preview",
+      "bannerPosition": "center",
+      "homepageRank": 3,
+      "updatedAt": "2026-06-14T11:31:19Z"
+    },
+    {
       "slug": "xbot",
       "name": "xbot",
       "tagline": "OpenAI-powered automation bot for generating posts and images to X/Discord.",
@@ -184,7 +238,7 @@
       ],
       "repoUrl": "https://github.com/kspringfield13/xbot",
       "demoUrl": "",
-      "pinned": true,
+      "pinned": false,
       "stars": 0,
       "forks": 0,
       "language": "Python",
@@ -205,8 +259,7 @@
       },
       "bannerImage": "/projects/banners/xbot.png",
       "bannerAlt": "xbot content automation dashboard preview",
-      "bannerPosition": "center",
-      "homepageRank": 3
+      "bannerPosition": "center"
     },
     {
       "slug": "xagg",

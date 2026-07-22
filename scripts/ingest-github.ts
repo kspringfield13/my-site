@@ -42,7 +42,7 @@ interface ProjectMeta {
 }
 
 const USERNAME = "kspringfield13";
-const REQUIRED_REPOS = ["intercoach", "xenosync", "chatdeb", "ecommerce-dbt", "clear-capacity"];
+const REQUIRED_REPOS = ["intercoach", "xenosync", "chatdeb", "ecommerce-dbt", "weekform"];
 const HOMEPAGE_EXCLUDED_REPOS = new Set(["xbot"]);
 const BASE = process.cwd();
 

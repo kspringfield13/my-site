@@ -1,15 +1,15 @@
 ---
-title: "Clear Capacity"
-slug: "clear-capacity"
+title: "Weekform"
+slug: "weekform"
 tags: ["ai", "data", "fullstack"]
-repoUrl: "https://github.com/kspringfield13/clear-capacity"
+repoUrl: "https://github.com/kspringfield13/weekform"
 ---
 
 ## Context
 Analyst workload is split across planned projects, recurring reporting, meetings, reactive requests, debugging, and coordination. Task lists capture only part of that work, making it difficult to explain current allocation or estimate how much new work a team can reliably absorb.
 
 ## Approach
-Built a local-first macOS prototype that combines foreground-app activity with Outlook calendar events. Clear Capacity groups those signals into candidate work sessions, then gives the user a Daily Review workflow to confirm, relabel, merge, exclude, or annotate the inferred work before it contributes to planning.
+Built a local-first macOS prototype that combines foreground-app activity with Outlook calendar events. Weekform groups those signals into candidate work sessions, then gives the user a Daily Review workflow to confirm, relabel, merge, exclude, or annotate the inferred work before it contributes to planning.
 
 ## Architecture
 - React, TypeScript, and Vite power the review ledger, capacity views, audit history, and editable analyst and manager summaries.
@@ -34,8 +34,8 @@ Produced an end-to-end workload intelligence workflow where every capacity estim
 Capacity planning is more trustworthy when inference is treated as a draft rather than a verdict. Deterministic calculations, visible evidence, confidence scores, correction history, and clear privacy controls make the system easier to review and explain.
 
 ## Artifacts
-- Repo: https://github.com/kspringfield13/clear-capacity
-- Privacy and data flow: https://github.com/kspringfield13/clear-capacity/blob/main/docs/PRIVACY.md
+- Repo: https://github.com/kspringfield13/weekform
+- Privacy and data flow: https://github.com/kspringfield13/weekform/blob/main/docs/PRIVACY.md
 
 ## If I had 2 more weeks...
 Add focused tests for calendar parsing, session grouping, capacity calculations, and native command boundaries, then move prototype persistence from local webview storage to an encrypted local database.

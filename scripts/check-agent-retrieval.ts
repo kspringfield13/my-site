@@ -37,9 +37,9 @@ async function main() {
 
   const projectsPath = path.join(process.cwd(), "content", "projects", "projects.json");
   const projectIndex = JSON.parse(await fs.readFile(projectsPath, "utf8")) as ProjectIndex;
-  const clearCapacity = projectIndex.projects.find((project) => project.slug === "clear-capacity");
-  if (!clearCapacity) {
-    throw new Error("Agent retrieval check failed: Clear Capacity project is missing.");
+  const weekform = projectIndex.projects.find((project) => project.slug === "weekform");
+  if (!weekform) {
+    throw new Error("Agent retrieval check failed: Weekform project is missing.");
   }
 
   const skillUniverse = new Set<string>();
@@ -47,27 +47,27 @@ async function main() {
   const expectedSkills = ["typescript", "react", "tauri", "rust", "openai api"];
   for (const expected of expectedSkills) {
     if (!skillUniverse.has(expected)) {
-      throw new Error(`Agent retrieval check failed: Clear Capacity skill missing from context: ${expected}.`);
+      throw new Error(`Agent retrieval check failed: Weekform skill missing from context: ${expected}.`);
     }
   }
 
   const projectEvidence = buildProjectEvidence(projectIndex.projects).filter(
-    (item) => item.projectSlug === "clear-capacity"
+    (item) => item.projectSlug === "weekform"
   );
   const projectEvidenceIds = new Set(projectEvidence.map((item) => item.id));
-  for (const expectedId of ["project:clear-capacity", "github:clear-capacity"]) {
+  for (const expectedId of ["project:weekform", "github:weekform"]) {
     if (!projectEvidenceIds.has(expectedId)) {
       throw new Error(`Agent retrieval check failed: missing ${expectedId}.`);
     }
   }
 
-  const clearCapacityContext = projectEvidence
+  const weekformContext = projectEvidence
     .map((item) => `${item.title} ${item.snippet} ${item.tags.join(" ")}`)
     .join(" ")
     .toLowerCase();
   for (const expected of ["local-first", "capacity", "outlook", "foreground-app"]) {
-    if (!clearCapacityContext.includes(expected)) {
-      throw new Error(`Agent retrieval check failed: Clear Capacity context missing ${expected}.`);
+    if (!weekformContext.includes(expected)) {
+      throw new Error(`Agent retrieval check failed: Weekform context missing ${expected}.`);
     }
   }
 

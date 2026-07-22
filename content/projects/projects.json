@@ -187,7 +187,7 @@
         "Outlook ICS",
         "macOS"
       ],
-      "repoUrl": "https://github.com/kspringfield13/weekform",
+      "repoUrl": "https://github.com/kspringfield13/weekform-dev",
       "demoUrl": "",
       "pinned": true,
       "stars": 0,
@@ -212,7 +212,7 @@
         "screenshots": [],
         "diagrams": [],
         "docs": [
-          "https://github.com/kspringfield13/weekform/blob/main/docs/PRIVACY.md"
+          "https://github.com/kspringfield13/weekform-dev/blob/main/docs/PRIVACY.md"
         ]
       },
       "bannerImage": "/projects/banners/xbot.png",

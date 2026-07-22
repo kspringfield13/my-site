@@ -168,8 +168,8 @@
       "bannerPosition": "center"
     },
     {
-      "slug": "clear-capacity",
-      "name": "clear-capacity",
+      "slug": "weekform",
+      "name": "weekform",
       "tagline": "Local-first macOS workload intelligence and explainable capacity planning for analysts.",
       "description": "Turns calendar events and foreground-app activity into reviewable work blocks, explainable weekly allocation, and reliable capacity estimates for new work.",
       "tags": [
@@ -187,7 +187,7 @@
         "Outlook ICS",
         "macOS"
       ],
-      "repoUrl": "https://github.com/kspringfield13/clear-capacity",
+      "repoUrl": "https://github.com/kspringfield13/weekform",
       "demoUrl": "",
       "pinned": true,
       "stars": 0,
@@ -212,11 +212,11 @@
         "screenshots": [],
         "diagrams": [],
         "docs": [
-          "https://github.com/kspringfield13/clear-capacity/blob/main/docs/PRIVACY.md"
+          "https://github.com/kspringfield13/weekform/blob/main/docs/PRIVACY.md"
         ]
       },
       "bannerImage": "/projects/banners/xbot.png",
-      "bannerAlt": "Clear Capacity workload intelligence dashboard preview",
+      "bannerAlt": "Weekform workload intelligence dashboard preview",
       "bannerPosition": "center",
       "homepageRank": 3,
       "updatedAt": "2026-06-14T11:31:19Z"

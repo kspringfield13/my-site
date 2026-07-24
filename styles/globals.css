@@ -201,16 +201,16 @@ a:hover {
   padding: 1rem;
 }
 
-.canvasui-bend-transition {
+.particle-scroll-transition {
   position: relative;
   width: 100%;
-  height: clamp(7.5rem, 14vw, 10rem);
-  margin-block: clamp(0.75rem, 2vw, 1.5rem);
+  height: clamp(13rem, 24vw, 18rem);
+  margin-block: clamp(0.5rem, 1.5vw, 1rem);
   overflow: hidden;
   isolation: isolate;
 }
 
-.canvasui-bend-canvas {
+.particle-scroll-canvas {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -218,10 +218,10 @@ a:hover {
   pointer-events: none;
 }
 
-.canvasui-bend-label {
+.particle-scroll-fallback {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 40%;
   z-index: 1;
   display: flex;
   align-items: center;
@@ -235,9 +235,33 @@ a:hover {
   white-space: nowrap;
 }
 
-.canvasui-bend-arrow {
+.particle-scroll-transition[data-particle-scroll="active"] .particle-scroll-fallback {
+  opacity: 0;
+}
+
+.particle-scroll-arrow {
   color: var(--c-link);
   font-size: 1rem;
+}
+
+@media (max-width: 560px) {
+  .particle-scroll-transition {
+    height: clamp(12rem, 58vw, 14rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .particle-scroll-transition {
+    height: 8rem;
+  }
+
+  .particle-scroll-canvas {
+    display: none;
+  }
+
+  .particle-scroll-fallback {
+    top: 50%;
+  }
 }
 
 .btn-primary,

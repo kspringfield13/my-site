@@ -40,7 +40,7 @@ export function ProjectsGrid({ projects }: { projects: ProjectMeta[] }) {
         })}
       </div>
 
-      <div className="mt-6 grid gap-6 md:grid-cols-2">
+      <div className="mt-6 grid items-start gap-5 md:grid-cols-2">
         {filtered.map((project) => (
           <ProjectCard key={project.slug} project={project} />
         ))}

@@ -4,7 +4,6 @@
   position: relative;
   isolation: isolate;
   display: flex;
-  min-height: 100%;
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--c-border);
@@ -75,7 +74,7 @@
 
 .banner {
   position: relative;
-  height: clamp(7.5rem, 18vw, 10rem);
+  height: clamp(6.6rem, 14vw, 8.25rem);
   overflow: hidden;
   border-bottom: 1px solid color-mix(in srgb, var(--c-border) 75%, transparent);
   background: var(--c-surface-2);
@@ -137,12 +136,11 @@
 .body {
   position: relative;
   z-index: 2;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 1.3rem;
-  padding: 1.1rem;
+  padding: 1rem;
+}
+
+.preview {
+  position: relative;
 }
 
 .kicker {
@@ -151,7 +149,7 @@
   gap: 0.6rem;
   color: var(--c-text-faint);
   font-family: var(--font-mono);
-  font-size: 0.67rem;
+  font-size: 0.64rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -169,16 +167,16 @@
 
 .headingRow {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  margin-top: 0.65rem;
+  margin-top: 0.55rem;
 }
 
 .title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.55rem, 3vw, 2rem);
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
   font-weight: 600;
   letter-spacing: -0.025em;
   line-height: 1.05;
@@ -193,38 +191,175 @@
   color: var(--c-link-hover);
 }
 
-.tagline {
-  margin: 0.65rem 0 0;
+.title a:focus-visible {
+  border-radius: 0.2rem;
+  outline: 2px solid var(--c-link);
+  outline-offset: 0.2rem;
+}
+
+.expandButton {
+  position: relative;
+  display: inline-flex;
+  min-width: 5.9rem;
+  min-height: 2.35rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--c-border-accent) 52%, var(--c-border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--c-surface-2) 84%, transparent);
   color: var(--c-text-muted);
-  font-size: 0.9rem;
-  line-height: 1.55;
+  padding: 0.4rem 0.55rem 0.4rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color 220ms ease,
+    background-color 220ms ease,
+    color 220ms ease;
+}
+
+.expandButton:hover,
+.expandButton:focus-visible,
+.card[data-expanded="true"] .expandButton {
+  border-color: var(--c-border-accent);
+  background: var(--c-surface-3);
+  color: var(--c-link-hover);
+}
+
+.expandButton:focus-visible {
+  outline: 2px solid var(--c-link);
+  outline-offset: 0.18rem;
+}
+
+.expandIcon {
+  position: relative;
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--c-link) 16%, transparent);
+}
+
+.expandIcon span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.48rem;
+  height: 1px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.expandIcon span:last-child {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.tagline {
+  display: -webkit-box;
+  margin: 0.55rem 0 0;
+  overflow: hidden;
+  color: var(--c-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.previewFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.8rem;
 }
 
 .tags {
   display: flex;
+  min-width: 0;
   flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.9rem;
+  gap: 0.35rem;
+}
+
+.previewCue {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--c-text-faint);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition:
+    color 220ms ease,
+    opacity 180ms ease;
+}
+
+.previewCueArrow {
+  color: var(--c-link);
+  font-size: 0.75rem;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.details {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 460ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease;
+  visibility: hidden;
+}
+
+.detailsClip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.detailsInner {
+  padding-top: 0;
+  transform: translateY(-0.55rem);
+  transition:
+    padding-top 460ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card[data-expanded="true"] .details {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+}
+
+.card[data-expanded="true"] .detailsInner {
+  padding-top: 1rem;
+  transform: translateY(0);
+}
+
+.card[data-expanded="true"] .expandIcon span:last-child {
+  transform: translate(-50%, -50%) rotate(0);
+}
+
+.card[data-expanded="true"] .previewCue {
+  color: var(--c-link);
+  opacity: 0.7;
+}
+
+.card[data-expanded="true"] .previewCueArrow {
+  transform: rotate(90deg);
 }
 
 .outcome {
   position: relative;
-  min-height: 6rem;
-  margin-top: 1rem;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--c-border) 70%, transparent);
   border-radius: 0.75rem;
   background: color-mix(in srgb, var(--c-surface-1) 78%, transparent);
   padding: 0.75rem 0.8rem;
-  transition:
-    border-color 260ms ease,
-    background-color 260ms ease;
-}
-
-.card:hover .outcome,
-.card:focus-within .outcome {
-  border-color: color-mix(in srgb, var(--c-border-accent) 72%, var(--c-border));
-  background: color-mix(in srgb, var(--c-surface-3) 37%, var(--c-surface-1));
 }
 
 .outcomeLabel {
@@ -244,41 +379,36 @@
   height: 0.35rem;
   border-radius: 999px;
   background: currentColor;
-  transition: box-shadow 260ms ease;
-}
-
-.card:hover .outcomeMarker,
-.card:focus-within .outcomeMarker {
   box-shadow: 0 0 0.75rem color-mix(in srgb, var(--c-link) 65%, transparent);
 }
 
-.outcomeCue {
-  display: none;
-  margin-left: auto;
-  color: var(--c-text-faint);
-  font-size: 0.58rem;
-  transition: opacity 180ms ease;
-}
-
 .outcomeText {
-  display: -webkit-box;
   margin: 0.45rem 0 0;
-  overflow: hidden;
   color: color-mix(in srgb, var(--c-text) 87%, var(--c-text-muted));
   font-size: 0.78rem;
   line-height: 1.48;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  transition:
-    opacity 240ms ease,
-    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.build {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.75rem 0.1rem;
+}
+
+.buildLabel {
+  flex: 0 0 auto;
+  color: var(--c-text-faint);
+  font-family: var(--font-mono);
+  font-size: 0.61rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .stack {
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem 0.75rem;
-  margin-top: 0.85rem;
   color: var(--c-text-faint);
   font-family: var(--font-mono);
   font-size: 0.67rem;
@@ -296,7 +426,7 @@
   justify-content: space-between;
   gap: 0.75rem;
   border-top: 1px solid color-mix(in srgb, var(--c-border) 58%, transparent);
-  padding-top: 1rem;
+  padding-top: 0.85rem;
 }
 
 .primaryAction,
@@ -358,28 +488,45 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .outcomeCue {
-    display: inline;
-  }
-
-  .outcomeText {
-    opacity: 0;
-    transform: translateY(0.5rem);
-  }
-
-  .card:hover .outcomeText,
-  .card:focus-within .outcomeText {
+  .card:hover .details,
+  .card:focus-within .details {
+    grid-template-rows: 1fr;
     opacity: 1;
+    visibility: visible;
+  }
+
+  .card:hover .detailsInner,
+  .card:focus-within .detailsInner {
+    padding-top: 1rem;
     transform: translateY(0);
   }
 
-  .card:hover .outcomeCue,
-  .card:focus-within .outcomeCue {
-    opacity: 0;
+  .card:hover .expandIcon span:last-child,
+  .card:focus-within .expandIcon span:last-child {
+    transform: translate(-50%, -50%) rotate(0);
+  }
+
+  .card:hover .previewCue,
+  .card:focus-within .previewCue {
+    color: var(--c-link);
+    opacity: 0.7;
+  }
+
+  .card:hover .previewCueArrow,
+  .card:focus-within .previewCueArrow {
+    transform: rotate(90deg);
   }
 }
 
 @media (max-width: 420px) {
+  .previewFooter {
+    align-items: flex-end;
+  }
+
+  .previewCue > span:first-child {
+    display: none;
+  }
+
   .actions {
     align-items: stretch;
     flex-direction: column;
@@ -398,13 +545,26 @@
   .bannerImage,
   .card:hover .bannerImage,
   .card:focus-within .bannerImage,
-  .outcomeText,
-  .card:hover .outcomeText,
-  .card:focus-within .outcomeText,
+  .detailsInner,
+  .card:hover .detailsInner,
+  .card:focus-within .detailsInner,
+  .expandIcon span,
+  .previewCueArrow,
   .actionArrow,
   .primaryAction:hover .actionArrow,
   .primaryAction:focus-visible .actionArrow {
     transform: none;
+  }
+
+  .card,
+  .bannerImage,
+  .details,
+  .detailsInner,
+  .expandIcon span,
+  .previewCue,
+  .previewCueArrow,
+  .actionArrow {
+    transition-duration: 0.01ms;
   }
 
   .sheen {

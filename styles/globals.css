@@ -210,6 +210,7 @@ a:hover {
   position: fixed;
   inset: 0;
   z-index: 2;
+  display: block;
   width: 100%;
   height: 100%;
   pointer-events: none;
@@ -221,7 +222,7 @@ a:hover {
 }
 
 @supports ((mask-image: linear-gradient(#000, transparent)) or (-webkit-mask-image: linear-gradient(#000, transparent))) {
-  .particle-scroll-stage[data-particle-scroll="active"] .particle-scroll-content {
+  .particle-scroll-stage[data-particle-scroll="active"] [data-particle-mask="active"] {
     -webkit-mask-image: linear-gradient(
       to bottom,
       #000 0,
@@ -242,6 +243,8 @@ a:hover {
     );
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
   }
 }
 

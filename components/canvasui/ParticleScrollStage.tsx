@@ -89,11 +89,16 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
     let reducedMotion = motionQuery.matches;
     let width = Math.max(window.innerWidth, 1);
     let height = Math.max(window.innerHeight, 1);
-    let dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    let dpr = Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
     let particles: Particle[] = [];
+    let maskTargets: HTMLElement[] = [];
+    const activeMaskTargets = new Set<HTMLElement>();
     let frame = 0;
     let rebuildFrame = 0;
+    let scrollIdleTimer = 0;
     let visible = false;
+    let effectActive = false;
+    let scrollIdle = true;
     let destroyed = false;
     let targetScroll = window.scrollY;
     let smoothScroll = targetScroll;
@@ -103,8 +108,8 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
     const formationMetrics = () => {
       const compact = width < 640;
       return {
-        line: height * (compact ? 0.7 : 0.66),
-        band: clamp(height * 0.52, compact ? 240 : 280, compact ? 360 : 460)
+        line: height * (compact ? 0.82 : 0.79),
+        band: clamp(height * 0.3, compact ? 170 : 190, compact ? 240 : 280)
       };
     };
 
@@ -123,23 +128,48 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
       index: number,
       compact: boolean
     ) => {
-      const spread = compact ? 88 : 146;
+      const spread = compact ? 76 : 118;
       candidates.push({
         homeX,
         homeY,
         scatterX: homeX + (random(index, 3) - 0.5) * spread * 1.45,
-        scatterY: homeY + spread * (0.34 + random(index, 5) * 0.96),
-        delay: random(index, 7) * 0.34,
-        drift: (random(index, 13) - 0.5) * (compact ? 24 : 38),
+        scatterY: homeY + spread * (0.3 + random(index, 5) * 0.82),
+        delay: random(index, 7) * 0.12,
+        drift: (random(index, 13) - 0.5) * (compact ? 30 : 44),
         radius: (compact ? 0.62 : 0.72) + random(index, 19) * 0.76,
         color,
         progress: 0
       });
     };
 
+    const clearCanvas = () => {
+      context.save();
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.restore();
+    };
+
+    const clearMaskTarget = (target: HTMLElement) => {
+      target.removeAttribute("data-particle-mask");
+      target.style.removeProperty("--particle-mask-crisp");
+      target.style.removeProperty("--particle-mask-soft");
+      target.style.removeProperty("--particle-mask-dissolve");
+      target.style.removeProperty("--particle-mask-hidden");
+      activeMaskTargets.delete(target);
+    };
+
+    const clearEffect = () => {
+      effectActive = false;
+      clearCanvas();
+      Array.from(activeMaskTargets).forEach(clearMaskTarget);
+    };
+
     const buildParticles = () => {
+      Array.from(activeMaskTargets).forEach(clearMaskTarget);
+
       if (reducedMotion || destroyed) {
         particles = [];
+        maskTargets = [];
         return;
       }
 
@@ -156,6 +186,15 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
           return !parentTextSource || !content.contains(parentTextSource);
         })
         .slice(0, 140);
+      const outlinedElements = Array.from(content.querySelectorAll<HTMLElement>("article, hr")).slice(0, 36);
+
+      // Mask only small visual units while the effect is moving. Masking the
+      // entire post-hero document creates a very tall composited surface that
+      // Chrome rasterizes in columns, exposing faint seams between tiles.
+      maskTargets = [
+        ...outlinedElements,
+        ...textElements.filter((element) => !element.closest("article"))
+      ];
 
       for (const element of textElements) {
         const rect = element.getBoundingClientRect();
@@ -209,7 +248,6 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
         }
       }
 
-      const outlinedElements = Array.from(content.querySelectorAll<HTMLElement>("article, hr")).slice(0, 36);
       for (const element of outlinedElements) {
         const rect = element.getBoundingClientRect();
         const styles = getComputedStyle(element);
@@ -231,7 +269,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
         }
       }
 
-      const maxParticles = compact ? 1600 : 2800;
+      const maxParticles = compact ? 1800 : 3400;
       if (candidates.length <= maxParticles) {
         particles = candidates;
       } else {
@@ -246,21 +284,42 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
     };
 
     const resizeCanvas = () => {
-      width = Math.max(window.innerWidth, 1);
-      height = Math.max(window.innerHeight, 1);
-      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      canvas.width = Math.max(1, Math.round(width * dpr));
-      canvas.height = Math.max(1, Math.round(height * dpr));
-      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const canvasRect = canvas.getBoundingClientRect();
+      width = Math.max(canvasRect.width, 1);
+      height = Math.max(canvasRect.height, 1);
+      dpr = Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
+      const pixelWidth = Math.max(1, Math.round(width * dpr));
+      const pixelHeight = Math.max(1, Math.round(height * dpr));
+      canvas.width = pixelWidth;
+      canvas.height = pixelHeight;
+      context.setTransform(pixelWidth / width, 0, 0, pixelHeight / height, 0, 0);
     };
 
-    const updateMask = (rootTop: number) => {
+    const updateMasks = () => {
       const { line, band } = formationMetrics();
-      const localLine = smoothScroll + line - rootTop;
-      content.style.setProperty("--particle-mask-crisp", `${localLine - band * 0.52}px`);
-      content.style.setProperty("--particle-mask-soft", `${localLine - band * 0.2}px`);
-      content.style.setProperty("--particle-mask-dissolve", `${localLine + band * 0.14}px`);
-      content.style.setProperty("--particle-mask-hidden", `${localLine + band * 0.48}px`);
+      const scrollLag = window.scrollY - smoothScroll;
+      const crisp = line - band * 0.5;
+      const soft = line - band * 0.22;
+      const dissolve = line + band * 0.08;
+      const hidden = line + band * 0.36;
+
+      maskTargets.forEach((target) => {
+        const rect = target.getBoundingClientRect();
+        const syntheticTop = rect.top + scrollLag;
+        const syntheticBottom = rect.bottom + scrollLag;
+
+        if (syntheticBottom <= crisp || syntheticTop >= hidden) {
+          if (activeMaskTargets.has(target)) clearMaskTarget(target);
+          return;
+        }
+
+        target.dataset.particleMask = "active";
+        target.style.setProperty("--particle-mask-crisp", `${crisp - syntheticTop}px`);
+        target.style.setProperty("--particle-mask-soft", `${soft - syntheticTop}px`);
+        target.style.setProperty("--particle-mask-dissolve", `${dissolve - syntheticTop}px`);
+        target.style.setProperty("--particle-mask-hidden", `${hidden - syntheticTop}px`);
+        activeMaskTargets.add(target);
+      });
     };
 
     const draw = (now: number) => {
@@ -270,31 +329,16 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
       const delta = Math.min((now - lastTime) / 1000, 1 / 30);
       lastTime = now;
       elapsed += delta;
-      const smoothing = 1 - Math.exp(-delta / 0.13);
+      const smoothing = 1 - Math.exp(-delta / 0.065);
       smoothScroll += (targetScroll - smoothScroll) * smoothing;
       if (Math.abs(targetScroll - smoothScroll) < 0.15) smoothScroll = targetScroll;
 
       const contentRect = content.getBoundingClientRect();
       const rootTop = window.scrollY + contentRect.top;
       const { line, band } = formationMetrics();
-      updateMask(rootTop);
-      context.clearRect(0, 0, width, height);
+      updateMasks();
+      clearCanvas();
       context.globalCompositeOperation = "source-over";
-
-      const accent = getComputedStyle(stage).getPropertyValue("--c-link").trim() || "#91b6d8";
-      const lineStart = Math.max(20, contentRect.left);
-      const lineEnd = Math.min(width - 20, contentRect.right);
-      const formationLine = context.createLinearGradient(lineStart, 0, lineEnd, 0);
-      formationLine.addColorStop(0, "transparent");
-      formationLine.addColorStop(0.16, accent);
-      formationLine.addColorStop(0.5, accent);
-      formationLine.addColorStop(0.84, accent);
-      formationLine.addColorStop(1, "transparent");
-      context.fillStyle = formationLine;
-      context.globalAlpha = 0.2;
-      context.fillRect(lineStart, line, lineEnd - lineStart, 1);
-      context.globalAlpha = 0.06;
-      context.fillRect(lineStart + (lineEnd - lineStart) * 0.08, line + band * 0.16, (lineEnd - lineStart) * 0.84, 1);
 
       let particlesAnimating = false;
       particles.forEach((particle, index) => {
@@ -302,7 +346,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
         if (viewportHomeY < line - band * 0.85 || viewportHomeY > line + band * 1.2) return;
 
         const targetProgress = targetProgressFor(particle, smoothScroll, rootTop);
-        const settleTime = targetProgress > particle.progress ? 0.62 : 0.4;
+        const settleTime = targetProgress > particle.progress ? 0.24 : 0.18;
         const step = delta / settleTime;
         if (Math.abs(targetProgress - particle.progress) <= step) {
           particle.progress = targetProgress;
@@ -317,15 +361,17 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
           particle.scatterX +
           (particle.homeX - particle.scatterX) * settled +
           particle.drift * arc +
-          Math.sin(index * 0.71 + elapsed * (2.5 + random(index, 23) * 2)) * (1 - settled) * 2.8;
+          Math.sin(index * 0.71 + elapsed * (5.2 + random(index, 23) * 3.4)) * (1 - settled) * 4.2;
         const localY =
           particle.scatterY +
           (particle.homeY - particle.scatterY) * settled -
-          Math.abs(particle.drift) * 0.25 * arc;
+          Math.abs(particle.drift) * 0.25 * arc +
+          Math.cos(index * 0.47 + elapsed * (4.4 + random(index, 29) * 3)) * (1 - settled) * 2.6;
         const viewportY = rootTop + localY - smoothScroll;
         const edgeFade = clamp(1 - Math.abs(viewportHomeY - line) / (band * 1.2));
         const mergeFade = 1 - clamp((particle.progress - 0.86) / 0.14);
-        const opacity = (0.28 + edgeFade * 0.72) * (0.35 + mergeFade * 0.65);
+        const opacity = (0.18 + edgeFade * 0.82) * mergeFade;
+        if (opacity <= 0.01) return;
 
         context.globalAlpha = opacity;
         context.fillStyle = particle.color;
@@ -335,13 +381,15 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
       });
 
       context.globalAlpha = 1;
-      if (smoothScroll !== targetScroll || particlesAnimating) {
+      if (smoothScroll !== targetScroll || particlesAnimating || !scrollIdle) {
         frame = window.requestAnimationFrame(draw);
+      } else {
+        clearEffect();
       }
     };
 
     const requestDraw = () => {
-      if (destroyed || reducedMotion || !visible || frame) return;
+      if (destroyed || reducedMotion || !visible || !effectActive || frame) return;
       lastTime = performance.now();
       frame = window.requestAnimationFrame(draw);
     };
@@ -351,16 +399,24 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
       rebuildFrame = window.requestAnimationFrame(() => {
         rebuildFrame = 0;
         buildParticles();
-        requestDraw();
+        if (effectActive) requestDraw();
       });
     };
 
     const onScroll = () => {
       targetScroll = window.scrollY;
+      effectActive = true;
+      scrollIdle = false;
+      window.clearTimeout(scrollIdleTimer);
+      scrollIdleTimer = window.setTimeout(() => {
+        scrollIdle = true;
+        requestDraw();
+      }, 100);
       requestDraw();
     };
 
     const onWindowResize = () => {
+      clearEffect();
       resizeCanvas();
       scheduleRebuild();
     };
@@ -372,17 +428,13 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
         window.cancelAnimationFrame(frame);
         frame = 0;
         particles = [];
-        context.clearRect(0, 0, width, height);
-        content.style.removeProperty("--particle-mask-crisp");
-        content.style.removeProperty("--particle-mask-soft");
-        content.style.removeProperty("--particle-mask-dissolve");
-        content.style.removeProperty("--particle-mask-hidden");
+        maskTargets = [];
+        clearEffect();
       } else {
         targetScroll = window.scrollY;
         smoothScroll = targetScroll;
         resizeCanvas();
         buildParticles();
-        requestDraw();
       }
     };
 
@@ -393,11 +445,11 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
           targetScroll = window.scrollY;
           smoothScroll = targetScroll;
           buildParticles();
-          requestDraw();
+          if (effectActive) requestDraw();
         } else {
           window.cancelAnimationFrame(frame);
           frame = 0;
-          context.clearRect(0, 0, width, height);
+          clearEffect();
         }
       },
       { rootMargin: "12% 0px" }
@@ -423,11 +475,13 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
       motionQuery.removeEventListener("change", onMotionChange);
       window.cancelAnimationFrame(frame);
       window.cancelAnimationFrame(rebuildFrame);
+      window.clearTimeout(scrollIdleTimer);
       particles = [];
+      maskTargets = [];
+      Array.from(activeMaskTargets).forEach(clearMaskTarget);
       canvas.width = 1;
       canvas.height = 1;
       delete stage.dataset.particleScroll;
-      content.removeAttribute("style");
     };
   }, []);
 

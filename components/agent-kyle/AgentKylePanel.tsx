@@ -124,10 +124,11 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
   }, [onClose, open]);
 
   useEffect(() => {
-    if (open && seedQuestion) {
-      setDraft(seedQuestion);
-      window.setTimeout(() => inputRef.current?.focus(), 180);
-    }
+    if (!open) return;
+    if (seedQuestion) setDraft(seedQuestion);
+
+    const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 180);
+    return () => window.clearTimeout(focusTimer);
   }, [open, seedQuestion]);
 
   useEffect(() => {

@@ -5,6 +5,7 @@ import { SectionProjects } from "@/components/SectionProjects";
 import { SectionSkills } from "@/components/SectionSkills";
 import { SectionNow } from "@/components/SectionNow";
 import { SectionContact } from "@/components/SectionContact";
+import { Bend } from "@/components/canvasui/Bend";
 
 export default function HomePage() {
   return (
@@ -13,6 +14,7 @@ export default function HomePage() {
       <div className="home-rhythm">
         <IntroBridge />
         <SectionProof />
+        <Bend />
         <SectionProjects />
         <SectionSkills />
         <SectionNow />

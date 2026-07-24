@@ -1,454 +1,339 @@
 .rail {
-  --count: 6;
   position: relative;
   margin: 1rem 0 0;
-  padding: 0.5rem 0;
-  min-height: clamp(290px, 36vw, 360px);
+  padding: 0;
   list-style: none;
-  display: grid;
-  grid-template-columns: repeat(var(--count), minmax(0, 1fr));
-  gap: clamp(0.85rem, 1.5vw, 1rem);
-  overflow: visible;
 }
 
 .rail::before {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 2px;
-  transform: translateY(-50%);
+  top: 1.5rem;
+  bottom: 1.5rem;
+  left: 4.2rem;
+  width: 1px;
   background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--c-accent-700) 24%, transparent),
-    color-mix(in srgb, var(--c-accent-700) 75%, transparent),
-    color-mix(in srgb, var(--c-accent-700) 24%, transparent)
+    180deg,
+    color-mix(in srgb, var(--c-border-accent) 24%, transparent),
+    color-mix(in srgb, var(--c-border-accent) 76%, transparent),
+    color-mix(in srgb, var(--c-border-accent) 24%, transparent)
   );
-  opacity: 0.9;
 }
 
 .item {
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  padding-left: 5.75rem;
+}
+
+.item + .item {
+  margin-top: 0.72rem;
 }
 
 .item::before {
   content: "";
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 12px;
-  height: 12px;
+  z-index: 2;
+  top: 1.7rem;
+  left: calc(4.2rem - 5px);
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--c-bg);
   border-radius: 999px;
-  transform: translate(-50%, -50%);
-  background: color-mix(in srgb, var(--c-accent-700) 76%, var(--c-text));
-  box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--c-accent-900) 46%, transparent),
-    0 0 16px color-mix(in srgb, var(--c-accent-700) 34%, transparent);
-}
-
-.item::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: calc(50% - 36px);
-  width: 2px;
-  height: 36px;
-  transform: translateX(-50%);
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--c-accent-700) 46%, transparent),
-    color-mix(in srgb, var(--c-accent-700) 8%, transparent)
-  );
-}
-
-.item:nth-child(even) {
-  align-items: flex-end;
-}
-
-.item:nth-child(even)::after {
-  top: 50%;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--c-accent-700) 8%, transparent),
-    color-mix(in srgb, var(--c-accent-700) 46%, transparent)
-  );
-}
-
-.card {
-  --base-y: -40px;
-  --hx: 0;
-  --hy: 0;
-  position: relative;
-  width: min(100%, 220px);
-  min-height: 162px;
-  padding: 0.88rem 0.9rem 0.86rem;
-  border-radius: 0.95rem;
-  border: 1px solid color-mix(in srgb, var(--c-accent-700) 24%, var(--c-border));
-  backdrop-filter: blur(7px);
-  background: linear-gradient(
-    168deg,
-    color-mix(in srgb, var(--c-accent-900) 24%, var(--c-surface-2)) 0%,
-    color-mix(in srgb, var(--c-surface-2) 86%, transparent) 100%
-  );
-  box-shadow:
-    0 9px 22px color-mix(in srgb, var(--c-accent-900) 12%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--c-text) 24%, transparent);
-  overflow: hidden;
-  transform: translate3d(
-    calc(var(--hx) * (8px * var(--depth))),
-    calc(var(--base-y) + var(--hy) * (10px * var(--depth))),
-    0
-  );
-  animation: card-float 7.2s ease-in-out infinite;
-  animation-delay: calc(var(--i) * -0.48s);
+  background: color-mix(in srgb, var(--c-accent-700) 82%, var(--c-text));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--c-accent-700) 32%, transparent);
   transition:
-    transform 220ms ease,
-    box-shadow 220ms ease,
-    border-color 220ms ease;
+    background-color 180ms ease,
+    box-shadow 180ms ease;
 }
 
-.cardHead {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.65rem;
-  width: 100%;
-}
-
-.item:nth-child(even) .card {
-  --base-y: 40px;
-}
-
-.card:hover {
-  border-color: color-mix(in srgb, var(--c-accent-700) 64%, transparent);
+.itemOpen::before {
+  background: var(--c-link-hover);
   box-shadow:
-    0 14px 28px color-mix(in srgb, var(--c-accent-900) 24%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--c-accent-700) 44%, transparent);
+    0 0 0 3px color-mix(in srgb, var(--c-accent-700) 38%, transparent),
+    0 0 16px color-mix(in srgb, var(--c-accent-700) 32%, transparent);
 }
 
-.cardTrigger {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
+.entry {
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--c-border) 84%, transparent);
+  border-radius: 0.9rem;
+  background: linear-gradient(
+    150deg,
+    color-mix(in srgb, var(--c-surface-2) 94%, var(--c-accent-900)),
+    color-mix(in srgb, var(--c-surface-1) 94%, var(--c-accent-900))
+  );
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.entry:hover {
+  border-color: color-mix(in srgb, var(--c-border-accent) 66%, var(--c-border));
+}
+
+.itemOpen .entry {
+  border-color: color-mix(in srgb, var(--c-border-accent) 78%, var(--c-border));
+  box-shadow: 0 12px 26px color-mix(in srgb, var(--c-shadow) 40%, transparent);
+}
+
+.trigger {
+  position: relative;
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr) auto;
+  gap: 1.15rem;
+  align-items: center;
+  width: 100%;
+  min-height: 5.25rem;
+  padding: 0.8rem 1rem;
   border: 0;
-  border-radius: inherit;
+  border-radius: 0;
   background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   cursor: pointer;
 }
 
-.cardTrigger:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--c-accent-700) 72%, var(--c-text));
-  outline-offset: 3px;
+.trigger:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: -4px;
 }
 
 .year {
-  margin: 0.16rem 0 0;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  width: fit-content;
+  border: 1px solid color-mix(in srgb, var(--c-accent-700) 44%, transparent);
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--c-accent-700) 40%, transparent);
-  background: color-mix(in srgb, var(--c-accent-900) 22%, transparent);
-  padding: 0.16rem 0.48rem;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--c-accent-700) 80%, var(--c-text));
-}
-
-.label {
-  margin: 0.8rem 0 0;
-  width: 100%;
-  font-size: 0.94rem;
-  line-height: 1.4;
-  color: color-mix(in srgb, var(--c-text) 94%, transparent);
-  text-wrap: balance;
-  min-height: 3.9em;
-}
-
-.cardCta {
-  margin-top: 0.74rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.66rem;
-  font-weight: 600;
+  background: color-mix(in srgb, var(--c-accent-900) 32%, transparent);
+  padding: 0.2rem 0.52rem;
+  color: color-mix(in srgb, var(--c-link) 88%, var(--c-text));
+  font-size: 0.7rem;
+  font-weight: 650;
   letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--c-accent-700) 62%, var(--c-text));
-  opacity: 0.88;
-  transition:
-    color 200ms ease,
-    opacity 200ms ease,
-    transform 200ms ease;
 }
 
-.cardCta::after {
-  content: "↗";
-  font-size: 0.78rem;
-  line-height: 1;
+.identity {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: center;
+  min-width: 0;
 }
 
 .logo {
-  width: 60px;
-  height: 60px;
-  margin-top: 0.06rem;
-  margin-left: auto;
-  flex-shrink: 0;
+  width: 3.5rem;
+  height: 2.5rem;
   object-fit: contain;
   opacity: 0.88;
-  pointer-events: none;
   transition:
-    opacity 220ms ease,
-    transform 220ms ease,
-    filter 220ms ease;
+    opacity 180ms ease,
+    transform 180ms ease;
 }
 
-.card:hover .logo {
-  opacity: 1;
-  transform: translateY(-1px);
-  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--c-accent-700) 32%, transparent));
+.company,
+.role {
+  display: block;
 }
 
-.card:hover .year {
-  border-color: color-mix(in srgb, var(--c-accent-700) 64%, transparent);
-  color: color-mix(in srgb, var(--c-link-hover) 82%, var(--c-text));
+.company {
+  color: color-mix(in srgb, var(--c-text) 96%, transparent);
+  font-size: 1rem;
+  font-weight: 620;
+  line-height: 1.35;
 }
 
-.card:hover .cardCta {
-  color: color-mix(in srgb, var(--c-link-hover) 84%, var(--c-text));
-  opacity: 1;
-  transform: translateX(1px);
+.role {
+  margin-top: 0.2rem;
+  color: var(--c-text-muted);
+  font-size: 0.86rem;
+  line-height: 1.35;
 }
 
-.modalBackdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 120;
-  display: flex;
+.affordance {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
-    max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
-  background: color-mix(in srgb, var(--c-bg) 62%, transparent);
-  backdrop-filter: blur(10px);
+  gap: 0.65rem;
+  color: color-mix(in srgb, var(--c-link) 82%, var(--c-text));
 }
 
-.modalPanel {
-  position: relative;
-  width: min(680px, 100%);
-  max-height: min(88dvh, 760px);
-  overflow: auto;
-  border: 1px solid color-mix(in srgb, var(--c-accent-700) 34%, var(--c-border));
-  border-radius: 1rem;
-  background: linear-gradient(
-    165deg,
-    color-mix(in srgb, var(--c-surface-2) 88%, var(--c-accent-900)) 0%,
-    color-mix(in srgb, var(--c-surface-2) 70%, var(--c-bg)) 100%
-  );
-  box-shadow: 0 24px 50px color-mix(in srgb, var(--c-bg) 46%, transparent);
-  padding: 1rem 1rem 1.1rem;
+.affordanceLabel {
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
-.modalClose {
-  position: absolute;
-  top: 0.7rem;
-  right: 0.7rem;
+.disclosureIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 1.9rem;
   height: 1.9rem;
-  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--c-border-accent) 58%, var(--c-border));
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--c-accent-700) 32%, transparent);
-  background: color-mix(in srgb, var(--c-accent-900) 24%, transparent);
-  color: color-mix(in srgb, var(--c-text) 92%, transparent);
-  font-size: 1.1rem;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.modalClose:hover {
-  border-color: color-mix(in srgb, var(--c-accent-700) 62%, transparent);
-}
-
-.modalHeader {
-  margin-top: 0.7rem;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.9rem;
-  align-items: start;
-}
-
-.modalLogo {
-  width: 88px;
-  height: 50px;
-  object-fit: contain;
-  border-radius: 0.5rem;
-  border: 1px dashed color-mix(in srgb, var(--c-accent-700) 32%, transparent);
-  background: color-mix(in srgb, var(--c-accent-900) 20%, transparent);
-}
-
-.modalRole {
-  margin: 0;
+  background: color-mix(in srgb, var(--c-accent-900) 26%, transparent);
+  color: var(--c-link-hover);
   font-size: 1.05rem;
-  line-height: 1.3;
-  color: color-mix(in srgb, var(--c-text) 96%, transparent);
+  line-height: 1;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    transform 180ms ease;
 }
 
-.modalCompany {
-  margin: 0.18rem 0 0;
-  font-size: 0.95rem;
-  color: color-mix(in srgb, var(--c-accent-700) 72%, var(--c-text));
+.trigger:hover .logo {
+  opacity: 1;
+  transform: translateY(-1px);
 }
 
-.modalMeta {
-  margin: 0.28rem 0 0;
-  font-size: 0.84rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--c-text) 66%, transparent);
+.trigger:hover .disclosureIcon {
+  border-color: var(--c-border-accent);
+  background: color-mix(in srgb, var(--c-accent-800) 70%, transparent);
 }
 
-.modalBullets {
-  margin: 1rem 0 0;
-  padding: 0;
-  list-style: none;
+.panel {
   display: grid;
-  gap: 0.72rem;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    grid-template-rows 220ms ease,
+    opacity 180ms ease,
+    visibility 0s linear 220ms;
 }
 
-.modalBullets li {
-  position: relative;
-  padding-left: 1rem;
-  color: color-mix(in srgb, var(--c-text) 90%, transparent);
-  line-height: 1.45;
+.panelOpen {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  opacity: 1;
+  transition:
+    grid-template-rows 220ms ease,
+    opacity 180ms ease,
+    visibility 0s linear 0s;
 }
 
-.modalBullets li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.55em;
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--c-accent-700) 70%, var(--c-text));
+.panelInner {
+  min-height: 0;
+  overflow: hidden;
+  border-top: 1px solid color-mix(in srgb, var(--c-border) 58%, transparent);
 }
 
-@keyframes card-float {
-  0%,
-  100% {
-    transform: translate3d(
-      calc(var(--hx) * (8px * var(--depth))),
-      calc(var(--base-y) + var(--hy) * (10px * var(--depth))),
-      0
-    );
-  }
-
-  50% {
-    transform: translate3d(
-      calc(var(--hx) * (8px * var(--depth))),
-      calc(var(--base-y) + var(--hy) * (10px * var(--depth)) - 6px),
-      0
-    );
-  }
+.meta {
+  margin: 0;
+  padding: 0.85rem 1rem 0;
+  color: var(--c-text-faint);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
-@media (max-width: 900px) {
-  .rail {
-    grid-template-columns: 1fr;
-    min-height: 0;
-    gap: 0.9rem;
-    padding: 0.25rem 0;
-  }
+.impactGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  padding: 0.85rem 1rem 1rem;
+}
 
+.impactPoint {
+  min-width: 0;
+  padding-right: 1.1rem;
+}
+
+.impactPoint + .impactPoint {
+  border-left: 1px solid color-mix(in srgb, var(--c-border) 58%, transparent);
+  padding-left: 1.1rem;
+}
+
+.impactPoint dt {
+  color: color-mix(in srgb, var(--c-link) 80%, var(--c-text));
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.impactPoint dd {
+  margin: 0.4rem 0 0;
+  color: color-mix(in srgb, var(--c-text) 88%, transparent);
+  font-size: 0.86rem;
+  line-height: 1.48;
+}
+
+@media (max-width: 700px) {
   .rail::before {
-    left: 1.25rem;
-    right: auto;
-    top: 1rem;
-    bottom: 1rem;
-    width: 2px;
-    height: auto;
-    transform: none;
-    background: linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--c-accent-700) 24%, transparent),
-      color-mix(in srgb, var(--c-accent-700) 76%, transparent),
-      color-mix(in srgb, var(--c-accent-700) 24%, transparent)
-    );
+    left: 0.65rem;
   }
 
   .item {
-    justify-content: flex-start;
-    align-items: flex-start;
-    padding-left: 1.9rem;
+    padding-left: 1.65rem;
   }
 
   .item::before {
-    left: 1.25rem;
-    top: 1.08rem;
-    transform: translate(-50%, 0);
+    left: calc(0.65rem - 5px);
   }
 
-  .item::after {
-    left: 1.25rem;
-    top: 1.42rem;
-    width: 20px;
-    height: 2px;
-    transform: none;
-    background: linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--c-accent-700) 56%, transparent),
-      color-mix(in srgb, var(--c-accent-700) 10%, transparent)
-    );
+  .trigger {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.85rem;
+    padding: 0.85rem;
   }
 
-  .item:nth-child(even) {
-    align-items: flex-start;
+  .year {
+    position: absolute;
+    top: 0.72rem;
+    right: 0.85rem;
   }
 
-  .item:nth-child(even)::after {
-    top: 1.42rem;
-    background: linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--c-accent-700) 56%, transparent),
-      color-mix(in srgb, var(--c-accent-700) 10%, transparent)
-    );
+  .identity {
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: 0.7rem;
+    padding-right: 3.75rem;
   }
 
-  .card {
-    --base-y: 0px;
-    width: min(100%, 560px);
+  .logo {
+    width: 3rem;
+    height: 2.25rem;
   }
 
-  .item:nth-child(even) .card {
-    --base-y: 0px;
-  }
-}
-
-@media (max-width: 640px) {
-  .modalPanel {
-    width: min(100%, 640px);
-    max-height: min(88dvh, 820px);
-    border-radius: 1rem;
-    padding: 0.9rem 0.9rem 1.15rem;
+  .affordanceLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
   }
 
-  .modalRole {
-    font-size: 1rem;
+  .impactGrid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .impactPoint {
+    padding-right: 0;
+  }
+
+  .impactPoint + .impactPoint {
+    border-top: 1px solid color-mix(in srgb, var(--c-border) 58%, transparent);
+    border-left: 0;
+    padding-top: 0.85rem;
+    padding-left: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card {
-    animation: none;
+  .item::before,
+  .entry,
+  .logo,
+  .disclosureIcon,
+  .panel,
+  .panelOpen {
     transition: none;
-    transform: none;
   }
 }

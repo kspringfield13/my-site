@@ -37,8 +37,6 @@ export function partitionNowEntries(now: NowFeed) {
   const previousEntries = entries
     .filter((entry) => !currentIds.has(entry.id))
     .sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
-  const previousDate = previousEntries[0]?.date;
-  const archivedEntries = previousEntries.filter((entry) => entry.date === previousDate);
 
-  return { currentEntries, archivedEntries };
+  return { currentEntries, archivedEntries: previousEntries };
 }

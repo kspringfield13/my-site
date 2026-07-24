@@ -10,6 +10,7 @@ import {
   type PointerEvent as ReactPointerEvent
 } from "react";
 import { THEME_RGB } from "@/lib/theme/palette";
+import { ParticleReveal } from "@/components/canvasui/ParticleReveal";
 import styles from "./HeroSpotlight.module.css";
 
 const X_URL = "https://x.com/kspringfield13";
@@ -1007,6 +1008,7 @@ export function HeroSpotlight() {
           .join(" ")}
         aria-hidden="true"
       />
+      <ParticleReveal className={styles.particleEntrance} />
 
       <div className={styles.uiLayer}>
         <div

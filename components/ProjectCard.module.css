@@ -1,0 +1,413 @@
+.card {
+  --project-pointer-x: 50%;
+  --project-pointer-y: 30%;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--c-border);
+  border-radius: 1rem;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--c-surface-2) 94%, var(--c-accent-900)), var(--c-surface-1));
+  box-shadow: 0 18px 42px color-mix(in srgb, var(--c-shadow) 35%, transparent);
+  transform: translateZ(0);
+  transition:
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 260ms ease,
+    box-shadow 320ms ease;
+}
+
+.card::after {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border: 1px solid transparent;
+  border-radius: inherit;
+  background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--c-link-hover) 45%, transparent),
+      transparent 34%,
+      transparent 70%,
+      color-mix(in srgb, var(--c-border-accent) 30%, transparent)
+    )
+    border-box;
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  mask:
+    linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  transition: opacity 260ms ease;
+}
+
+.sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: radial-gradient(
+    330px circle at var(--project-pointer-x) var(--project-pointer-y),
+    color-mix(in srgb, var(--c-link) 11%, transparent),
+    transparent 68%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 260ms ease;
+}
+
+.card:hover,
+.card:focus-within {
+  border-color: color-mix(in srgb, var(--c-border-accent) 76%, var(--c-border));
+  box-shadow:
+    0 24px 56px color-mix(in srgb, var(--c-shadow) 58%, transparent),
+    0 0 36px color-mix(in srgb, var(--c-glow-accent) 38%, transparent);
+  transform: translateY(-4px);
+}
+
+.card:hover::after,
+.card:focus-within::after,
+.card:hover .sheen,
+.card:focus-within .sheen {
+  opacity: 1;
+}
+
+.banner {
+  position: relative;
+  height: clamp(7.5rem, 18vw, 10rem);
+  overflow: hidden;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-border) 75%, transparent);
+  background: var(--c-surface-2);
+}
+
+.bannerImage {
+  object-fit: cover;
+  transform: scale(1.005);
+  transition:
+    transform 650ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 400ms ease;
+}
+
+.card:hover .bannerImage,
+.card:focus-within .bannerImage {
+  filter: saturate(1.08) contrast(1.03);
+  transform: scale(1.045);
+}
+
+.bannerScrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(4, 8, 16, 0.02) 0%, rgba(4, 8, 16, 0.18) 55%, rgba(6, 11, 19, 0.9) 100%),
+    linear-gradient(90deg, rgba(4, 8, 16, 0.3), transparent 50%);
+  pointer-events: none;
+}
+
+.bannerMeta {
+  position: absolute;
+  right: 0.85rem;
+  bottom: 0.7rem;
+  left: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: color-mix(in srgb, var(--c-text) 75%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.statusDot {
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 999px;
+  background: var(--c-link);
+  box-shadow: 0 0 0.6rem color-mix(in srgb, var(--c-link) 62%, transparent);
+}
+
+.body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.3rem;
+  padding: 1.1rem;
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--c-text-faint);
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.kickerRule {
+  height: 1px;
+  min-width: 1.5rem;
+  flex: 1;
+  background: color-mix(in srgb, var(--c-border) 70%, transparent);
+}
+
+.flagship {
+  color: var(--c-link);
+}
+
+.headingRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.65rem;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 3vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+.title a {
+  color: var(--c-text);
+  text-decoration: none;
+}
+
+.title a:hover {
+  color: var(--c-link-hover);
+}
+
+.tagline {
+  margin: 0.65rem 0 0;
+  color: var(--c-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.9rem;
+}
+
+.outcome {
+  position: relative;
+  min-height: 6rem;
+  margin-top: 1rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--c-border) 70%, transparent);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--c-surface-1) 78%, transparent);
+  padding: 0.75rem 0.8rem;
+  transition:
+    border-color 260ms ease,
+    background-color 260ms ease;
+}
+
+.card:hover .outcome,
+.card:focus-within .outcome {
+  border-color: color-mix(in srgb, var(--c-border-accent) 72%, var(--c-border));
+  background: color-mix(in srgb, var(--c-surface-3) 37%, var(--c-surface-1));
+}
+
+.outcomeLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--c-link);
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.outcomeMarker {
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: currentColor;
+  transition: box-shadow 260ms ease;
+}
+
+.card:hover .outcomeMarker,
+.card:focus-within .outcomeMarker {
+  box-shadow: 0 0 0.75rem color-mix(in srgb, var(--c-link) 65%, transparent);
+}
+
+.outcomeCue {
+  display: none;
+  margin-left: auto;
+  color: var(--c-text-faint);
+  font-size: 0.58rem;
+  transition: opacity 180ms ease;
+}
+
+.outcomeText {
+  display: -webkit-box;
+  margin: 0.45rem 0 0;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--c-text) 87%, var(--c-text-muted));
+  font-size: 0.78rem;
+  line-height: 1.48;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  transition:
+    opacity 240ms ease,
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.75rem;
+  margin-top: 0.85rem;
+  color: var(--c-text-faint);
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+}
+
+.stack span:not(:last-child)::after {
+  margin-left: 0.75rem;
+  color: color-mix(in srgb, var(--c-border) 80%, transparent);
+  content: "/";
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-top: 1px solid color-mix(in srgb, var(--c-border) 58%, transparent);
+  padding-top: 1rem;
+}
+
+.primaryAction,
+.repoAction {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.primaryAction {
+  color: var(--c-text);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.primaryAction:hover {
+  color: var(--c-link-hover);
+}
+
+.actionArrow {
+  display: inline-block;
+  color: var(--c-link);
+  font-size: 1rem;
+  transition: transform 220ms ease;
+}
+
+.primaryAction:hover .actionArrow,
+.primaryAction:focus-visible .actionArrow {
+  transform: translateX(0.22rem);
+}
+
+.repoAction {
+  border: 1px solid var(--c-border);
+  background: color-mix(in srgb, var(--c-surface-2) 84%, transparent);
+  color: var(--c-text-muted);
+  padding: 0.45rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  transition:
+    border-color 220ms ease,
+    background-color 220ms ease,
+    color 220ms ease;
+}
+
+.repoAction:hover {
+  border-color: var(--c-border-accent);
+  background: var(--c-surface-3);
+  color: var(--c-link-hover);
+}
+
+.samsStudioAction {
+  border-color: #aa6d2f;
+  background: color-mix(in srgb, var(--c-surface-2) 78%, #cc7f2f);
+  color: color-mix(in srgb, var(--c-text) 88%, #ffd7a5);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .outcomeCue {
+    display: inline;
+  }
+
+  .outcomeText {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  .card:hover .outcomeText,
+  .card:focus-within .outcomeText {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .card:hover .outcomeCue,
+  .card:focus-within .outcomeCue {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .primaryAction,
+  .repoAction {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card:hover,
+  .card:focus-within,
+  .bannerImage,
+  .card:hover .bannerImage,
+  .card:focus-within .bannerImage,
+  .outcomeText,
+  .card:hover .outcomeText,
+  .card:focus-within .outcomeText,
+  .actionArrow,
+  .primaryAction:hover .actionArrow,
+  .primaryAction:focus-visible .actionArrow {
+    transform: none;
+  }
+
+  .sheen {
+    display: none;
+  }
+}

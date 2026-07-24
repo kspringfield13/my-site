@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { AgentKylePanel } from "@/components/agent-kyle/AgentKylePanel";
 
@@ -15,6 +15,7 @@ export function AgentKyleDock() {
   const [hasReachedProjects, setHasReachedProjects] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [seedQuestion, setSeedQuestion] = useState("");
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!isHomeRoute) {
@@ -72,10 +73,15 @@ export function AgentKyleDock() {
     setIsExpanded(true);
   }
 
+  function closePanel() {
+    setIsExpanded(false);
+    window.requestAnimationFrame(() => triggerRef.current?.focus());
+  }
+
   return (
     <div
-      className={`fixed inset-x-0 bottom-0 z-[75] px-2 transition-all duration-300 motion-reduce:transition-none md:px-4 ${
-        isVisible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-full opacity-0"
+      className={`fixed inset-x-3 bottom-3 z-[75] transition-all duration-300 motion-reduce:transition-none md:inset-x-auto md:bottom-5 md:right-5 ${
+        isVisible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
       }`}
     >
       {isExpanded ? (
@@ -83,11 +89,11 @@ export function AgentKyleDock() {
           type="button"
           aria-label="Close Agent Kyle"
           className="fixed inset-0 -z-10 cursor-default bg-black/55 backdrop-blur-[2px]"
-          onClick={() => setIsExpanded(false)}
+          onClick={closePanel}
         />
       ) : null}
 
-      <div className="relative mx-auto max-w-5xl">
+      <div className={`relative ml-auto ${isExpanded ? "w-full max-w-5xl md:w-[min(72rem,calc(100vw-2.5rem))]" : "w-fit"}`}>
         <div
           className={`absolute inset-x-0 bottom-full pb-2 transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none ${
             isExpanded ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-5 opacity-0"
@@ -97,23 +103,22 @@ export function AgentKyleDock() {
             <AgentKylePanel
               open={isExpanded}
               seedQuestion={seedQuestion}
-              onClose={() => setIsExpanded(false)}
+              onClose={closePanel}
             />
           </div>
         </div>
 
         <div
-          className={`border border-b-0 border-border-strong bg-surface-1/95 shadow-panel backdrop-blur-xl transition-all duration-300 ${
+          className={`border bg-surface-1/90 shadow-panel backdrop-blur-xl transition-all duration-300 motion-reduce:transition-none ${
             isExpanded
-              ? "mx-auto w-fit rounded-t-xl px-2 pt-1.5"
-              : "rounded-t-2xl px-3 pt-2.5 md:px-4"
+              ? "mx-auto w-fit rounded-full border-border-strong px-2 py-1"
+              : "group/dock relative rounded-full border-border px-1.5 py-1.5 hover:border-border-strong focus-within:border-border-strong"
           }`}
-          style={{ paddingBottom: isExpanded ? "max(0.35rem, env(safe-area-inset-bottom))" : "max(0.6rem, env(safe-area-inset-bottom))" }}
         >
           {isExpanded ? (
             <button
               type="button"
-              onClick={() => setIsExpanded(false)}
+              onClick={closePanel}
               className="flex items-center gap-2 rounded-full px-2 py-1 text-[0.65rem] uppercase tracking-[0.12em] text-faint transition hover:text-link-hover"
               aria-label="Collapse Agent Kyle"
             >
@@ -123,54 +128,49 @@ export function AgentKyleDock() {
               </svg>
             </button>
           ) : (
-            <div className="flex items-center gap-3">
+            <>
               <button
+                ref={triggerRef}
                 type="button"
                 onClick={() => openWithQuestion()}
-                className="group flex min-w-0 flex-1 items-center gap-3 text-left"
+                className="group flex items-center gap-2 rounded-full px-1.5 py-1 text-left"
                 aria-expanded={false}
-                aria-label="Open Agent Kyle"
+                aria-label="Open Agent Kyle, a guide to Kyle's portfolio"
               >
-                <div className="relative grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-border-accent bg-surface-3 text-xs font-semibold text-link-hover">
+                <span className="relative grid h-7 w-7 shrink-0 place-items-center rounded-full border border-border-accent bg-surface-2 text-[0.62rem] font-semibold tracking-wide text-link">
                   AK
-                  <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-surface-1 bg-emerald-400" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-fg">Ask Agent Kyle</span>
-                    <span className="hidden text-[0.62rem] uppercase tracking-[0.12em] text-faint sm:inline">Public portfolio guide</span>
-                  </div>
-                  <p className="truncate text-xs text-muted group-hover:text-link-hover">
-                    Ask about experience, projects, skills, or what Kyle could bring to your team.
-                  </p>
-                </div>
-              </button>
-
-              <div className="hidden items-center gap-2 lg:flex">
-                {DOCK_QUESTIONS.map((question) => (
-                  <button
-                    key={question}
-                    type="button"
-                    onClick={() => openWithQuestion(question)}
-                    className="rounded-full border border-border bg-surface-2 px-3 py-1.5 text-xs text-muted transition hover:border-border-accent hover:text-link-hover"
-                  >
-                    {question}
-                  </button>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsExpanded(true)}
-                className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-border bg-surface-2 text-muted transition hover:border-border-accent hover:text-link-hover"
-                aria-label="Expand Agent Kyle"
-                aria-expanded={false}
-              >
-                <svg className="h-4 w-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                  <span className="absolute -bottom-px -right-px h-2 w-2 rounded-full border-2 border-surface-1 bg-emerald-400" />
+                </span>
+                <span className="text-xs font-medium text-muted transition group-hover:text-link-hover motion-reduce:transition-none">
+                  Ask Agent Kyle
+                </span>
+                <svg className="h-3.5 w-3.5 text-faint transition group-hover:-translate-y-0.5 group-hover:text-link-hover motion-reduce:transition-none" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
                   <path d="M3.5 10 8 5.5 12.5 10" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
-            </div>
+
+              <div
+                className="pointer-events-none absolute bottom-full right-0 w-[min(20rem,calc(100vw-1.5rem))] translate-y-2 pb-3 opacity-0 transition-[transform,opacity] duration-200 ease-out motion-reduce:transition-none group-hover/dock:pointer-events-auto group-hover/dock:translate-y-0 group-hover/dock:opacity-100 group-focus-within/dock:pointer-events-auto group-focus-within/dock:translate-y-0 group-focus-within/dock:opacity-100"
+              >
+                <div className="rounded-2xl border border-border bg-surface-1/95 p-3 shadow-panel backdrop-blur-xl">
+                  <p className="px-1 text-xs leading-relaxed text-muted">
+                    Explore Kyle&apos;s experience, projects, and fit for your team.
+                  </p>
+                  <div className="mt-3 grid gap-1.5">
+                    {DOCK_QUESTIONS.map((question) => (
+                      <button
+                        key={question}
+                        type="button"
+                        onClick={() => openWithQuestion(question)}
+                        className="rounded-xl border border-transparent bg-surface-2 px-3 py-2 text-left text-xs text-muted transition hover:border-border-accent hover:text-link-hover motion-reduce:transition-none"
+                      >
+                        {question}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </div>

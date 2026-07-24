@@ -201,6 +201,45 @@ a:hover {
   padding: 1rem;
 }
 
+.canvasui-bend-transition {
+  position: relative;
+  width: 100%;
+  height: clamp(7.5rem, 14vw, 10rem);
+  margin-block: clamp(0.75rem, 2vw, 1.5rem);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.canvasui-bend-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.canvasui-bend-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  transform: translate(-50%, -50%);
+  color: var(--c-text-faint);
+  font-family: var(--font-mono);
+  font-size: clamp(0.65rem, 1.6vw, 0.76rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.canvasui-bend-arrow {
+  color: var(--c-link);
+  font-size: 1rem;
+}
+
 .btn-primary,
 .btn-secondary {
   display: inline-flex;

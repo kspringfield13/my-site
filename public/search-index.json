@@ -180,10 +180,30 @@
     "body": "Current experiments with outcomes and next steps."
   },
   {
+    "id": "now:2026-07-24-codex-voice-orchestration",
+    "type": "Now",
+    "title": "Codex + voice as a project control layer",
+    "url": "/#now",
+    "tags": [
+      "tools"
+    ],
+    "body": "Experimenting with Codex and voice control to coordinate software projects: framing bounded tasks, directing agents, reviewing progress, and keeping related workstreams moving. The practical goal is to spend less time moving context between tools and more time defining the problem, checking the work, and making decisions."
+  },
+  {
+    "id": "now:2026-07-24-agent-orchestration-notes",
+    "type": "Now",
+    "title": "What I’m learning",
+    "url": "/#now",
+    "tags": [
+      "ideas"
+    ],
+    "body": "Voice works well for direction and triage; detailed review still benefits from a keyboard and the code in view. Parallel agents help most when ownership is explicit, tasks are narrow, and every result is verified before it is combined."
+  },
+  {
     "id": "now:2026-06-07-ventures",
     "type": "Now",
     "title": "VENTURES",
-    "url": "/#now",
+    "url": "/archive/now",
     "tags": [
       "ventures"
     ],
@@ -193,7 +213,7 @@
     "id": "now:2026-06-07-tools",
     "type": "Now",
     "title": "TOOLS",
-    "url": "/#now",
+    "url": "/archive/now",
     "tags": [
       "tools"
     ],
@@ -203,7 +223,7 @@
     "id": "now:2026-06-07-ideas",
     "type": "Now",
     "title": "IDEAS",
-    "url": "/#now",
+    "url": "/archive/now",
     "tags": [
       "ideas"
     ],
@@ -213,7 +233,7 @@
     "id": "now:2026-06-07-models",
     "type": "Now",
     "title": "MODELS",
-    "url": "/#now",
+    "url": "/archive/now",
     "tags": [
       "models"
     ],
@@ -258,5 +278,35 @@
       "ventures"
     ],
     "body": "Building and supporting products and businesses across finance AI, coaching, and fitness studio operations. Pantheon is an autonomous hedge fund concept with 12 specialized AI agents running staggered 15-minute cycles from ingestion to execution and reporting. InterCoach is an AI interview prep platform using conversational avatars and real-time feedback with WebRTC. Sam's Studio is a yoga and barre business platform built with Next.js, Supabase, Stripe, scheduling, waitlists, and a mobile app via Capacitor."
+  },
+  {
+    "id": "now:2026-02-04-multi-agent-reliability",
+    "type": "Now",
+    "title": "Multi-agent reliability sweep",
+    "url": "/archive/now",
+    "tags": [
+      "models"
+    ],
+    "body": "Tried: Benchmarked retry and reconciliation strategies for parallel coding sessions. Outcome: Queue-based retries improved successful merges and reduced dead-end sessions. Next step: Add conflict scoring and weighted merge heuristics."
+  },
+  {
+    "id": "now:2026-01-31-dbt-governance-pattern",
+    "type": "Now",
+    "title": "dbt governance pattern tests",
+    "url": "/archive/now",
+    "tags": [
+      "tools"
+    ],
+    "body": "Tried: Compared model contracts and test suites for e-commerce-style marts. Outcome: Contract-first modeling caught breaking changes earlier in CI. Next step: Extend checks into cross-domain semantic layers."
+  },
+  {
+    "id": "now:2025-11-15-context-window-ops",
+    "type": "Now",
+    "title": "Context-window operations notes",
+    "url": "/archive/now",
+    "tags": [
+      "ideas"
+    ],
+    "body": "Tried: Documented prompt packing patterns for analytics copilots. Outcome: Prompt budgets were easier to tune with structured retrieval chunks. Next step: Package patterns into reusable toolkit modules."
   }
 ]

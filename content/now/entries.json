@@ -121,6 +121,26 @@
         "Outcome: Prompt budgets were easier to tune with structured retrieval chunks.",
         "Next step: Package patterns into reusable toolkit modules."
       ]
+    },
+    {
+      "id": "2026-07-24-codex-voice-orchestration",
+      "date": "2026-07-24",
+      "category": "tools",
+      "title": "Codex + voice as a project control layer",
+      "details": [
+        "Experimenting with Codex and voice control to coordinate software projects: framing bounded tasks, directing agents, reviewing progress, and keeping related workstreams moving.",
+        "The practical goal is to spend less time moving context between tools and more time defining the problem, checking the work, and making decisions."
+      ]
+    },
+    {
+      "id": "2026-07-24-agent-orchestration-notes",
+      "date": "2026-07-24",
+      "category": "ideas",
+      "title": "What I’m learning",
+      "details": [
+        "Voice works well for direction and triage; detailed review still benefits from a keyboard and the code in view.",
+        "Parallel agents help most when ownership is explicit, tasks are narrow, and every result is verified before it is combined."
+      ]
     }
   ]
 }

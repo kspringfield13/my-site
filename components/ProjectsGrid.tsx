@@ -31,6 +31,7 @@ export function ProjectsGrid({ projects }: { projects: ProjectMeta[] }) {
               className={`rounded-full border bg-surface-1 px-3 py-1 text-xs uppercase tracking-[0.08em] transition ${
                 active ? "border-border-accent bg-surface-3 text-link-hover" : "border-border text-muted hover:text-fg"
               }`}
+              aria-pressed={active}
               onClick={() => setSelected(tag.key)}
             >
               {tag.label}

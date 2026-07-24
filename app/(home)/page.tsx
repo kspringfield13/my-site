@@ -5,21 +5,22 @@ import { SectionProjects } from "@/components/SectionProjects";
 import { SectionSkills } from "@/components/SectionSkills";
 import { SectionNow } from "@/components/SectionNow";
 import { SectionContact } from "@/components/SectionContact";
-import { ParticleScrollTransition } from "@/components/canvasui/ParticleScrollTransition";
+import { ParticleScrollStage } from "@/components/canvasui/ParticleScrollStage";
 
 export default function HomePage() {
   return (
     <>
       <HeroSpotlight />
-      <div className="home-rhythm">
-        <IntroBridge />
-        <SectionProof />
-        <ParticleScrollTransition />
-        <SectionProjects />
-        <SectionSkills />
-        <SectionNow />
-        <SectionContact />
-      </div>
+      <ParticleScrollStage>
+        <div className="home-rhythm">
+          <IntroBridge />
+          <SectionProof />
+          <SectionProjects />
+          <SectionSkills />
+          <SectionNow />
+          <SectionContact />
+        </div>
+      </ParticleScrollStage>
     </>
   );
 }

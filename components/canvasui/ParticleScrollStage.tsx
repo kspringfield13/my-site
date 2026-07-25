@@ -94,7 +94,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
     let dpr = Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
     let particles: Particle[] = [];
     let revealTargets: HTMLElement[] = [];
-    const maskedTargets = new Set<HTMLElement>();
+    const activeRevealTargets = new Set<HTMLElement>();
     let frame = 0;
     let rebuildFrame = 0;
     let scrollIdleTimer = 0;
@@ -165,21 +165,17 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
 
     const clearRevealTarget = (target: HTMLElement) => {
       target.removeAttribute("data-particle-reveal");
-      target.style.removeProperty("--particle-reveal-solid");
-      target.style.removeProperty("--particle-reveal-soft");
-      target.style.removeProperty("--particle-reveal-dissolve");
-      target.style.removeProperty("--particle-reveal-clear");
-      target.style.removeProperty("--particle-reveal-fallback-clip");
-      maskedTargets.delete(target);
+      target.style.removeProperty("--particle-reveal-opacity");
+      activeRevealTargets.delete(target);
     };
 
     const clearVisuals = () => {
       clearCanvas();
-      Array.from(maskedTargets).forEach(clearRevealTarget);
+      Array.from(activeRevealTargets).forEach(clearRevealTarget);
     };
 
     const buildParticles = () => {
-      Array.from(maskedTargets).forEach(clearRevealTarget);
+      Array.from(activeRevealTargets).forEach(clearRevealTarget);
 
       if (reducedMotion || destroyed) {
         particles = [];
@@ -204,12 +200,20 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
         content.querySelectorAll<HTMLElement>("article, hr, a, button")
       ).slice(0, 72);
       const mediaElements = Array.from(content.querySelectorAll<HTMLElement>(MEDIA_SELECTOR)).slice(0, 24);
+      const surfaceElements = Array.from(
+        content.querySelectorAll<HTMLElement>("article, [data-particle-surface]")
+      );
 
-      // Mask whole homepage sections so their surfaces, borders, and children
-      // dissolve together. Per-child clipping left the painted container behind
-      // as a dark rectangular band, while one document-height mask can expose
-      // browser compositing seams. Section-sized masks avoid both artifacts.
-      revealTargets = Array.from(content.querySelectorAll<HTMLElement>("section"));
+      // Assemble bounded visual units instead of slicing a whole section at one
+      // y-coordinate. A section-wide cut through a card leaves a dark rectangular
+      // slab; revealing the card as one unit lets its particles own the handoff.
+      const insideSurface = (element: HTMLElement) =>
+        surfaceElements.some((surface) => surface !== element && surface.contains(element));
+      revealTargets = [
+        ...surfaceElements,
+        ...mediaElements.filter((element) => !insideSurface(element)),
+        ...textElements.filter((element) => !insideSurface(element))
+      ].filter((element, index, elements) => elements.indexOf(element) === index);
 
       for (const element of textElements) {
         const rect = element.getBoundingClientRect();
@@ -391,45 +395,38 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
       const { line, band } = formationMetrics(revealScroll);
       const scrollLag = window.scrollY - revealScroll;
       const clearEdge = line - band * 0.08;
-      const handoff = clamp(band * 0.055, 16, 24);
+      const handoff = clamp(band * 0.17, 52, 72);
       const solidEdge = clearEdge - handoff;
-      const softEdge = solidEdge + handoff * 0.2;
-      const dissolveEdge = solidEdge + handoff * 0.68;
 
       revealTargets.forEach((target) => {
         const rect = target.getBoundingClientRect();
         const syntheticTop = rect.top + scrollLag;
-        const syntheticBottom = rect.bottom + scrollLag;
+        const assemblyPoint = syntheticTop + Math.min(rect.height * 0.22, 28);
 
-        if (syntheticBottom <= solidEdge) {
-          if (maskedTargets.has(target)) clearRevealTarget(target);
+        if (assemblyPoint <= solidEdge) {
+          if (activeRevealTargets.has(target)) clearRevealTarget(target);
           return;
         }
 
-        if (syntheticTop >= clearEdge) {
+        if (assemblyPoint >= clearEdge) {
           if (target.dataset.particleReveal !== "hidden") {
             target.dataset.particleReveal = "hidden";
           }
-          maskedTargets.add(target);
+          target.style.setProperty("--particle-reveal-opacity", "0");
+          activeRevealTargets.add(target);
           return;
         }
 
         target.dataset.particleReveal = "forming";
-        const stops = [
-          ["--particle-reveal-solid", solidEdge - syntheticTop],
-          ["--particle-reveal-soft", softEdge - syntheticTop],
-          ["--particle-reveal-dissolve", dissolveEdge - syntheticTop],
-          ["--particle-reveal-clear", clearEdge - syntheticTop],
-          ["--particle-reveal-fallback-clip", Math.max(0, syntheticBottom - dissolveEdge)]
-        ] as const;
-
-        for (const [property, value] of stops) {
-          const nextValue = `${value.toFixed(1)}px`;
-          if (target.style.getPropertyValue(property) !== nextValue) {
-            target.style.setProperty(property, nextValue);
-          }
+        const linearProgress = clamp((clearEdge - assemblyPoint) / handoff);
+        const fusionProgress = clamp((linearProgress - 0.8) / 0.2);
+        const revealOpacity = (
+          fusionProgress * fusionProgress * (3 - 2 * fusionProgress)
+        ).toFixed(3);
+        if (target.style.getPropertyValue("--particle-reveal-opacity") !== revealOpacity) {
+          target.style.setProperty("--particle-reveal-opacity", revealOpacity);
         }
-        maskedTargets.add(target);
+        activeRevealTargets.add(target);
       });
     };
 
@@ -643,7 +640,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
       window.clearTimeout(scrollIdleTimer);
       particles = [];
       revealTargets = [];
-      Array.from(maskedTargets).forEach(clearRevealTarget);
+      Array.from(activeRevealTargets).forEach(clearRevealTarget);
       canvas.width = 1;
       canvas.height = 1;
       delete stage.dataset.particleScroll;

@@ -232,8 +232,8 @@ a:hover {
       to bottom,
       #000 0,
       #000 var(--particle-reveal-solid),
-      rgba(0, 0, 0, 0.86) var(--particle-reveal-soft),
-      rgba(0, 0, 0, 0.24) var(--particle-reveal-dissolve),
+      rgba(0, 0, 0, 0.96) var(--particle-reveal-soft),
+      rgba(0, 0, 0, 0.02) var(--particle-reveal-dissolve),
       transparent var(--particle-reveal-clear),
       transparent 100%
     );
@@ -241,8 +241,8 @@ a:hover {
       to bottom,
       #000 0,
       #000 var(--particle-reveal-solid),
-      rgba(0, 0, 0, 0.86) var(--particle-reveal-soft),
-      rgba(0, 0, 0, 0.24) var(--particle-reveal-dissolve),
+      rgba(0, 0, 0, 0.96) var(--particle-reveal-soft),
+      rgba(0, 0, 0, 0.02) var(--particle-reveal-dissolve),
       transparent var(--particle-reveal-clear),
       transparent 100%
     );

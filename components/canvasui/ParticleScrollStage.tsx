@@ -103,6 +103,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
     let destroyed = false;
     let targetScroll = window.scrollY;
     let smoothScroll = targetScroll;
+    let revealScroll = targetScroll;
     let lastTime = performance.now();
     let elapsed = 0;
     let pointerX = -10_000;
@@ -112,7 +113,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
     const formationMetrics = (scroll = smoothScroll) => {
       const compact = width < 640;
       const band = clamp(height * 0.42, compact ? 240 : 280, compact ? 340 : 420);
-      const baseLine = height * (compact ? 0.7 : 0.68);
+      const baseLine = height * (compact ? 0.8 : 0.78);
       const maxScroll = Math.max(document.documentElement.scrollHeight - height, 0);
       const endWindow = height * 0.45;
       const endProgress = clamp((scroll - (maxScroll - endWindow)) / Math.max(endWindow, 1));
@@ -188,7 +189,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
 
       const contentRect = content.getBoundingClientRect();
       const compact = width < 640;
-      const sampleStep = compact ? 2 : 3;
+      const sampleStep = 2;
       const candidates: Particle[] = [];
       let particleIndex = 0;
 
@@ -334,7 +335,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
 
         const localLeft = rect.left - contentRect.left;
         const localTop = rect.top - contentRect.top;
-        const edgeStep = compact ? 14 : 18;
+        const edgeStep = compact ? 10 : 12;
         const edgeColor =
           styles.borderTopColor && styles.borderTopColor !== "rgba(0, 0, 0, 0)"
             ? styles.borderTopColor
@@ -350,7 +351,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
 
       const lowPower = (navigator.hardwareConcurrency || 8) <= 4;
       const bucketHeight = compact ? 136 : 156;
-      const bucketCap = compact ? (lowPower ? 420 : 760) : lowPower ? 620 : 1120;
+      const bucketCap = compact ? (lowPower ? 520 : 900) : lowPower ? 760 : 1500;
       const buckets = new Map<number, Particle[]>();
 
       candidates.forEach((particle) => {
@@ -387,12 +388,13 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
     };
 
     const updateReveals = () => {
-      const { line, band } = formationMetrics(smoothScroll);
-      const scrollLag = window.scrollY - smoothScroll;
-      const solidEdge = line - band * 0.06;
-      const softEdge = line + band * 0.18;
-      const dissolveEdge = line + band * 0.58;
-      const clearEdge = line + band * 0.96;
+      const { line, band } = formationMetrics(revealScroll);
+      const scrollLag = window.scrollY - revealScroll;
+      const clearEdge = line - band * 0.08;
+      const handoff = clamp(band * 0.055, 16, 24);
+      const solidEdge = clearEdge - handoff;
+      const softEdge = solidEdge + handoff * 0.2;
+      const dissolveEdge = solidEdge + handoff * 0.68;
 
       revealTargets.forEach((target) => {
         const rect = target.getBoundingClientRect();
@@ -441,6 +443,10 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
       const smoothing = 1 - Math.exp(-delta / 0.22);
       smoothScroll += (targetScroll - smoothScroll) * smoothing;
       if (Math.abs(targetScroll - smoothScroll) < 0.15) smoothScroll = targetScroll;
+      const revealTau = targetScroll >= revealScroll ? 0.34 : 0.18;
+      const revealSmoothing = 1 - Math.exp(-delta / revealTau);
+      revealScroll += (targetScroll - revealScroll) * revealSmoothing;
+      if (Math.abs(targetScroll - revealScroll) < 0.15) revealScroll = targetScroll;
 
       const contentRect = content.getBoundingClientRect();
       const rootTop = window.scrollY + contentRect.top;
@@ -510,15 +516,17 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
 
         const bandPosition = clamp((viewportHomeY - line) / band);
         const edgeFade = Math.sin(bandPosition * Math.PI);
-        const mergeFade = 1 - clamp((particle.progress - 0.86) / 0.14);
-        const activityOpacity = scrollIdle ? 0.82 : 1;
-        const opacity = (0.68 + edgeFade * 0.32) * mergeFade * activityOpacity;
+        const mergeFade = 1 - clamp((particle.progress - 0.94) / 0.06);
+        const formationOpacity = 0.72 + settled * 0.28;
+        const activityOpacity = scrollIdle ? 0.85 : 1;
+        const opacity =
+          (0.72 + edgeFade * 0.28) * formationOpacity * mergeFade * activityOpacity;
         if (opacity <= 0.01) continue;
 
         context.globalAlpha = opacity;
         context.fillStyle = particle.color;
         context.beginPath();
-        context.arc(localX, viewportY, particle.radius * (0.74 + settled * 0.34), 0, Math.PI * 2);
+        context.arc(localX, viewportY, particle.radius * (0.72 + settled * 1.05), 0, Math.PI * 2);
         context.fill();
       }
 
@@ -582,6 +590,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
       } else {
         targetScroll = window.scrollY;
         smoothScroll = targetScroll;
+        revealScroll = targetScroll;
         resizeCanvas();
         buildParticles();
         requestDraw();
@@ -594,6 +603,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
         if (visible) {
           targetScroll = window.scrollY;
           smoothScroll = targetScroll;
+          revealScroll = targetScroll;
           buildParticles();
           updateReveals();
           requestDraw();

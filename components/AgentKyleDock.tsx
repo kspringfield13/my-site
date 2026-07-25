@@ -80,7 +80,7 @@ export function AgentKyleDock() {
 
   return (
     <div
-      className={`fixed inset-x-3 bottom-3 z-[75] transition-all duration-300 motion-reduce:transition-none md:inset-x-auto md:bottom-5 md:right-5 ${
+      className={`fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-[75] isolate transition-all duration-300 motion-reduce:transition-none md:inset-x-auto md:bottom-5 md:right-5 ${
         isVisible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
       }`}
     >
@@ -95,11 +95,11 @@ export function AgentKyleDock() {
 
       <div className={`relative ml-auto ${isExpanded ? "w-full max-w-5xl md:w-[min(72rem,calc(100vw-2.5rem))]" : "w-fit"}`}>
         <div
-          className={`absolute inset-x-0 bottom-full pb-2 transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none ${
+          className={`absolute inset-x-0 bottom-full z-10 pb-2 transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none ${
             isExpanded ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-5 opacity-0"
           }`}
         >
-          <div className="h-[min(76vh,760px)] min-h-[31rem]">
+          <div className="h-[calc(100dvh-6rem-env(safe-area-inset-bottom))] max-h-[42rem] min-h-0 md:h-[min(76vh,760px)] md:max-h-none md:min-h-[31rem]">
             <AgentKylePanel
               open={isExpanded}
               seedQuestion={seedQuestion}
@@ -109,10 +109,10 @@ export function AgentKyleDock() {
         </div>
 
         <div
-          className={`border bg-surface-1/90 shadow-panel backdrop-blur-xl transition-all duration-300 motion-reduce:transition-none ${
+          className={`relative z-20 border bg-surface-1 shadow-panel transition-all duration-300 motion-reduce:transition-none ${
             isExpanded
               ? "mx-auto w-fit rounded-full border-border-strong px-2 py-1"
-              : "group/dock relative rounded-full border-border px-1.5 py-1.5 hover:border-border-strong focus-within:border-border-strong"
+              : "group/dock rounded-full border-border px-1.5 py-1.5 hover:border-border-strong focus-within:border-border-strong"
           }`}
         >
           {isExpanded ? (
@@ -150,9 +150,9 @@ export function AgentKyleDock() {
               </button>
 
               <div
-                className="pointer-events-none absolute bottom-full right-0 w-[min(20rem,calc(100vw-1.5rem))] translate-y-2 pb-3 opacity-0 transition-[transform,opacity] duration-200 ease-out motion-reduce:transition-none group-hover/dock:pointer-events-auto group-hover/dock:translate-y-0 group-hover/dock:opacity-100 group-focus-within/dock:pointer-events-auto group-focus-within/dock:translate-y-0 group-focus-within/dock:opacity-100"
+                className="pointer-events-none absolute bottom-full right-0 z-10 w-[calc(100vw-1.5rem)] max-w-[22rem] translate-y-2 pb-3 opacity-0 transition-[transform,opacity] duration-200 ease-out motion-reduce:transition-none group-hover/dock:pointer-events-auto group-hover/dock:translate-y-0 group-hover/dock:opacity-100 group-focus-within/dock:pointer-events-auto group-focus-within/dock:translate-y-0 group-focus-within/dock:opacity-100 sm:w-[min(20rem,calc(100vw-1.5rem))]"
               >
-                <div className="rounded-2xl border border-border bg-surface-1/95 p-3 shadow-panel backdrop-blur-xl">
+                <div className="rounded-2xl border border-border-strong bg-surface-1 p-3 shadow-panel">
                   <p className="px-1 text-xs leading-relaxed text-muted">
                     Explore Kyle&apos;s experience, projects, and fit for your team.
                   </p>

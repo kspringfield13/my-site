@@ -193,6 +193,8 @@ export function PlaygroundTower() {
         },
         onPiece: setPiece,
         onCollapse: (finalHeight) => {
+          heightRef.current = finalHeight;
+          setHeight(finalHeight);
           setGameState("collapsed");
           setScoreSaved(false);
           setScoreError("");
@@ -311,7 +313,7 @@ export function PlaygroundTower() {
         )}
 
         {gameState === "collapsed" && (
-          <div className={styles.collapsePanel}>
+          <div className={styles.collapsePanel} role="status" aria-live="polite">
             <span>STRUCTURE LOST</span>
             <strong>{height.toFixed(1)} m</strong>
             {!scoreSaved ? (
@@ -440,7 +442,7 @@ export function PlaygroundTower() {
           <span className={styles.desktopHint}>
             Drag: position · Right-drag: orbit · Scroll: zoom · Q/E: rotate · Space: drop
           </span>
-          <span className={styles.mobileHint}>Drag to position · Controls below to rotate + drop</span>
+          <span className={styles.mobileHint}>1 finger places · 2 fingers orbit</span>
         </p>
         <div className={styles.actionControls}>
           <button

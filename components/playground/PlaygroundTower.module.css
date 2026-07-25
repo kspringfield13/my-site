@@ -551,30 +551,75 @@
     min-height: 30rem;
   }
 
+  .game[data-state="idle"] .startPanel {
+    justify-content: flex-end;
+    padding: 10rem 1.25rem 1.25rem;
+  }
+
+  .leaderboard {
+    z-index: 6;
+    width: min(12.5rem, calc(100% - 4.5rem));
+  }
+
+  .boardHeader {
+    padding: 0.55rem 0.65rem;
+    font-size: 0.68rem;
+  }
+
+  .boardMode {
+    font-size: 0.56rem;
+  }
+
+  .leaderboard ol {
+    padding: 0.35rem 0.65rem;
+  }
+
+  .leaderboard li {
+    min-height: 1.85rem;
+    font-size: 0.66rem;
+  }
+
+  .leaderboard p {
+    padding: 0.42rem 0.65rem;
+    font-size: 0.54rem;
+  }
+
   .controlDeck {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr;
     gap: 0.65rem;
-    padding-bottom: 4.4rem;
+    padding: 0.75rem 0.65rem max(1rem, env(safe-area-inset-bottom));
   }
 
   .movePad {
     grid-column: 1;
     grid-row: 2;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
   }
 
   .controlDeck > p {
-    grid-column: 1 / -1;
+    grid-column: 1;
     grid-row: 1;
     text-align: left;
   }
 
   .actionControls {
-    grid-column: 2;
-    grid-row: 2;
+    display: grid;
+    grid-column: 1;
+    grid-row: 3;
+    grid-template-columns: 1fr 1.35fr;
+    width: 100%;
+  }
+
+  .movePad button,
+  .actionControls button {
+    width: 100%;
+    min-height: 2.75rem;
   }
 
   .stopControl {
-    grid-column: 1 / -1;
+    grid-column: 1;
+    grid-row: 4;
     justify-self: center;
   }
 
@@ -603,7 +648,7 @@
 
   .leaderboard {
     right: 0.55rem;
-    width: min(11.4rem, calc(100% - 4.5rem));
+    width: min(12.5rem, calc(100% - 4.5rem));
   }
 
   .heightMeter {
@@ -614,17 +659,9 @@
     padding-inline: 0.65rem;
   }
 
-  .movePad {
-    grid-template-columns: repeat(4, minmax(2rem, 2.3rem));
-  }
-
-  .movePad button {
-    width: auto;
-  }
-
   .primaryControl,
   .secondaryControl {
-    min-height: 2.65rem;
+    min-height: 2.75rem;
     padding-inline: 0.8rem;
     font-size: 0.68rem;
   }

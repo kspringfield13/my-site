@@ -168,7 +168,7 @@ export async function createTowerEngine({
   renderer.domElement.className = "tower-game-canvas";
   renderer.domElement.setAttribute(
     "aria-label",
-    "3D tower arena. Drag to position the next piece. Right-drag to orbit and scroll to zoom."
+    "3D tower arena. One-finger drag positions the next piece; two-finger drag or right-drag orbits, and scroll zooms."
   );
   renderer.domElement.setAttribute("role", "img");
   renderer.domElement.tabIndex = 0;
@@ -365,6 +365,7 @@ export async function createTowerEngine({
   let scoreUpdateTimer = 0;
   let shakeUntil = 0;
   let collapseTimer = 0;
+  let structuralLossStartedAt = 0;
   let burst: THREE.Points | null = null;
   let burstVelocity: Float32Array | null = null;
   let pieceDragPointer: number | null = null;
@@ -376,6 +377,12 @@ export async function createTowerEngine({
   let cameraDistance = 13.4;
   const cameraRight = new THREE.Vector3();
   const cameraToward = new THREE.Vector3();
+  const activePointers = new Map<
+    number,
+    { x: number; y: number; pointerType: string }
+  >();
+  let placementPointer: number | null = null;
+  let orbitGestureX: number | null = null;
 
   const clampPosition = (value: number) => Math.max(-3.25, Math.min(3.25, value));
 
@@ -568,6 +575,10 @@ export async function createTowerEngine({
     collapsed = false;
     nextPieceTimer = 0;
     shakeUntil = 0;
+    structuralLossStartedAt = 0;
+    orbitAzimuth = Math.atan2(10.5, 8.2);
+    orbitElevation = 0.44;
+    cameraDistance = 13.4;
     onHeight(0);
     spawnPreview();
   };
@@ -575,6 +586,12 @@ export async function createTowerEngine({
   const startCollapseBurst = () => {
     if (collapsed) return;
     collapsed = true;
+    activePointers.clear();
+    placementPointer = null;
+    orbitGestureX = null;
+    pieceDragPointer = null;
+    orbitPointer = null;
+    delete renderer.domElement.dataset.cameraDragging;
     if (preview) {
       removeAlignmentGuide();
       scene.remove(preview.mesh);
@@ -667,7 +684,7 @@ export async function createTowerEngine({
       }
 
       if (
-        piece.landed &&
+        oldEnough &&
         (translation.y < -1.35 || Math.abs(translation.x) > 5.25 || Math.abs(translation.z) > 5.25)
       ) {
         hasEscaped = true;
@@ -682,7 +699,20 @@ export async function createTowerEngine({
       }
     }
 
-    if (pieceCount >= 2 && hasEscaped) startCollapseBurst();
+    const heightLoss = highest - currentTop;
+    const hasStructuralLoss =
+      pieceCount >= 2 &&
+      highest >= 2.2 &&
+      heightLoss >= Math.max(1.1, highest * 0.3);
+
+    if (hasStructuralLoss) {
+      if (structuralLossStartedAt === 0) structuralLossStartedAt = now;
+      else if (now - structuralLossStartedAt >= 850) startCollapseBurst();
+    } else {
+      structuralLossStartedAt = 0;
+    }
+
+    if (hasEscaped) startCollapseBurst();
   };
 
   const updateCamera = (now: number, delta: number) => {
@@ -772,6 +802,30 @@ export async function createTowerEngine({
 
   const onPointerDown = (event: PointerEvent) => {
     renderer.domElement.focus({ preventScroll: true });
+
+    if (event.pointerType === "touch") {
+      if (collapsed || paused) return;
+      activePointers.set(event.pointerId, {
+        x: event.clientX,
+        y: event.clientY,
+        pointerType: event.pointerType
+      });
+      renderer.domElement.setPointerCapture(event.pointerId);
+
+      const touchPointers = [...activePointers.values()].filter(
+        (pointer) => pointer.pointerType === "touch"
+      );
+      if (touchPointers.length >= 2) {
+        placementPointer = null;
+        orbitGestureX =
+          touchPointers.reduce((total, pointer) => total + pointer.x, 0) / touchPointers.length;
+        return;
+      }
+
+      if (preview && activePointers.size === 1) placementPointer = event.pointerId;
+      return;
+    }
+
     if (event.button === 2) {
       orbitPointer = event.pointerId;
       dragX = event.clientX;
@@ -788,6 +842,42 @@ export async function createTowerEngine({
     renderer.domElement.setPointerCapture(event.pointerId);
   };
   const onPointerMove = (event: PointerEvent) => {
+    if (event.pointerType === "touch") {
+      const previous = activePointers.get(event.pointerId);
+      if (!previous || collapsed || paused) return;
+      activePointers.set(event.pointerId, {
+        x: event.clientX,
+        y: event.clientY,
+        pointerType: event.pointerType
+      });
+
+      const touchPointers = [...activePointers.values()].filter(
+        (pointer) => pointer.pointerType === "touch"
+      );
+      if (touchPointers.length >= 2) {
+        const nextOrbitX =
+          touchPointers.reduce((total, pointer) => total + pointer.x, 0) / touchPointers.length;
+        if (orbitGestureX !== null) {
+          orbitAzimuth -= (nextOrbitX - orbitGestureX) * 0.008;
+        }
+        orbitGestureX = nextOrbitX;
+        placementPointer = null;
+        return;
+      }
+
+      if (placementPointer !== event.pointerId || !preview) return;
+      const scale = mount.clientWidth < 600 ? 0.014 : 0.01;
+      const pointerX = (event.clientX - previous.x) * scale;
+      const pointerY = (event.clientY - previous.y) * scale;
+      cameraRight.setFromMatrixColumn(camera.matrixWorld, 0).setY(0).normalize();
+      cameraToward.set(camera.position.x, 0, camera.position.z).normalize();
+      move(
+        cameraRight.x * pointerX + cameraToward.x * pointerY,
+        cameraRight.z * pointerX + cameraToward.z * pointerY
+      );
+      return;
+    }
+
     if (orbitPointer === event.pointerId) {
       orbitAzimuth -= (event.clientX - dragX) * 0.007;
       orbitElevation = THREE.MathUtils.clamp(
@@ -813,7 +903,30 @@ export async function createTowerEngine({
     dragX = event.clientX;
     dragY = event.clientY;
   };
+
   const onPointerUp = (event: PointerEvent) => {
+    if (event.pointerType === "touch") {
+      if (!activePointers.has(event.pointerId)) return;
+      activePointers.delete(event.pointerId);
+      if (renderer.domElement.hasPointerCapture(event.pointerId)) {
+        renderer.domElement.releasePointerCapture(event.pointerId);
+      }
+      if (activePointers.size === 0) {
+        placementPointer = null;
+        orbitGestureX = null;
+        return;
+      }
+
+      const remainingTouches = [...activePointers.values()].filter(
+        (pointer) => pointer.pointerType === "touch"
+      );
+      if (remainingTouches.length < 2) {
+        placementPointer = null;
+        orbitGestureX = null;
+      }
+      return;
+    }
+
     if (pieceDragPointer !== event.pointerId && orbitPointer !== event.pointerId) return;
     if (pieceDragPointer === event.pointerId) pieceDragPointer = null;
     if (orbitPointer === event.pointerId) {

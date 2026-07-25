@@ -154,7 +154,7 @@
 @media (max-width: 700px) {
   .hexSurface,
   .surface {
-    min-height: 40rem;
+    min-height: 0;
   }
 
   .surfaceHeader {

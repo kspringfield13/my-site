@@ -200,7 +200,9 @@ export function PlaygroundTower() {
         },
         onReady: () => {
           setGameState("playing");
-          setAnnouncement("Arena ready. Drag the piece to position it, then rotate or drop.");
+          setAnnouncement(
+            "Arena ready. Drag to position, right-drag to orbit, scroll to zoom, then rotate or drop."
+          );
         }
       });
       engineRef.current.setPaused(!visibleRef.current || document.hidden);
@@ -435,8 +437,10 @@ export function PlaygroundTower() {
           </button>
         </div>
         <p>
-          <span className={styles.desktopHint}>Drag to position · Arrows/WASD · Q/E rotate · Space drop</span>
-          <span className={styles.mobileHint}>Drag the arena to position</span>
+          <span className={styles.desktopHint}>
+            Drag: position · Right-drag: orbit · Scroll: zoom · Q/E: rotate · Space: drop
+          </span>
+          <span className={styles.mobileHint}>Drag to position · Controls below to rotate + drop</span>
         </p>
         <div className={styles.actionControls}>
           <button

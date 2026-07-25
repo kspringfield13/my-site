@@ -7,6 +7,7 @@ import {
   type AgentChatResponse,
   type AgentStatusResponse
 } from "@/lib/agent-kyle/types";
+import styles from "./AgentKylePanel.module.css";
 
 interface AgentKylePanelProps {
   open: boolean;
@@ -89,8 +90,10 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
   const [statusLoading, setStatusLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedStarter, setSelectedStarter] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const submissionPendingRef = useRef(false);
 
   const refreshStatus = useCallback(async (showLoading = true) => {
     if (showLoading) setStatusLoading(true);
@@ -100,8 +103,10 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
       const parsed = agentStatusResponseSchema.safeParse(json);
       if (!parsed.success) throw new Error("Unexpected status response");
       setStatus(parsed.data);
+      return parsed.data;
     } catch {
       setStatus(DEFAULT_STATUS);
+      return DEFAULT_STATUS;
     } finally {
       if (showLoading) setStatusLoading(false);
     }
@@ -125,8 +130,23 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
 
   useEffect(() => {
     if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const previousOverscrollBehavior = document.body.style.overscrollBehavior;
+    document.body.style.overflow = "hidden";
+    document.body.style.overscrollBehavior = "none";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.body.style.overscrollBehavior = previousOverscrollBehavior;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
     if (seedQuestion) setDraft(seedQuestion);
 
+    if (!window.matchMedia("(min-width: 768px)").matches) return;
     const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 180);
     return () => window.clearTimeout(focusTimer);
   }, [open, seedQuestion]);
@@ -149,10 +169,13 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
 
   async function askQuestion(question: string) {
     const content = question.trim();
-    if (!content || sending) return;
+    if (!content || sending || submissionPendingRef.current) return;
+    submissionPendingRef.current = true;
 
-    if (!status.available) {
-      setError(allowanceError(status));
+    const currentStatus = statusLoading ? await refreshStatus() : status;
+    if (!currentStatus.available) {
+      submissionPendingRef.current = false;
+      setError(allowanceError(currentStatus));
       return;
     }
 
@@ -204,6 +227,7 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
     } catch {
       setError("I couldn't answer that just now. Try again in a moment or use one of the public links below.");
     } finally {
+      submissionPendingRef.current = false;
       setSending(false);
     }
   }
@@ -213,10 +237,18 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
     askQuestion(draft);
   }
 
+  function chooseStarter(question: string) {
+    if (selectedStarter) return;
+    setSelectedStarter(question);
+    void askQuestion(question);
+    window.setTimeout(() => setSelectedStarter(null), 180);
+  }
+
   function resetConversation() {
     setTurns([WELCOME_TURN]);
     setDraft("");
     setError(null);
+    setSelectedStarter(null);
     window.setTimeout(() => inputRef.current?.focus(), 0);
   }
 
@@ -225,13 +257,13 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
   return (
     <section
       role="dialog"
-      aria-modal="false"
+      aria-modal="true"
       aria-label="Chat with Agent Kyle"
-      className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-t-[1.4rem] border border-border-strong bg-surface-1 shadow-panel"
+      className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[1.4rem] border border-border-strong bg-surface-1 shadow-panel md:rounded-b-none md:rounded-t-[1.4rem]"
     >
-      <header className="flex items-center justify-between gap-4 border-b border-border px-4 py-3 md:px-5">
+      <header className="relative z-20 flex shrink-0 items-center justify-between gap-3 border-b border-border bg-surface-1 px-4 py-2.5 md:gap-4 md:px-5 md:py-3">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-border-accent bg-surface-3 text-sm font-semibold text-link-hover">
+          <div className="relative grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border-accent bg-surface-3 text-xs font-semibold text-link-hover md:h-10 md:w-10 md:rounded-xl md:text-sm">
             AK
             <span
               className={`absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2 border-surface-1 ${
@@ -263,91 +295,96 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
             type="button"
             onClick={onClose}
             aria-label="Close Agent Kyle"
-            className="grid h-8 w-8 place-items-center rounded-full border border-border bg-surface-2 text-muted transition hover:border-border-accent hover:text-link-hover"
+            className="grid h-10 w-10 place-items-center rounded-full border border-border bg-surface-2 text-muted transition hover:border-border-accent hover:text-link-hover md:h-8 md:w-8"
           >
             <span aria-hidden="true" className="text-lg leading-none">×</span>
           </button>
         </div>
       </header>
 
-      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-4 py-5 md:px-6">
+      <div
+        ref={scrollRef}
+        className="relative z-10 min-h-0 flex-1 overscroll-contain overflow-y-auto bg-surface-1 px-4 py-4 [scrollbar-gutter:stable] md:px-6 md:py-5"
+      >
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-          {turns.map((turn) => (
-            <div
-              key={turn.id}
-              className={turn.role === "user" ? "ml-auto max-w-[88%] md:max-w-[76%]" : "mr-auto w-full max-w-[94%]"}
-            >
+          {turns.map((turn) => {
+            const isLatestAssistant =
+              turn.role === "assistant" &&
+              turn.id !== WELCOME_TURN.id &&
+              turn.id === turns[turns.length - 1]?.id;
+
+            return (
               <div
-                className={
-                  turn.role === "user"
-                    ? "rounded-2xl rounded-br-md border border-border-accent bg-surface-3 px-4 py-3 text-sm leading-6 text-fg"
-                    : "text-sm leading-7 text-muted"
-                }
+                key={turn.id}
+                className={`${turn.role === "assistant" ? styles.assistantTurn : styles.userTurn} ${
+                  isLatestAssistant ? styles.latestAssistant : ""
+                } ${
+                  turn.role === "user" ? "ml-auto max-w-[88%] md:max-w-[76%]" : "mr-auto w-full max-w-[94%]"
+                }`}
               >
-                {turn.role === "assistant" ? (
-                  <p className="mb-1 text-[0.65rem] uppercase tracking-[0.16em] text-faint">Agent Kyle</p>
-                ) : null}
-                <p className="whitespace-pre-line">{turn.content}</p>
-              </div>
-
-              {turn.result?.actions.length ? (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {turn.result.actions.map((action) => (
-                    <a
-                      key={`${turn.id}-${action.url}`}
-                      href={action.url}
-                      target={action.url.startsWith("http") ? "_blank" : undefined}
-                      rel={action.url.startsWith("http") ? "noreferrer" : undefined}
-                      title={action.description}
-                      className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-2 px-3 py-1.5 text-xs text-link transition hover:border-border-accent hover:bg-surface-3 hover:text-link-hover"
-                    >
-                      {action.label}
-                      <span className="h-3.5 w-3.5"><ArrowIcon /></span>
-                    </a>
-                  ))}
-                </div>
-              ) : null}
-
-              {turn.result?.followUps.length ? (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {turn.result.followUps.map((question) => (
-                    <button
-                      key={question}
-                      type="button"
-                      onClick={() => askQuestion(question)}
-                      disabled={sending}
-                      className="rounded-full border border-border px-3 py-1.5 text-left text-xs text-muted transition hover:border-border-accent hover:bg-surface-2 hover:text-link-hover disabled:opacity-50"
-                    >
-                      {question}
-                    </button>
-                  ))}
-                </div>
-              ) : null}
-            </div>
-          ))}
-
-          {turns.length === 1 ? (
-            <div className="grid gap-2 sm:grid-cols-2">
-              {RECOMMENDED_QUESTIONS.map((question) => (
-                <button
-                  key={question}
-                  type="button"
-                  onClick={() => askQuestion(question)}
-                  disabled={sending}
-                  className="group flex min-h-[4.6rem] items-center justify-between gap-3 rounded-xl border border-border bg-surface-2 p-3 text-left text-sm text-muted transition hover:border-border-accent hover:bg-surface-3 hover:text-fg disabled:cursor-not-allowed disabled:opacity-55"
+                <div
+                  className={
+                    turn.role === "user"
+                      ? "rounded-2xl rounded-br-md border border-border-accent bg-surface-3 px-4 py-3 text-sm leading-6 text-fg"
+                      : "text-sm leading-7 text-muted"
+                  }
                 >
-                  <span>{question}</span>
-                  <span className="h-4 w-4 shrink-0 text-faint transition group-hover:translate-x-0.5 group-hover:text-link-hover">
-                    <ArrowIcon />
-                  </span>
-                </button>
-              ))}
+                  {turn.role === "assistant" ? (
+                    <p className="mb-1 text-[0.65rem] uppercase tracking-[0.16em] text-faint">Agent Kyle</p>
+                  ) : null}
+                  <p className="whitespace-pre-line">{turn.content}</p>
+                </div>
+
+                {turn.result?.actions.length ? (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {turn.result.actions.map((action) => (
+                      <a
+                        key={`${turn.id}-${action.url}`}
+                        href={action.url}
+                        target={action.url.startsWith("http") ? "_blank" : undefined}
+                        rel={action.url.startsWith("http") ? "noreferrer" : undefined}
+                        title={action.description}
+                        className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-2 px-3 py-1.5 text-xs text-link transition hover:border-border-accent hover:bg-surface-3 hover:text-link-hover"
+                      >
+                        {action.label}
+                        <span className="h-3.5 w-3.5"><ArrowIcon /></span>
+                      </a>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}
+
+          {turns.length === 1 || selectedStarter ? (
+            <div className={`${styles.starterTray} ${selectedStarter ? styles.starterTrayLeaving : ""}`}>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {RECOMMENDED_QUESTIONS.map((question) => (
+                  <button
+                    key={question}
+                    type="button"
+                    onClick={() => chooseStarter(question)}
+                    disabled={sending || selectedStarter !== null}
+                    aria-pressed={selectedStarter === question}
+                    className={`${selectedStarter === question ? styles.starterSelected : ""} group flex min-h-[4.6rem] items-center justify-between gap-3 rounded-xl border border-border bg-surface-2 p-3 text-left text-sm text-muted transition hover:border-border-accent hover:bg-surface-3 hover:text-fg disabled:cursor-not-allowed disabled:opacity-55`}
+                  >
+                    <span>{question}</span>
+                    <span className="h-4 w-4 shrink-0 text-faint transition group-hover:translate-x-0.5 group-hover:text-link-hover">
+                      <ArrowIcon />
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
           ) : null}
 
           {sending ? (
-            <div className="flex items-center gap-2 text-xs text-faint" role="status">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-link" />
+            <div className={`${styles.loadingState} flex items-center gap-2 text-xs text-faint`} role="status">
+              <span className="flex items-center gap-1" aria-hidden="true">
+                <span className={`${styles.loadingDot} h-1.5 w-1.5 rounded-full bg-link`} />
+                <span className={`${styles.loadingDot} h-1.5 w-1.5 rounded-full bg-link`} />
+                <span className={`${styles.loadingDot} h-1.5 w-1.5 rounded-full bg-link`} />
+              </span>
               Reading Kyle's public evidence...
             </div>
           ) : null}
@@ -366,7 +403,7 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
         </div>
       </div>
 
-      <footer className="border-t border-border bg-surface-2/80 px-4 py-3 backdrop-blur md:px-5">
+      <footer className="relative z-20 shrink-0 border-t border-border bg-surface-2 px-3 py-2.5 md:px-5 md:py-3">
         <form onSubmit={submit} className="mx-auto max-w-3xl">
           <div className="mb-2.5" aria-label={`${status.usageWindow.sessionRemaining} Agent Kyle turns remaining`}>
             <div className="flex items-center justify-between gap-3 text-[0.65rem] text-faint">
@@ -396,7 +433,7 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
               />
             </div>
             {statusLoading ? null : (
-              <p className="mt-1 text-right text-[0.62rem] text-faint">
+              <p className="mt-1 hidden text-right text-[0.62rem] text-faint sm:block">
                 {status.usageWindow.remainingInWindow} available now · up to {status.usageWindow.windowLimit} every 10 minutes
               </p>
             )}
@@ -427,7 +464,7 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
               <span className="h-5 w-5"><ArrowIcon /></span>
             </button>
           </div>
-          <p className="mt-2 text-center text-[0.64rem] text-faint">
+          <p className="mt-2 hidden text-center text-[0.64rem] text-faint sm:block">
             Grounded in public information. Verify important details with Kyle directly.
           </p>
         </form>

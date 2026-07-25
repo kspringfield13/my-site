@@ -80,8 +80,10 @@ export function AgentKyleDock() {
 
   return (
     <div
-      className={`fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-[75] isolate transition-all duration-300 motion-reduce:transition-none md:inset-x-auto md:bottom-5 md:right-5 ${
-        isVisible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
+      className={`fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-[75] isolate transition-opacity duration-300 motion-reduce:transition-none md:bottom-5 ${
+        isExpanded ? "md:inset-x-5" : "md:inset-x-auto md:right-5"
+      } ${
+        isVisible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
     >
       {isExpanded ? (
@@ -93,13 +95,13 @@ export function AgentKyleDock() {
         />
       ) : null}
 
-      <div className={`relative ml-auto ${isExpanded ? "w-full max-w-5xl md:w-[min(72rem,calc(100vw-2.5rem))]" : "w-fit"}`}>
+      <div className={`relative ${isExpanded ? "mx-auto w-full max-w-5xl" : "ml-auto w-fit"}`}>
         <div
-          className={`absolute inset-x-0 bottom-full z-10 pb-2 transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none ${
+          className={`fixed inset-x-3 bottom-[calc(3.75rem+env(safe-area-inset-bottom))] top-[calc(0.75rem+env(safe-area-inset-top))] z-10 pb-2 transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none md:absolute md:inset-x-0 md:bottom-full md:top-auto ${
             isExpanded ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-5 opacity-0"
           }`}
         >
-          <div className="h-[calc(100dvh-6rem-env(safe-area-inset-bottom))] max-h-[42rem] min-h-0 md:h-[min(76vh,760px)] md:max-h-none md:min-h-[31rem]">
+          <div className="h-full min-h-0 md:h-[min(76vh,760px)] md:min-h-[31rem]">
             <AgentKylePanel
               open={isExpanded}
               seedQuestion={seedQuestion}

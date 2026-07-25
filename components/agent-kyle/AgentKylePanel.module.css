@@ -1,0 +1,123 @@
+.assistantTurn {
+  animation: agent-kyle-turn-in 220ms ease-out both;
+}
+
+.userTurn {
+  animation: agent-kyle-user-turn-in 160ms ease-out both;
+}
+
+.latestAssistant {
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--c-surface-2) 42%, transparent);
+  box-shadow: inset 2px 0 0 color-mix(in srgb, var(--c-link) 62%, transparent);
+  padding: 0.75rem;
+}
+
+.assistantTurn.latestAssistant {
+  animation:
+    agent-kyle-turn-in 220ms ease-out both,
+    agent-kyle-answer-emphasis 700ms ease-out both;
+}
+
+.loadingState {
+  animation: agent-kyle-turn-in 160ms ease-out both;
+}
+
+.loadingDot {
+  animation: agent-kyle-loading 900ms ease-in-out infinite;
+}
+
+.loadingDot:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.loadingDot:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+.starterTray {
+  max-height: 24rem;
+  overflow: hidden;
+}
+
+.starterTrayLeaving {
+  animation: agent-kyle-starters-sent 180ms ease-in both;
+  pointer-events: none;
+}
+
+.starterSelected {
+  border-color: var(--c-border-accent);
+  background: var(--c-surface-3);
+  color: var(--c-text);
+  transform: translateY(1px) scale(0.985);
+}
+
+@keyframes agent-kyle-turn-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes agent-kyle-user-turn-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.2rem) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes agent-kyle-answer-emphasis {
+  from {
+    background: color-mix(in srgb, var(--c-surface-3) 70%, transparent);
+    box-shadow: inset 2px 0 0 var(--c-link);
+  }
+}
+
+@keyframes agent-kyle-loading {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(-0.15rem);
+  }
+}
+
+@keyframes agent-kyle-starters-sent {
+  from {
+    max-height: 24rem;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-0.25rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assistantTurn,
+  .assistantTurn.latestAssistant,
+  .userTurn,
+  .loadingState,
+  .starterTrayLeaving,
+  .loadingDot {
+    animation: none;
+  }
+}

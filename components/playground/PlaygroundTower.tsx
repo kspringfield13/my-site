@@ -360,26 +360,6 @@ export function PlaygroundTower() {
           </div>
         )}
 
-        <aside className={styles.leaderboard} aria-label={`${boardMode} top three tower scores`}>
-          <div className={styles.boardHeader}>
-            <span>TOP 3</span>
-            <span className={styles.boardMode}>{boardMode === "global" ? "GLOBAL" : "THIS DEVICE"}</span>
-          </div>
-          <ol>
-            {[0, 1, 2].map((rank) => {
-              const entry = leaderboard[rank];
-              return (
-                <li key={entry?.id ?? `empty-${rank}`}>
-                  <span>{String(rank + 1).padStart(2, "0")}</span>
-                  <b>{entry?.name ?? "—"}</b>
-                  <em>{entry ? `${entry.height.toFixed(1)}m` : "—"}</em>
-                </li>
-              );
-            })}
-          </ol>
-          {boardMode === "local" && <p>Global board not connected</p>}
-        </aside>
-
         <div className={styles.heightMeter} aria-hidden="true">
           <span className={styles.meterRail}>
             <i style={{ height: `${Math.min(100, (height / meterMax) * 100)}%` }} />
@@ -402,6 +382,26 @@ export function PlaygroundTower() {
           </div>
         )}
       </div>
+
+      <aside className={styles.leaderboard} aria-label={`${boardMode} top three tower scores`}>
+        <div className={styles.boardHeader}>
+          <span>TOP 3</span>
+          <span className={styles.boardMode}>{boardMode === "global" ? "GLOBAL" : "THIS DEVICE"}</span>
+        </div>
+        <ol>
+          {[0, 1, 2].map((rank) => {
+            const entry = leaderboard[rank];
+            return (
+              <li key={entry?.id ?? `empty-${rank}`}>
+                <span>{String(rank + 1).padStart(2, "0")}</span>
+                <b>{entry?.name ?? "—"}</b>
+                <em>{entry ? `${entry.height.toFixed(1)}m` : "—"}</em>
+              </li>
+            );
+          })}
+        </ol>
+        {boardMode === "local" && <p>Global board not connected</p>}
+      </aside>
 
       <div className={styles.controlDeck}>
         <div className={styles.movePad} aria-label="Position piece">

@@ -332,7 +332,7 @@
 .leaderboard {
   position: absolute;
   z-index: 3;
-  top: 0.85rem;
+  top: 5.2rem;
   right: 0.85rem;
   width: min(13.5rem, calc(100% - 5.4rem));
   border: 1px solid rgba(40, 209, 235, 0.32);
@@ -557,12 +557,17 @@
   }
 
   .leaderboard {
-    z-index: 6;
-    width: min(12.5rem, calc(100% - 4.5rem));
+    position: static;
+    width: auto;
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+    box-shadow: inset 0 1px 18px rgba(0, 218, 246, 0.035);
+    backdrop-filter: none;
   }
 
   .boardHeader {
-    padding: 0.55rem 0.65rem;
+    padding: 0.48rem 0.65rem;
     font-size: 0.68rem;
   }
 
@@ -571,17 +576,37 @@
   }
 
   .leaderboard ol {
-    padding: 0.35rem 0.65rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 0;
   }
 
   .leaderboard li {
-    min-height: 1.85rem;
+    grid-template-columns: 1.55rem minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    min-height: 3rem;
+    padding: 0.35rem 0.55rem;
     font-size: 0.66rem;
   }
 
+  .leaderboard li + li {
+    border-left: 1px solid rgba(120, 153, 185, 0.15);
+  }
+
+  .leaderboard li > span {
+    grid-row: 1 / 3;
+  }
+
+  .leaderboard li em {
+    grid-column: 2;
+    color: #7f9caf;
+    font-size: 0.58rem;
+  }
+
   .leaderboard p {
-    padding: 0.42rem 0.65rem;
+    padding: 0.34rem 0.65rem;
     font-size: 0.54rem;
+    text-align: center;
   }
 
   .controlDeck {
@@ -644,11 +669,6 @@
 
   .heightReadout strong {
     min-width: 5.2rem;
-  }
-
-  .leaderboard {
-    right: 0.55rem;
-    width: min(12.5rem, calc(100% - 4.5rem));
   }
 
   .heightMeter {

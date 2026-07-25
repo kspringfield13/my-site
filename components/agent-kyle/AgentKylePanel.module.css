@@ -52,6 +52,22 @@
   transform: translateY(1px) scale(0.985);
 }
 
+.composerShell:focus-within {
+  border-color: var(--c-focus);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--c-focus) 52%, transparent);
+}
+
+.composerField:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.sendButton:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
 @keyframes agent-kyle-turn-in {
   from {
     opacity: 0;

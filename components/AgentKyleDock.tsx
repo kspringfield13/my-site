@@ -13,28 +13,42 @@ export function AgentKyleDock() {
   const pathname = usePathname();
   const isHomeRoute = pathname === "/";
   const [hasReachedProjects, setHasReachedProjects] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [isPlaygroundInView, setIsPlaygroundInView] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [seedQuestion, setSeedQuestion] = useState("");
+  const dockRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const viewportQuery = window.matchMedia("(max-width: 767px)");
+    const updateViewport = () => setIsMobileViewport(viewportQuery.matches);
+    updateViewport();
+    viewportQuery.addEventListener("change", updateViewport);
+    return () => viewportQuery.removeEventListener("change", updateViewport);
+  }, []);
 
   useEffect(() => {
     if (!isHomeRoute) {
       setHasReachedProjects(false);
+      setIsPlaygroundInView(false);
       setIsExpanded(false);
       return;
     }
 
-    let observer: IntersectionObserver | null = null;
+    let projectsObserver: IntersectionObserver | null = null;
+    let playgroundObserver: IntersectionObserver | null = null;
     let rafId: number | null = null;
 
     const connectObserver = () => {
       const projects = document.getElementById("projects");
-      if (!projects) {
+      const playground = document.getElementById("playground");
+      if (!projects || !playground) {
         rafId = window.requestAnimationFrame(connectObserver);
         return;
       }
 
-      observer = new IntersectionObserver(
+      projectsObserver = new IntersectionObserver(
         ([entry]) => {
           if (!entry) return;
           const reachedProjects = entry.isIntersecting || entry.boundingClientRect.top < 0;
@@ -43,17 +57,34 @@ export function AgentKyleDock() {
         },
         { threshold: 0, rootMargin: "0px 0px -10% 0px" }
       );
-      observer.observe(projects);
+      projectsObserver.observe(projects);
+
+      playgroundObserver = new IntersectionObserver(
+        ([entry]) => setIsPlaygroundInView(Boolean(entry?.isIntersecting)),
+        { threshold: 0 }
+      );
+      playgroundObserver.observe(playground);
     };
 
     connectObserver();
     return () => {
       if (rafId !== null) window.cancelAnimationFrame(rafId);
-      observer?.disconnect();
+      projectsObserver?.disconnect();
+      playgroundObserver?.disconnect();
     };
   }, [isHomeRoute]);
 
-  const isVisible = isHomeRoute && hasReachedProjects;
+  const isVisible =
+    isHomeRoute && hasReachedProjects && !(isMobileViewport && isPlaygroundInView);
+
+  useEffect(() => {
+    if (isVisible) return;
+    setIsExpanded(false);
+    const activeElement = document.activeElement;
+    if (activeElement instanceof HTMLElement && dockRef.current?.contains(activeElement)) {
+      activeElement.blur();
+    }
+  }, [isVisible]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -80,6 +111,9 @@ export function AgentKyleDock() {
 
   return (
     <div
+      ref={dockRef}
+      aria-hidden={!isVisible}
+      inert={!isVisible}
       className={`fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-[75] isolate transition-opacity duration-300 motion-reduce:transition-none md:bottom-5 ${
         isExpanded ? "md:inset-x-5" : "md:inset-x-auto md:right-5"
       } ${

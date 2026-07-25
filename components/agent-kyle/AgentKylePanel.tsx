@@ -91,9 +91,13 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedStarter, setSelectedStarter] = useState<string | null>(null);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const mobileInputRef = useRef<HTMLInputElement>(null);
+  const desktopInputRef = useRef<HTMLTextAreaElement>(null);
   const submissionPendingRef = useRef(false);
+  const submittedSeedRef = useRef<string | null>(null);
+  const askQuestionRef = useRef<(question: string) => Promise<void>>(async () => {});
 
   const refreshStatus = useCallback(async (showLoading = true) => {
     if (showLoading) setStatusLoading(true);
@@ -143,11 +147,20 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
   }, [open]);
 
   useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const updateViewport = () => setIsMobileViewport(media.matches);
+
+    updateViewport();
+    media.addEventListener("change", updateViewport);
+    return () => media.removeEventListener("change", updateViewport);
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
     if (seedQuestion) setDraft(seedQuestion);
 
     if (!window.matchMedia("(min-width: 768px)").matches) return;
-    const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 180);
+    const focusTimer = window.setTimeout(() => desktopInputRef.current?.focus(), 180);
     return () => window.clearTimeout(focusTimer);
   }, [open, seedQuestion]);
 
@@ -171,10 +184,12 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
     const content = question.trim();
     if (!content || sending || submissionPendingRef.current) return;
     submissionPendingRef.current = true;
+    setSending(true);
 
     const currentStatus = statusLoading ? await refreshStatus() : status;
     if (!currentStatus.available) {
       submissionPendingRef.current = false;
+      setSending(false);
       setError(allowanceError(currentStatus));
       return;
     }
@@ -232,6 +247,22 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
     }
   }
 
+  askQuestionRef.current = askQuestion;
+
+  useEffect(() => {
+    if (!open) {
+      submittedSeedRef.current = null;
+      return;
+    }
+
+    const seed = seedQuestion?.trim();
+    if (!seed || submittedSeedRef.current === seed) return;
+
+    submittedSeedRef.current = seed;
+    setDraft("");
+    void askQuestionRef.current(seed);
+  }, [open, seedQuestion]);
+
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     askQuestion(draft);
@@ -249,7 +280,10 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
     setDraft("");
     setError(null);
     setSelectedStarter(null);
-    window.setTimeout(() => inputRef.current?.focus(), 0);
+    window.setTimeout(
+      () => (isMobileViewport ? mobileInputRef.current : desktopInputRef.current)?.focus(),
+      0
+    );
   }
 
   if (!open) return null;
@@ -438,28 +472,42 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
               </p>
             )}
           </div>
-          <div className="flex items-end gap-2 rounded-2xl border border-border bg-surface-1 p-2 focus-within:border-border-accent">
-            <textarea
-              ref={inputRef}
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" && !event.shiftKey) {
-                  event.preventDefault();
-                  askQuestion(draft);
-                }
-              }}
-              rows={1}
-              maxLength={6000}
-              placeholder="Ask about Kyle's experience, projects, skills, or fit..."
-              aria-label="Ask Agent Kyle a question"
-              className="max-h-28 min-h-10 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-fg outline-none placeholder:text-faint"
-            />
+          <div className={`${styles.composerShell} flex items-center gap-3 rounded-2xl border border-border bg-surface-1 p-1.5`}>
+            {isMobileViewport ? (
+              <input
+                ref={mobileInputRef}
+                type="text"
+                value={draft}
+                onChange={(event) => setDraft(event.target.value)}
+                maxLength={6000}
+                placeholder="Ask about Kyle…"
+                aria-label="Ask Agent Kyle a question"
+                autoComplete="off"
+                className={`${styles.composerField} h-10 min-w-0 flex-1 bg-transparent px-2 text-sm leading-5 text-fg outline-none placeholder:text-faint`}
+              />
+            ) : (
+              <textarea
+                ref={desktopInputRef}
+                value={draft}
+                onChange={(event) => setDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    askQuestion(draft);
+                  }
+                }}
+                rows={1}
+                maxLength={6000}
+                placeholder="Ask about Kyle's experience, projects, skills, or fit..."
+                aria-label="Ask Agent Kyle a question"
+                className={`${styles.composerField} max-h-28 min-h-10 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-fg outline-none placeholder:text-faint`}
+              />
+            )}
             <button
               type="submit"
               disabled={!draft.trim() || sending}
               aria-label="Send question"
-              className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-border-accent bg-accent text-button-primary-text transition hover:bg-surface-3 disabled:cursor-not-allowed disabled:opacity-40"
+              className={`${styles.sendButton} grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-focus bg-focus text-surface-1 transition enabled:hover:brightness-110 disabled:cursor-not-allowed disabled:border-border disabled:bg-accent disabled:text-button-primary-text disabled:opacity-40 md:h-10 md:w-10`}
             >
               <span className="h-5 w-5"><ArrowIcon /></span>
             </button>

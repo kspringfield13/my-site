@@ -144,7 +144,7 @@ export function IntroBridge() {
 
   return (
     <section aria-labelledby="orientation-title" className={`section-wrap ${styles.orientation}`}>
-      <div className={styles.frame} data-particle-surface>
+      <div className={styles.frame}>
         <p id="orientation-title" className={styles.statement}>
           Kyle builds data systems and AI tools that make work clearer.
         </p>

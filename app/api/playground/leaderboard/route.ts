@@ -7,6 +7,7 @@ import {
   insertTowerScore,
   isLeaderboardReadable,
   isScoreSubmissionEnabled,
+  leaderboardRateLimitSecret,
   LeaderboardThrottledError
 } from "@/lib/playground/leaderboard";
 
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
   const forwardedFor = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
   const address = forwardedFor || request.headers.get("x-real-ip") || "unknown";
   const userAgent = request.headers.get("user-agent") || "unknown";
-  const requestHash = createHmac("sha256", process.env.PLAYGROUND_RATE_LIMIT_SECRET!)
+  const requestHash = createHmac("sha256", leaderboardRateLimitSecret()!)
     .update(`${address}\u0000${userAgent}`)
     .digest("hex");
 

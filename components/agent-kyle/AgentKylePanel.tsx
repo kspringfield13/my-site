@@ -437,8 +437,8 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
         </div>
       </div>
 
-      <footer className="relative z-20 shrink-0 border-t border-border bg-surface-2 px-3 py-2.5 md:px-5 md:py-3">
-        <form onSubmit={submit} className="mx-auto max-w-3xl">
+      <footer className="relative z-20 min-w-0 shrink-0 border-t border-border bg-surface-2 py-2.5 pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] md:px-5 md:py-3">
+        <form onSubmit={submit} className="mx-auto w-full min-w-0 max-w-3xl">
           <div className="mb-2.5" aria-label={`${status.usageWindow.sessionRemaining} Agent Kyle turns remaining`}>
             <div className="flex items-center justify-between gap-3 text-[0.65rem] text-faint">
               <span className="uppercase tracking-[0.12em]">Turn allowance</span>
@@ -472,7 +472,7 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
               </p>
             )}
           </div>
-          <div className={`${styles.composerShell} flex items-center gap-3 rounded-2xl border border-border bg-surface-1 p-1.5`}>
+          <div className={`${styles.composerShell} flex w-full min-w-0 max-w-full items-center gap-3 rounded-2xl border border-border bg-surface-1 p-1.5`}>
             {isMobileViewport ? (
               <input
                 ref={mobileInputRef}
@@ -483,7 +483,7 @@ export function AgentKylePanel({ open, seedQuestion, onClose }: AgentKylePanelPr
                 placeholder="Ask about Kyle…"
                 aria-label="Ask Agent Kyle a question"
                 autoComplete="off"
-                className={`${styles.composerField} h-10 min-w-0 flex-1 bg-transparent px-2 text-sm leading-5 text-fg outline-none placeholder:text-faint`}
+                className={`${styles.composerField} h-10 w-0 min-w-0 flex-1 bg-transparent px-2 text-base leading-5 text-fg outline-none placeholder:text-faint`}
               />
             ) : (
               <textarea

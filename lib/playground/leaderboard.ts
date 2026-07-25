@@ -17,6 +17,12 @@ type ScoreRow = {
 
 const connectionString = () => process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
 
+// A separate secret is preferable, but a connected database is enough to keep
+// the short-lived abuse throttle stable. This lets a linked Neon database work
+// even when the optional rate-limit secret was not configured in production.
+export const leaderboardRateLimitSecret = () =>
+  process.env.PLAYGROUND_RATE_LIMIT_SECRET ?? connectionString();
+
 export function isLeaderboardReadable() {
   return Boolean(connectionString());
 }
@@ -24,8 +30,7 @@ export function isLeaderboardReadable() {
 export function isScoreSubmissionEnabled() {
   return (
     isLeaderboardReadable() &&
-    process.env.PLAYGROUND_LEADERBOARD_ENABLED !== "false" &&
-    Boolean(process.env.PLAYGROUND_RATE_LIMIT_SECRET)
+    process.env.PLAYGROUND_LEADERBOARD_ENABLED !== "false"
   );
 }
 

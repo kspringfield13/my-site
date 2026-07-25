@@ -221,31 +221,8 @@ a:hover {
   z-index: 1;
 }
 
-@supports ((mask-image: linear-gradient(#000, transparent)) or (-webkit-mask-image: linear-gradient(#000, transparent))) {
-  .particle-scroll-stage[data-particle-scroll="active"] [data-particle-mask="active"] {
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      #000 0,
-      #000 var(--particle-mask-crisp),
-      rgba(0, 0, 0, 0.86) var(--particle-mask-soft),
-      rgba(0, 0, 0, 0.24) var(--particle-mask-dissolve),
-      transparent var(--particle-mask-hidden),
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      #000 0,
-      #000 var(--particle-mask-crisp),
-      rgba(0, 0, 0, 0.86) var(--particle-mask-soft),
-      rgba(0, 0, 0, 0.24) var(--particle-mask-dissolve),
-      transparent var(--particle-mask-hidden),
-      transparent 100%
-    );
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-  }
+.particle-scroll-stage[data-particle-scroll="active"] [data-particle-reveal="clipped"] {
+  clip-path: inset(0 0 var(--particle-clip-bottom) 0);
 }
 
 @media (prefers-reduced-motion: reduce) {

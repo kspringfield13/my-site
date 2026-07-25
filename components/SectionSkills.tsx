@@ -19,7 +19,7 @@ export async function SectionSkills() {
           <h2 className="subhead mt-2">What I ship with in production.</h2>
         </div>
         <p className="m-0 text-sm leading-relaxed text-muted md:text-right">
-          Four connected disciplines, one production-ready delivery practice. Focus a capability to tune the fabric surface.
+          Four connected disciplines, one production-ready delivery practice—from data foundations through deployment.
         </p>
       </div>
 

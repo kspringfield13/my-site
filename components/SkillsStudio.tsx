@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { Cloth } from "@/components/canvasui/Cloth";
 import styles from "@/components/SkillsStudio.module.css";
 
@@ -9,192 +9,123 @@ export type SkillCapability = {
   items: string[];
 };
 
-const capabilityCodes = ["DATA", "MEASURE", "AI", "SHIP"] as const;
-
 export function SkillsStudio({ capabilities }: { capabilities: SkillCapability[] }) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activeCapability = capabilities[activeIndex] ?? capabilities[0];
-
-  const paintFallback = useCallback(
+  const paintFabric = useCallback(
     (context: CanvasRenderingContext2D, width: number, height: number) => {
-      if (!activeCapability) return;
       context.clearRect(0, 0, width, height);
 
       const base = context.createLinearGradient(0, 0, width, height);
-      base.addColorStop(0, "#101d31");
-      base.addColorStop(0.56, "#09111f");
-      base.addColorStop(1, "#060b13");
+      base.addColorStop(0, "#14243a");
+      base.addColorStop(0.48, "#0c1728");
+      base.addColorStop(1, "#070d17");
       context.fillStyle = base;
       context.fillRect(0, 0, width, height);
 
-      const glow = context.createRadialGradient(width * 0.78, height * 0.15, 0, width * 0.78, height * 0.15, width * 0.7);
-      glow.addColorStop(0, "rgba(141, 167, 198, 0.22)");
-      glow.addColorStop(1, "rgba(141, 167, 198, 0)");
-      context.fillStyle = glow;
+      const highlight = context.createRadialGradient(
+        width * 0.18,
+        height * 0.08,
+        0,
+        width * 0.18,
+        height * 0.08,
+        width * 0.8,
+      );
+      highlight.addColorStop(0, "rgba(131, 165, 207, 0.24)");
+      highlight.addColorStop(0.55, "rgba(70, 99, 135, 0.08)");
+      highlight.addColorStop(1, "rgba(6, 11, 19, 0)");
+      context.fillStyle = highlight;
       context.fillRect(0, 0, width, height);
 
-      const pad = Math.max(24, width * 0.075);
-      context.textBaseline = "top";
-      context.fillStyle = "#8da7c6";
-      context.font = `600 ${Math.max(11, width * 0.024)}px monospace`;
-      context.fillText(capabilityCodes[activeIndex] ?? "SYSTEM", pad, pad);
-      context.textAlign = "right";
-      context.fillText(
-        `${String(activeIndex + 1).padStart(2, "0")} / ${String(capabilities.length).padStart(2, "0")}`,
-        width - pad,
-        pad,
+      const lowlight = context.createRadialGradient(
+        width * 0.88,
+        height * 0.92,
+        0,
+        width * 0.88,
+        height * 0.92,
+        width * 0.62,
       );
+      lowlight.addColorStop(0, "rgba(1, 5, 11, 0.46)");
+      lowlight.addColorStop(1, "rgba(1, 5, 11, 0)");
+      context.fillStyle = lowlight;
+      context.fillRect(0, 0, width, height);
 
-      context.textAlign = "left";
-      context.fillStyle = "#7d8798";
-      context.font = `600 ${Math.max(10, width * 0.022)}px monospace`;
-      context.fillText("ACTIVE CAPABILITY", pad, height * 0.27);
-
-      const titleSize = Math.max(28, Math.min(58, width * 0.105));
-      context.fillStyle = "#e8ecf3";
-      context.font = `600 ${titleSize}px monospace`;
-      const words = activeCapability.label.split(" ");
-      const titleLines: string[] = [];
-      let line = "";
-      for (const word of words) {
-        const candidate = line ? `${line} ${word}` : word;
-        if (line && context.measureText(candidate).width > width - pad * 2) {
-          titleLines.push(line);
-          line = word;
-        } else {
-          line = candidate;
-        }
-      }
-      if (line) titleLines.push(line);
-      titleLines.slice(0, 3).forEach((titleLine, index) => {
-        context.fillText(titleLine, pad, height * 0.34 + index * titleSize * 0.9);
-      });
-
-      const skillY = height * 0.72;
-      context.fillStyle = "#aeb7c7";
-      context.font = `500 ${Math.max(10, width * 0.021)}px monospace`;
-      let skillX = pad;
-      for (const item of activeCapability.items.slice(0, 4)) {
-        const label = `• ${item}`;
-        const labelWidth = context.measureText(label).width + 18;
-        if (skillX + labelWidth > width - pad) break;
-        context.fillText(label, skillX, skillY);
-        skillX += labelWidth;
-      }
-
-      const footerY = height - pad * 1.5;
-      context.strokeStyle = "rgba(65, 82, 105, 0.48)";
       context.lineWidth = 1;
-      context.beginPath();
-      context.moveTo(pad, footerY - 18);
-      context.lineTo(width - pad, footerY - 18);
-      context.stroke();
-      context.fillStyle = "#7d8798";
-      context.font = `600 ${Math.max(9, width * 0.018)}px monospace`;
-      context.fillText("BUILT FOR REAL DELIVERY", pad, footerY);
-      context.textAlign = "right";
-      context.fillText("BRUSH THE SURFACE", width - pad, footerY);
+      for (let y = 1; y < height; y += 4) {
+        context.strokeStyle = y % 8 === 1
+          ? "rgba(208, 224, 242, 0.026)"
+          : "rgba(3, 8, 15, 0.08)";
+        context.beginPath();
+        context.moveTo(0, y);
+        context.lineTo(width, y);
+        context.stroke();
+      }
+
+      for (let x = 1; x < width; x += 5) {
+        context.strokeStyle = x % 10 === 1
+          ? "rgba(185, 205, 229, 0.018)"
+          : "rgba(2, 7, 14, 0.055)";
+        context.beginPath();
+        context.moveTo(x, 0);
+        context.lineTo(x, height);
+        context.stroke();
+      }
     },
-    [activeCapability, activeIndex, capabilities.length],
+    [],
   );
 
-  if (!activeCapability) return null;
+  if (capabilities.length === 0) return null;
 
   return (
     <div className={styles.studio} data-testid="skills-studio">
-      <div className={styles.studioHeader} aria-hidden="true">
-        <span>Capability surface</span>
-        <span>{String(capabilities.length).padStart(2, "0")} working systems</span>
-        <span className={styles.ready}>
-          <span className={styles.readyDot} />
-          Production ready
-        </span>
+      <div className={styles.fabricLayer} aria-hidden="true">
+        <Cloth
+          className={styles.cloth}
+          fallbackPainter={paintFabric}
+          pin="top"
+          wind={0.9}
+          speed={0.3}
+          amplitude={12}
+          drape={15}
+          brush={0.85}
+          brushSize={150}
+          damping={1.65}
+          light={0.38}
+          sheen={0.08}
+          shadow={0.2}
+          cornerRadius={24}
+          perspective={1700}
+          backing={[0.045, 0.085, 0.145]}
+        >
+          <div className={styles.fabricTexture} />
+        </Cloth>
       </div>
 
-      <div className={styles.studioGrid}>
-        <div className={styles.clothBay} aria-hidden="true">
-          <Cloth
-            className={styles.cloth}
-            fallbackPainter={paintFallback}
-            pin="top"
-            wind={1.65}
-            speed={0.38}
-            amplitude={18}
-            drape={20}
-            brush={1.35}
-            brushSize={120}
-            damping={1.45}
-            light={0.42}
-            sheen={0.12}
-            shadow={0.22}
-            cornerRadius={24}
-            perspective={1500}
-            backing={[0.035, 0.065, 0.12]}
-          >
-            <div className={styles.clothSurface}>
-              <div className={styles.clothTopline}>
-                <span>{capabilityCodes[activeIndex] ?? "SYSTEM"}</span>
-                <span>{String(activeIndex + 1).padStart(2, "0")} / {String(capabilities.length).padStart(2, "0")}</span>
+      <div className={styles.content}>
+        <div className={styles.surfaceHeader}>
+          <span>Capability cloth</span>
+          <span>{String(capabilities.length).padStart(2, "0")} production disciplines</span>
+          <span className={styles.ready}>
+            <span className={styles.readyDot} />
+            Built for delivery
+          </span>
+        </div>
+
+        <div className={styles.capabilityGrid} aria-label="Production skill capabilities">
+          {capabilities.map((capability, index) => (
+            <article className={styles.capability} key={capability.label}>
+              <div className={styles.capabilityHeading}>
+                <span className={styles.capabilityIndex} aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3>{capability.label}</h3>
               </div>
 
-              <div className={styles.clothIdentity}>
-                <p>Active capability</p>
-                <h3>{activeCapability.label}</h3>
-              </div>
-
-              <ul className={styles.clothSkills}>
-                {activeCapability.items.slice(0, 4).map((item) => (
+              <ul className={styles.skillInventory}>
+                {capability.items.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-
-              <div className={styles.clothFooter}>
-                <span>Built for real delivery</span>
-                <span>Brush the surface</span>
-              </div>
-            </div>
-          </Cloth>
-        </div>
-
-        <div className={styles.capabilityMap} aria-label="Production skill capabilities">
-          {capabilities.map((capability, index) => {
-            const active = index === activeIndex;
-
-            return (
-              <article
-                key={capability.label}
-                className={styles.capability}
-                data-active={active ? "true" : "false"}
-                onMouseEnter={() => setActiveIndex(index)}
-                onFocus={() => setActiveIndex(index)}
-              >
-                <div className={styles.capabilityHeading}>
-                  <span className={styles.capabilityIndex} aria-hidden="true">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <h3>
-                    <button
-                      type="button"
-                      className={styles.capabilityButton}
-                      aria-pressed={active}
-                      onClick={() => setActiveIndex(index)}
-                    >
-                      {capability.label}
-                    </button>
-                  </h3>
-                  <span className={styles.focusCue} aria-hidden="true">
-                    {active ? "On surface" : "View surface"}
-                  </span>
-                </div>
-
-                <ul className={styles.skillInventory}>
-                  {capability.items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </article>
-            );
-          })}
+            </article>
+          ))}
         </div>
       </div>
     </div>

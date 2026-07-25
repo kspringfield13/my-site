@@ -1,147 +1,184 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type MouseEvent as ReactMouseEvent
+} from "react";
+import styles from "./IntroBridge.module.css";
 
-type Fragment = {
-  text: string;
-  threshold: number;
-  desktopCol: string;
-  mobileCol: string;
-};
-
-const FRAGMENTS: Fragment[] = [
-  { text: "Hey, glad you made it here.", threshold: 0.04, desktopCol: "md:col-start-2", mobileCol: "col-start-1" },
-  { text: "I built this site as a home base for my work.", threshold: 0.12, desktopCol: "md:col-start-6", mobileCol: "col-start-2" },
+const ORIENTATION_LINKS = [
   {
-    text: "After a bunch of projects, I wanted one place",
-    threshold: 0.24,
-    desktopCol: "md:col-start-3",
-    mobileCol: "col-start-1"
-  },
-  { text: "to share what I'm building,", threshold: 0.37, desktopCol: "md:col-start-7", mobileCol: "col-start-2" },
-  { text: "what I'm learning,", threshold: 0.46, desktopCol: "md:col-start-9", mobileCol: "col-start-3" },
-  { text: "and where I'm headed.", threshold: 0.55, desktopCol: "md:col-start-11", mobileCol: "col-start-4" },
-  {
-    text: "Scroll around and you'll get the real story:",
-    threshold: 0.66,
-    desktopCol: "md:col-start-2",
-    mobileCol: "col-start-1"
+    href: "#proof",
+    label: "Career impact",
+    destination: "Proof / timeline"
   },
   {
-    text: "practical work, honest experiments, and a lot of curiosity.",
-    threshold: 0.78,
-    desktopCol: "md:col-start-6",
-    mobileCol: "col-start-2"
+    href: "#projects",
+    label: "Applied projects",
+    destination: "Projects"
+  },
+  {
+    href: "#now",
+    label: "Current experiments",
+    destination: "Now"
   }
-];
+] as const;
+
+const DEPARTURE_DELAY_MS = 130;
+const TRANSITION_DURATION_MS = 380;
+
+function focusDestination(destination: HTMLElement) {
+  const focusTarget = destination.querySelector<HTMLElement>("h2") ?? destination;
+  const hadTabIndex = focusTarget.hasAttribute("tabindex");
+
+  if (!hadTabIndex) {
+    focusTarget.setAttribute("tabindex", "-1");
+    focusTarget.addEventListener(
+      "blur",
+      () => {
+        focusTarget.removeAttribute("tabindex");
+      },
+      { once: true }
+    );
+  }
+
+  window.requestAnimationFrame(() => {
+    focusTarget.focus({ preventScroll: true });
+  });
+}
 
 export function IntroBridge() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [progress, setProgress] = useState(0);
-  const [inView, setInView] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const timersRef = useRef<number[]>([]);
+  const isTransitioningRef = useRef(false);
+  const [teleport, setTeleport] = useState({ active: false, originY: 0, run: 0 });
 
   useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReduceMotion(media.matches);
-    update();
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
+    return () => {
+      timersRef.current.forEach((timer) => window.clearTimeout(timer));
+    };
   }, []);
 
-  useEffect(() => {
-    const node = sectionRef.current;
-    if (!node) return;
+  function navigateTo(destination: HTMLElement, href: string, reduceMotion: boolean) {
+    destination.scrollIntoView({ behavior: "auto", block: "start" });
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setInView(entry.isIntersecting);
-      },
-      { rootMargin: "18% 0px -35% 0px", threshold: [0, 0.2, 0.5, 0.8, 1] }
-    );
+    if (window.location.hash !== href) {
+      window.history.pushState(null, "", href);
+    }
 
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
+    focusDestination(destination);
 
-  useEffect(() => {
-    if (reduceMotion) {
-      setProgress(1);
+    if (!reduceMotion) {
+      destination.animate(
+        [
+          { opacity: 0.58, transform: "translate3d(0, 9px, 0)" },
+          { opacity: 1, transform: "translate3d(0, 0, 0)" }
+        ],
+        {
+          duration: 280,
+          easing: "cubic-bezier(0.16, 1, 0.3, 1)"
+        }
+      );
+    }
+  }
+
+  function handleAnchorClick(event: ReactMouseEvent<HTMLAnchorElement>, href: string) {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
       return;
     }
 
-    let frame = 0;
+    const destination = document.getElementById(href.slice(1));
+    if (!destination) return;
 
-    const update = () => {
-      const node = sectionRef.current;
-      if (!node) return;
+    event.preventDefault();
+    activateAnchor(event.currentTarget, destination, href);
+  }
 
-      const rect = node.getBoundingClientRect();
-      const viewport = window.innerHeight || 1;
-      const start = viewport * 1.15;
-      const end = -rect.height * 0.45;
-      const raw = (start - rect.top) / (start - end);
-      const next = Math.max(0, Math.min(raw, 1));
-      setProgress((prev) => (Math.abs(prev - next) > 0.007 ? next : prev));
-    };
+  function handleAnchorKeyDown(event: ReactKeyboardEvent<HTMLAnchorElement>, href: string) {
+    if (event.key !== "Enter" || event.defaultPrevented) return;
 
-    const onScroll = () => {
-      if (!inView) return;
-      if (frame) return;
-      frame = window.requestAnimationFrame(() => {
-        frame = 0;
-        update();
-      });
-    };
+    const destination = document.getElementById(href.slice(1));
+    if (!destination) return;
 
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    event.preventDefault();
+    activateAnchor(event.currentTarget, destination, href);
+  }
 
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
-  }, [inView, reduceMotion]);
+  function activateAnchor(anchor: HTMLAnchorElement, destination: HTMLElement, href: string) {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) {
+      navigateTo(destination, href, true);
+      return;
+    }
 
-  const ambientOpacity = useMemo(() => 0.35 + progress * 0.4, [progress]);
+    if (isTransitioningRef.current) return;
+    isTransitioningRef.current = true;
+
+    const anchorRect = anchor.getBoundingClientRect();
+    setTeleport((current) => ({
+      active: true,
+      originY: anchorRect.top + anchorRect.height / 2,
+      run: current.run + 1
+    }));
+
+    timersRef.current.push(
+      window.setTimeout(() => {
+        navigateTo(destination, href, false);
+      }, DEPARTURE_DELAY_MS),
+      window.setTimeout(() => {
+        isTransitioningRef.current = false;
+        setTeleport((current) => ({ ...current, active: false }));
+      }, TRANSITION_DURATION_MS)
+    );
+  }
 
   return (
-    <section
-      ref={sectionRef}
-      aria-label="Interpretive bridge"
-      className="section-wrap relative py-16 md:py-20"
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-[color:var(--c-border)]/55 to-transparent"
-        style={{ opacity: ambientOpacity }}
-      />
+    <section aria-labelledby="orientation-title" className={`section-wrap ${styles.orientation}`}>
+      <div className={styles.frame}>
+        <p id="orientation-title" className={styles.statement}>
+          Kyle builds data systems and AI tools that make work clearer.
+        </p>
 
-      <div className="relative grid grid-cols-4 gap-y-3 text-[0.8rem] uppercase tracking-[0.12em] text-[color:var(--c-text-faint)] md:grid-cols-12 md:gap-y-4 md:text-[0.9rem]">
-        {FRAGMENTS.map((fragment, index) => {
-          const visible = reduceMotion || progress >= fragment.threshold;
-          const offset = (1 - Math.min(Math.max((progress - fragment.threshold) * 4, 0), 1)) * 16;
-
-          return (
-            <p
-              key={fragment.text}
-              className={`${fragment.mobileCol} ${fragment.desktopCol} col-span-3 md:col-span-4`}
-              style={{
-                opacity: visible ? 1 : 0,
-                transform: `translate3d(0, ${visible ? 0 : offset}px, 0)`,
-                transitionProperty: "opacity, transform",
-                transitionDuration: `${reduceMotion ? 120 : 540}ms`,
-                transitionTimingFunction: "cubic-bezier(0.22, 0.61, 0.36, 1)",
-                transitionDelay: `${index * 35}ms`
-              }}
+        <nav aria-label="Explore Kyle's work" className={styles.links}>
+          {ORIENTATION_LINKS.map((link, index) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className={styles.anchor}
+              onClick={(event) => handleAnchorClick(event, link.href)}
+              onKeyDown={(event) => handleAnchorKeyDown(event, link.href)}
             >
-              {fragment.text}
-            </p>
-          );
-        })}
+              <span className={styles.index} aria-hidden="true">
+                0{index + 1}
+              </span>
+              <span className={styles.anchorCopy}>
+                <span className={styles.anchorLabel}>{link.label}</span>
+                <span className={styles.destination}>{link.destination}</span>
+              </span>
+              <span className={styles.arrow} aria-hidden="true">
+                ↘
+              </span>
+            </a>
+          ))}
+        </nav>
       </div>
+
+      <span
+        key={teleport.run}
+        aria-hidden="true"
+        className={`${styles.teleportTrace} ${teleport.active ? styles.teleportTraceActive : ""}`}
+        style={{ "--teleport-origin-y": `${teleport.originY}px` } as CSSProperties}
+      />
     </section>
   );
 }

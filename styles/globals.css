@@ -222,7 +222,8 @@ a:hover {
 }
 
 .particle-scroll-stage[data-particle-scroll="active"] [data-particle-reveal="forming"] {
-  opacity: var(--particle-reveal-opacity);
+  clip-path: inset(0 0 var(--particle-reveal-clip, 100%) 0);
+  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

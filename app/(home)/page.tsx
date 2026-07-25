@@ -11,16 +11,16 @@ export default function HomePage() {
   return (
     <>
       <HeroSpotlight />
-      <ParticleScrollStage>
-        <div className="home-rhythm">
+      <div className="home-rhythm">
+        <ParticleScrollStage>
           <IntroBridge />
           <SectionProof />
-          <SectionProjects />
-          <SectionSkills />
-          <SectionNow />
-          <SectionContact />
-        </div>
-      </ParticleScrollStage>
+        </ParticleScrollStage>
+        <SectionProjects />
+        <SectionSkills />
+        <SectionNow />
+        <SectionContact />
+      </div>
     </>
   );
 }

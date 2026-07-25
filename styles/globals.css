@@ -127,15 +127,19 @@ a:hover {
   --home-rhythm-gap: clamp(1.25rem, 2.5vw, 2.75rem);
 }
 
-.home-rhythm > section + section {
+.home-rhythm > :is(section, .particle-scroll-stage) + :is(section, .particle-scroll-stage),
+.particle-scroll-content > section + section {
   margin-top: var(--home-rhythm-gap);
 }
 
-.home-rhythm > section:not(:last-child):not(:nth-last-child(2)) {
+.home-rhythm > :is(section, .particle-scroll-stage):not(:last-child):not(:nth-last-child(2)),
+.particle-scroll-content > section:not(:last-child) {
   position: relative;
 }
 
-.home-rhythm > section:not(:last-child):not(:nth-last-child(2))::after {
+.home-rhythm
+  > :is(section, .particle-scroll-stage):not(:last-child):not(:nth-last-child(2))::after,
+.particle-scroll-content > section:not(:last-child)::after {
   content: "";
   position: absolute;
   left: 50%;

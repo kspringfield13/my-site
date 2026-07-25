@@ -1,14 +1,14 @@
 import * as THREE from "three";
 import RAPIER from "@dimforge/rapier3d-compat";
 
-type PieceKind = "box" | "beam" | "cube" | "cylinder" | "capsule";
+type PieceKind = "box" | "beam" | "cube" | "column" | "hex" | "wedge";
 
 type PieceSpec = {
   kind: PieceKind;
   size: [number, number, number];
   color: number;
   radius?: number;
-  halfHeight?: number;
+  topScale?: number;
 };
 
 type TowerPiece = {
@@ -18,6 +18,13 @@ type TowerPiece = {
   landed: boolean;
   droppedAt: number;
   landingHeight: number;
+};
+
+type AlignmentGuide = {
+  group: THREE.Group;
+  beam: THREE.Mesh;
+  glow: THREE.Mesh;
+  reticle: THREE.Mesh;
 };
 
 export type TowerEngineApi = {
@@ -39,11 +46,12 @@ export type TowerEngineOptions = {
 };
 
 const PIECES: PieceSpec[] = [
-  { kind: "box", size: [1.75, 0.58, 1.18], color: 0x90b9d8 },
-  { kind: "beam", size: [2.5, 0.44, 0.7], color: 0xc5d5e4 },
-  { kind: "cube", size: [1.06, 1.06, 1.06], color: 0x6f91b2 },
-  { kind: "cylinder", size: [1.38, 0.68, 1.38], radius: 0.69, halfHeight: 0.34, color: 0x9c88ad },
-  { kind: "capsule", size: [0.86, 1.75, 0.86], radius: 0.43, halfHeight: 0.445, color: 0x78a6a2 }
+  { kind: "box", size: [1.75, 0.58, 1.18], color: 0x42d9f5 },
+  { kind: "beam", size: [2.5, 0.44, 0.7], color: 0xb8eaff },
+  { kind: "cube", size: [1.06, 1.06, 1.06], color: 0x7b86ff },
+  { kind: "column", size: [0.88, 1.48, 0.88], color: 0x5ee1c3 },
+  { kind: "hex", size: [1.42, 0.7, 1.42], radius: 0.71, color: 0xc779ff },
+  { kind: "wedge", size: [1.78, 0.72, 1.12], topScale: 0.58, color: 0xff5aa8 }
 ];
 
 const labelFor = (kind: PieceKind) =>
@@ -51,33 +59,78 @@ const labelFor = (kind: PieceKind) =>
     box: "SLAB",
     beam: "BEAM",
     cube: "BLOCK",
-    cylinder: "DRUM",
-    capsule: "CAPSULE"
+    column: "COLUMN",
+    hex: "HEX",
+    wedge: "WEDGE"
   })[kind];
 
-function geometryFor(spec: PieceSpec) {
-  if (spec.kind === "cylinder") {
-    return new THREE.CylinderGeometry(spec.radius, spec.radius, spec.size[1], 24);
+function wedgeVertices(spec: PieceSpec) {
+  const [width, height, depth] = spec.size;
+  const bottomX = width / 2;
+  const topX = (width * (spec.topScale ?? 0.6)) / 2;
+  const halfY = height / 2;
+  const halfZ = depth / 2;
+  return new Float32Array([
+    -bottomX, -halfY, -halfZ,
+    bottomX, -halfY, -halfZ,
+    bottomX, -halfY, halfZ,
+    -bottomX, -halfY, halfZ,
+    -topX, halfY, -halfZ,
+    topX, halfY, -halfZ,
+    topX, halfY, halfZ,
+    -topX, halfY, halfZ
+  ]);
+}
+
+function hexVertices(spec: PieceSpec) {
+  const vertices: number[] = [];
+  const radius = spec.radius ?? spec.size[0] / 2;
+  for (const y of [-spec.size[1] / 2, spec.size[1] / 2]) {
+    for (let index = 0; index < 6; index += 1) {
+      const angle = (index / 6) * Math.PI * 2 + Math.PI / 6;
+      vertices.push(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
+    }
   }
-  if (spec.kind === "capsule") {
-    return new THREE.CapsuleGeometry(spec.radius, spec.halfHeight! * 2, 8, 16);
+  return new Float32Array(vertices);
+}
+
+function geometryFor(spec: PieceSpec) {
+  if (spec.kind === "hex") {
+    return new THREE.CylinderGeometry(spec.radius, spec.radius, spec.size[1], 6, 1, false, Math.PI / 6);
+  }
+  if (spec.kind === "wedge") {
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute("position", new THREE.BufferAttribute(wedgeVertices(spec), 3));
+    geometry.setIndex([
+      0, 2, 1, 0, 3, 2,
+      4, 5, 6, 4, 6, 7,
+      0, 1, 5, 0, 5, 4,
+      1, 2, 6, 1, 6, 5,
+      2, 3, 7, 2, 7, 6,
+      3, 0, 4, 3, 4, 7
+    ]);
+    geometry.computeVertexNormals();
+    return geometry;
   }
   return new THREE.BoxGeometry(...spec.size);
 }
 
 function colliderFor(spec: PieceSpec) {
-  if (spec.kind === "cylinder") {
-    return RAPIER.ColliderDesc.cylinder(spec.halfHeight!, spec.radius!);
-  }
-  if (spec.kind === "capsule") {
-    return RAPIER.ColliderDesc.capsule(spec.halfHeight!, spec.radius!);
+  if (spec.kind === "hex" || spec.kind === "wedge") {
+    const collider = RAPIER.ColliderDesc.convexHull(
+      spec.kind === "hex" ? hexVertices(spec) : wedgeVertices(spec)
+    );
+    if (!collider) throw new Error(`Unable to create ${spec.kind} collider`);
+    return collider;
   }
   return RAPIER.ColliderDesc.cuboid(spec.size[0] / 2, spec.size[1] / 2, spec.size[2] / 2);
 }
 
 function disposeObject(object: THREE.Object3D) {
   object.traverse((child) => {
-    if (!(child instanceof THREE.Mesh || child instanceof THREE.Points)) return;
+    if (!(child instanceof THREE.Mesh || child instanceof THREE.Points || child instanceof THREE.Line)) {
+      return;
+    }
     child.geometry.dispose();
     const materials = Array.isArray(child.material) ? child.material : [child.material];
     materials.forEach((material) => material.dispose());
@@ -95,8 +148,8 @@ export async function createTowerEngine({
   await RAPIER.init();
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x03060c);
-  scene.fog = new THREE.FogExp2(0x07101c, 0.035);
+  scene.background = new THREE.Color(0x01040c);
+  scene.fog = new THREE.FogExp2(0x03101a, 0.028);
 
   const camera = new THREE.PerspectiveCamera(37, 1, 0.1, 90);
   camera.position.set(8.2, 6.5, 10.5);
@@ -115,19 +168,20 @@ export async function createTowerEngine({
   renderer.domElement.className = "tower-game-canvas";
   renderer.domElement.setAttribute(
     "aria-label",
-    "3D tower arena. Drag to position the next piece, then use rotate and drop controls."
+    "3D tower arena. Drag to position the next piece. Right-drag to orbit and scroll to zoom."
   );
   renderer.domElement.setAttribute("role", "img");
+  renderer.domElement.tabIndex = 0;
   mount.appendChild(renderer.domElement);
 
   const world = new RAPIER.World({ x: 0, y: -9.81, z: 0 });
   world.integrationParameters.dt = 1 / 60;
   world.integrationParameters.numSolverIterations = 5;
 
-  const ambient = new THREE.HemisphereLight(0xbedcff, 0x07101c, 1.75);
+  const ambient = new THREE.HemisphereLight(0x9cecff, 0x070317, 1.55);
   scene.add(ambient);
 
-  const key = new THREE.DirectionalLight(0xe3efff, 4.25);
+  const key = new THREE.DirectionalLight(0xc9f8ff, 4.5);
   key.position.set(5, 11, 7);
   key.castShadow = true;
   key.shadow.mapSize.set(reducedMotion ? 512 : 1024, reducedMotion ? 512 : 1024);
@@ -137,37 +191,139 @@ export async function createTowerEngine({
   key.shadow.camera.bottom = -3;
   scene.add(key);
 
-  const rim = new THREE.PointLight(0x5879b4, 35, 18, 2);
+  const rim = new THREE.PointLight(0x00d9ff, 48, 21, 2);
   rim.position.set(-5, 5, -4);
   scene.add(rim);
 
+  const magentaRim = new THREE.PointLight(0xff2fa6, 35, 19, 2);
+  magentaRim.position.set(5.5, 3.8, -5);
+  scene.add(magentaRim);
+
+  const platform = new THREE.Group();
+  scene.add(platform);
+
   const groundMaterial = new THREE.MeshStandardMaterial({
-    color: 0x0a1321,
-    roughness: 0.82,
-    metalness: 0.22
+    color: 0x071522,
+    roughness: 0.36,
+    metalness: 0.72,
+    emissive: 0x031928,
+    emissiveIntensity: 0.65
   });
   const ground = new THREE.Mesh(new THREE.CylinderGeometry(4.5, 5.05, 0.55, 48), groundMaterial);
   ground.position.y = -0.3;
   ground.receiveShadow = true;
-  scene.add(ground);
+  platform.add(ground);
+
+  const lowerDeck = new THREE.Mesh(
+    new THREE.CylinderGeometry(4.9, 4.35, 0.32, 48),
+    new THREE.MeshStandardMaterial({
+      color: 0x040a14,
+      roughness: 0.42,
+      metalness: 0.86,
+      emissive: 0x09051b,
+      emissiveIntensity: 0.8
+    })
+  );
+  lowerDeck.position.y = -0.7;
+  platform.add(lowerDeck);
+
+  const underGlow = new THREE.Mesh(
+    new THREE.CylinderGeometry(4.58, 4.78, 0.08, 64),
+    new THREE.MeshBasicMaterial({
+      color: 0x00dffc,
+      transparent: true,
+      opacity: 0.52,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    })
+  );
+  underGlow.position.y = -0.53;
+  platform.add(underGlow);
 
   const baseBody = world.createRigidBody(RAPIER.RigidBodyDesc.fixed().setTranslation(0, -0.3, 0));
   world.createCollider(RAPIER.ColliderDesc.cylinder(0.275, 4.5).setFriction(0.82), baseBody);
 
-  const ringMaterial = new THREE.MeshBasicMaterial({
-    color: 0x6284ac,
+  const ringSpecs = [
+    { radius: 1.45, width: 0.018, color: 0xff2fa6, opacity: 0.38 },
+    { radius: 2.45, width: 0.026, color: 0x00e5ff, opacity: 0.54 },
+    { radius: 3.42, width: 0.018, color: 0x7b61ff, opacity: 0.42 },
+    { radius: 4.38, width: 0.045, color: 0x00e5ff, opacity: 0.72 }
+  ];
+  const rings = ringSpecs.map(({ radius, width, color, opacity }, index) => {
+    const ring = new THREE.Mesh(
+      new THREE.RingGeometry(radius, radius + width, 96),
+      new THREE.MeshBasicMaterial({
+        color,
+        transparent: true,
+        opacity,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      })
+    );
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = 0.006 + index * 0.002;
+    platform.add(ring);
+    return ring;
+  });
+
+  const techMarkMaterial = new THREE.MeshBasicMaterial({
+    color: 0x00cce8,
     transparent: true,
-    opacity: 0.19,
+    opacity: 0.26,
     blending: THREE.AdditiveBlending,
     depthWrite: false
   });
-  const rings = [2.4, 3.35, 4.35].map((radius, index) => {
-    const ring = new THREE.Mesh(new THREE.RingGeometry(radius, radius + 0.018, 64), ringMaterial.clone());
-    ring.rotation.x = -Math.PI / 2;
-    ring.position.y = 0.005 + index * 0.002;
-    scene.add(ring);
-    return ring;
+  const techMarks = Array.from({ length: 24 }, (_, index) => {
+    const mark = new THREE.Mesh(
+      new THREE.BoxGeometry(index % 3 === 0 ? 0.75 : 0.42, 0.012, 0.035),
+      index % 4 === 0
+        ? new THREE.MeshBasicMaterial({
+            color: 0xff2fa6,
+            transparent: true,
+            opacity: 0.34,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+          })
+        : techMarkMaterial.clone()
+    );
+    const angle = (index / 24) * Math.PI * 2;
+    const radius = index % 2 === 0 ? 3.86 : 2.94;
+    mark.position.set(Math.cos(angle) * radius, 0.013, Math.sin(angle) * radius);
+    mark.rotation.y = -angle;
+    platform.add(mark);
+    return mark;
   });
+
+  const spokeMaterial = new THREE.LineBasicMaterial({
+    color: 0x19a8c2,
+    transparent: true,
+    opacity: 0.16,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+  const spokes = Array.from({ length: 12 }, (_, index) => {
+    const angle = (index / 12) * Math.PI * 2;
+    const geometry = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(Math.cos(angle) * 1.55, 0.01, Math.sin(angle) * 1.55),
+      new THREE.Vector3(Math.cos(angle) * 4.3, 0.01, Math.sin(angle) * 4.3)
+    ]);
+    const spoke = new THREE.Line(geometry, spokeMaterial.clone());
+    platform.add(spoke);
+    return spoke;
+  });
+
+  const horizonGrid = new THREE.GridHelper(38, 38, 0x0b748c, 0x082838);
+  horizonGrid.position.y = -0.91;
+  const horizonMaterials = Array.isArray(horizonGrid.material)
+    ? horizonGrid.material
+    : [horizonGrid.material];
+  horizonMaterials.forEach((material) => {
+    material.transparent = true;
+    material.opacity = 0.22;
+    material.blending = THREE.AdditiveBlending;
+    material.depthWrite = false;
+  });
+  scene.add(horizonGrid);
 
   const starGeometry = new THREE.BufferGeometry();
   const starCount = reducedMotion ? 50 : 110;
@@ -183,10 +339,10 @@ export async function createTowerEngine({
   const stars = new THREE.Points(
     starGeometry,
     new THREE.PointsMaterial({
-      color: 0x8eacca,
-      size: 0.035,
+      color: 0x74eaff,
+      size: 0.045,
       transparent: true,
-      opacity: 0.45,
+      opacity: 0.58,
       depthWrite: false
     })
   );
@@ -194,6 +350,7 @@ export async function createTowerEngine({
 
   const pieces: TowerPiece[] = [];
   let preview: { mesh: THREE.Mesh; spec: PieceSpec; x: number; z: number; yaw: number } | null = null;
+  let alignmentGuide: AlignmentGuide | null = null;
   let previewIndex = -1;
   let highest = 0;
   let currentTop = 0;
@@ -210,9 +367,15 @@ export async function createTowerEngine({
   let collapseTimer = 0;
   let burst: THREE.Points | null = null;
   let burstVelocity: Float32Array | null = null;
-  let dragPointer: number | null = null;
+  let pieceDragPointer: number | null = null;
+  let orbitPointer: number | null = null;
   let dragX = 0;
   let dragY = 0;
+  let orbitAzimuth = Math.atan2(camera.position.z, camera.position.x);
+  let orbitElevation = 0.44;
+  let cameraDistance = 13.4;
+  const cameraRight = new THREE.Vector3();
+  const cameraToward = new THREE.Vector3();
 
   const clampPosition = (value: number) => Math.max(-3.25, Math.min(3.25, value));
 
@@ -229,6 +392,77 @@ export async function createTowerEngine({
       emissiveIntensity: ghost ? 0.8 : 0.35
     });
 
+  const createAlignmentGuide = (): AlignmentGuide => {
+    const group = new THREE.Group();
+    group.renderOrder = 8;
+    const beamGeometry = new THREE.CylinderGeometry(0.012, 0.012, 1, 10);
+    const glowGeometry = new THREE.CylinderGeometry(0.038, 0.038, 1, 10);
+    const beam = new THREE.Mesh(
+      beamGeometry,
+      new THREE.MeshBasicMaterial({
+        color: 0xff244c,
+        transparent: true,
+        opacity: 0.98,
+        blending: THREE.AdditiveBlending,
+        depthTest: true,
+        depthWrite: false
+      })
+    );
+    const glow = new THREE.Mesh(
+      glowGeometry,
+      new THREE.MeshBasicMaterial({
+        color: 0xff003c,
+        transparent: true,
+        opacity: 0.22,
+        blending: THREE.AdditiveBlending,
+        depthTest: true,
+        depthWrite: false
+      })
+    );
+    const reticle = new THREE.Mesh(
+      new THREE.RingGeometry(0.19, 0.25, 32),
+      new THREE.MeshBasicMaterial({
+        color: 0xff365e,
+        transparent: true,
+        opacity: 0.84,
+        blending: THREE.AdditiveBlending,
+        depthTest: false,
+        depthWrite: false,
+        side: THREE.DoubleSide
+      })
+    );
+    reticle.rotation.x = -Math.PI / 2;
+    reticle.position.y = 0.035;
+    group.add(glow, beam, reticle);
+    scene.add(group);
+    return { group, beam, glow, reticle };
+  };
+
+  const removeAlignmentGuide = () => {
+    if (!alignmentGuide) return;
+    scene.remove(alignmentGuide.group);
+    disposeObject(alignmentGuide.group);
+    alignmentGuide = null;
+  };
+
+  const syncAlignmentGuide = (now?: number) => {
+    if (!preview || !alignmentGuide) return;
+    const beamBottom = 0.045;
+    const beamTop = Math.max(beamBottom + 0.1, preview.mesh.position.y - preview.spec.size[1] / 2);
+    const beamHeight = beamTop - beamBottom;
+    alignmentGuide.group.position.x = preview.x;
+    alignmentGuide.group.position.z = preview.z;
+    alignmentGuide.beam.position.y = beamBottom + beamHeight / 2;
+    alignmentGuide.glow.position.y = beamBottom + beamHeight / 2;
+    alignmentGuide.beam.scale.y = beamHeight;
+    alignmentGuide.glow.scale.y = beamHeight;
+    if (now !== undefined && !reducedMotion) {
+      const pulse = 0.86 + Math.sin(now * 0.006) * 0.14;
+      (alignmentGuide.glow.material as THREE.MeshBasicMaterial).opacity = 0.16 + pulse * 0.1;
+      alignmentGuide.reticle.scale.setScalar(0.92 + pulse * 0.12);
+    }
+  };
+
   const spawnPreview = () => {
     if (destroyed || collapsed || preview) return;
     let nextIndex = Math.floor(Math.random() * PIECES.length);
@@ -243,6 +477,8 @@ export async function createTowerEngine({
     scene.add(mesh);
     preview = { mesh, spec, x: 0, z: 0, yaw: Math.random() > 0.58 ? Math.PI / 2 : 0 };
     preview.mesh.rotation.y = preview.yaw;
+    alignmentGuide = createAlignmentGuide();
+    syncAlignmentGuide();
     onPiece(labelFor(spec.kind));
   };
 
@@ -252,6 +488,7 @@ export async function createTowerEngine({
     preview.z = clampPosition(preview.z + z);
     preview.mesh.position.x = preview.x;
     preview.mesh.position.z = preview.z;
+    syncAlignmentGuide();
   };
 
   const rotate = (direction = 1) => {
@@ -264,6 +501,7 @@ export async function createTowerEngine({
     if (!preview || collapsed || paused) return;
     const { mesh: ghost, spec, x, z, yaw } = preview;
     const position = ghost.position.clone();
+    removeAlignmentGuide();
     scene.remove(ghost);
     disposeObject(ghost);
     preview = null;
@@ -304,6 +542,7 @@ export async function createTowerEngine({
 
   const clearPieces = () => {
     if (preview) {
+      removeAlignmentGuide();
       scene.remove(preview.mesh);
       disposeObject(preview.mesh);
       preview = null;
@@ -337,6 +576,7 @@ export async function createTowerEngine({
     if (collapsed) return;
     collapsed = true;
     if (preview) {
+      removeAlignmentGuide();
       scene.remove(preview.mesh);
       disposeObject(preview.mesh);
       preview = null;
@@ -447,11 +687,12 @@ export async function createTowerEngine({
 
   const updateCamera = (now: number, delta: number) => {
     const focusY = Math.max(1.5, Math.min(currentTop * 0.52 + 1.1, 10.5));
-    const distance = 10.8 + Math.min(currentTop * 0.15, 2.6);
-    const orbit = reducedMotion ? 0.64 : 0.64 + Math.sin(now * 0.00009) * 0.055;
-    camera.position.x += (Math.cos(orbit) * distance - camera.position.x) * Math.min(1, delta * 1.8);
-    camera.position.z += (Math.sin(orbit) * distance - camera.position.z) * Math.min(1, delta * 1.8);
-    camera.position.y += (focusY + 4.15 - camera.position.y) * Math.min(1, delta * 2);
+    const targetX = Math.cos(orbitAzimuth) * Math.cos(orbitElevation) * cameraDistance;
+    const targetZ = Math.sin(orbitAzimuth) * Math.cos(orbitElevation) * cameraDistance;
+    const targetY = focusY + Math.sin(orbitElevation) * cameraDistance;
+    camera.position.x += (targetX - camera.position.x) * Math.min(1, delta * 7);
+    camera.position.z += (targetZ - camera.position.z) * Math.min(1, delta * 7);
+    camera.position.y += (targetY - camera.position.y) * Math.min(1, delta * 7);
 
     const shake = now < shakeUntil ? (shakeUntil - now) / 720 : 0;
     if (shake > 0) {
@@ -505,9 +746,14 @@ export async function createTowerEngine({
       (preview.mesh.material as THREE.MeshPhysicalMaterial).emissiveIntensity =
         0.75 + Math.sin(now * 0.004) * 0.13;
     }
+    syncAlignmentGuide(now);
     rings.forEach((ring, index) => {
       ring.rotation.z = reducedMotion ? 0 : now * 0.000045 * (index % 2 ? -1 : 1);
     });
+    if (!reducedMotion) {
+      underGlow.rotation.y = now * 0.00008;
+      magentaRim.intensity = 31 + Math.sin(now * 0.0011) * 4;
+    }
     updateCamera(now, delta);
     renderer.render(scene, camera);
     raf = requestAnimationFrame(frame);
@@ -525,30 +771,74 @@ export async function createTowerEngine({
   resize();
 
   const onPointerDown = (event: PointerEvent) => {
-    if (!preview || collapsed || paused) return;
-    dragPointer = event.pointerId;
+    renderer.domElement.focus({ preventScroll: true });
+    if (event.button === 2) {
+      orbitPointer = event.pointerId;
+      dragX = event.clientX;
+      dragY = event.clientY;
+      renderer.domElement.dataset.cameraDragging = "true";
+      renderer.domElement.setPointerCapture(event.pointerId);
+      event.preventDefault();
+      return;
+    }
+    if (event.button !== 0 || !preview || collapsed || paused) return;
+    pieceDragPointer = event.pointerId;
     dragX = event.clientX;
     dragY = event.clientY;
     renderer.domElement.setPointerCapture(event.pointerId);
   };
   const onPointerMove = (event: PointerEvent) => {
-    if (dragPointer !== event.pointerId || !preview || collapsed || paused) return;
+    if (orbitPointer === event.pointerId) {
+      orbitAzimuth -= (event.clientX - dragX) * 0.007;
+      orbitElevation = THREE.MathUtils.clamp(
+        orbitElevation + (event.clientY - dragY) * 0.005,
+        0.2,
+        1.05
+      );
+      dragX = event.clientX;
+      dragY = event.clientY;
+      event.preventDefault();
+      return;
+    }
+    if (pieceDragPointer !== event.pointerId || !preview || collapsed || paused) return;
     const scale = mount.clientWidth < 600 ? 0.014 : 0.01;
-    move((event.clientX - dragX) * scale, (event.clientY - dragY) * scale);
+    const pointerX = (event.clientX - dragX) * scale;
+    const pointerY = (event.clientY - dragY) * scale;
+    cameraRight.setFromMatrixColumn(camera.matrixWorld, 0).setY(0).normalize();
+    cameraToward.set(camera.position.x, 0, camera.position.z).normalize();
+    move(
+      cameraRight.x * pointerX + cameraToward.x * pointerY,
+      cameraRight.z * pointerX + cameraToward.z * pointerY
+    );
     dragX = event.clientX;
     dragY = event.clientY;
   };
   const onPointerUp = (event: PointerEvent) => {
-    if (dragPointer !== event.pointerId) return;
-    dragPointer = null;
+    if (pieceDragPointer !== event.pointerId && orbitPointer !== event.pointerId) return;
+    if (pieceDragPointer === event.pointerId) pieceDragPointer = null;
+    if (orbitPointer === event.pointerId) {
+      orbitPointer = null;
+      delete renderer.domElement.dataset.cameraDragging;
+    }
     if (renderer.domElement.hasPointerCapture(event.pointerId)) {
       renderer.domElement.releasePointerCapture(event.pointerId);
     }
+  };
+  const onContextMenu = (event: MouseEvent) => {
+    event.preventDefault();
+  };
+  const onWheel = (event: WheelEvent) => {
+    if (document.activeElement !== renderer.domElement) return;
+    event.preventDefault();
+    const normalizedDelta = Math.sign(event.deltaY) * Math.min(Math.abs(event.deltaY), 120);
+    cameraDistance = THREE.MathUtils.clamp(cameraDistance + normalizedDelta * 0.012, 7.5, 19);
   };
   renderer.domElement.addEventListener("pointerdown", onPointerDown);
   renderer.domElement.addEventListener("pointermove", onPointerMove);
   renderer.domElement.addEventListener("pointerup", onPointerUp);
   renderer.domElement.addEventListener("pointercancel", onPointerUp);
+  renderer.domElement.addEventListener("contextmenu", onContextMenu);
+  renderer.domElement.addEventListener("wheel", onWheel, { passive: false });
 
   const setPaused = (nextPaused: boolean) => {
     if (paused === nextPaused || destroyed) return;
@@ -572,9 +862,12 @@ export async function createTowerEngine({
     renderer.domElement.removeEventListener("pointermove", onPointerMove);
     renderer.domElement.removeEventListener("pointerup", onPointerUp);
     renderer.domElement.removeEventListener("pointercancel", onPointerUp);
+    renderer.domElement.removeEventListener("contextmenu", onContextMenu);
+    renderer.domElement.removeEventListener("wheel", onWheel);
     clearPieces();
-    disposeObject(ground);
-    rings.forEach(disposeObject);
+    removeAlignmentGuide();
+    disposeObject(platform);
+    disposeObject(horizonGrid);
     disposeObject(stars);
     renderer.renderLists.dispose();
     renderer.dispose();

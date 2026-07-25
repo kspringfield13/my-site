@@ -1,16 +1,18 @@
 .game {
-  --game-line: rgba(126, 159, 194, 0.3);
-  --game-bright: #cfe5f4;
-  --game-accent: #7ea3c6;
+  --game-line: rgba(60, 218, 242, 0.34);
+  --game-bright: #d7fbff;
+  --game-accent: #20d9f4;
   position: relative;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--c-border) 82%, #7799bb);
   border-radius: 1.1rem;
   background:
-    radial-gradient(circle at 50% 0%, rgba(61, 92, 126, 0.2), transparent 42%),
-    #03070d;
+    radial-gradient(circle at 18% 0%, rgba(0, 222, 255, 0.16), transparent 38%),
+    radial-gradient(circle at 82% 12%, rgba(255, 38, 151, 0.11), transparent 34%),
+    #01040b;
   box-shadow:
     0 28px 80px rgba(0, 0, 0, 0.36),
+    0 0 44px rgba(0, 211, 242, 0.08),
     inset 0 1px 0 rgba(214, 234, 249, 0.04);
   isolation: isolate;
 }
@@ -27,7 +29,10 @@
   gap: 1rem;
   border-bottom: 1px solid var(--game-line);
   padding: 0.75rem 1rem;
-  background: rgba(6, 12, 21, 0.92);
+  background:
+    linear-gradient(90deg, rgba(0, 218, 246, 0.07), transparent 28%, rgba(255, 34, 145, 0.045)),
+    rgba(3, 9, 18, 0.94);
+  box-shadow: inset 0 -1px 14px rgba(0, 213, 241, 0.04);
 }
 
 .topBar h3 {
@@ -40,7 +45,7 @@
 .gameIndex,
 .heightReadout span,
 .pieceBadge span {
-  color: #7f93a9;
+  color: #759eaa;
   font-size: 0.58rem;
   letter-spacing: 0.18em;
 }
@@ -57,7 +62,7 @@
   color: var(--game-bright);
   font-size: clamp(1.15rem, 3vw, 1.55rem);
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 20px rgba(128, 177, 215, 0.23);
+  text-shadow: 0 0 20px rgba(32, 225, 249, 0.34);
 }
 
 .arena {
@@ -65,9 +70,25 @@
   min-height: clamp(26rem, 62vw, 39rem);
   overflow: hidden;
   background:
-    linear-gradient(rgba(100, 134, 168, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(100, 134, 168, 0.035) 1px, transparent 1px);
+    linear-gradient(rgba(36, 203, 231, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(36, 203, 231, 0.04) 1px, transparent 1px);
   background-size: 42px 42px;
+}
+
+.arena::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      transparent 0,
+      transparent 4px,
+      rgba(56, 218, 240, 0.018) 5px
+    ),
+    linear-gradient(90deg, rgba(0, 218, 246, 0.05), transparent 10%, transparent 90%, rgba(255, 34, 145, 0.04));
+  content: "";
+  pointer-events: none;
 }
 
 .canvasMount {
@@ -81,11 +102,16 @@
   width: 100%;
   height: 100%;
   touch-action: none;
-  cursor: grab;
+  cursor: crosshair;
+  outline: none;
 }
 
-.canvasMount :global(.tower-game-canvas:active) {
+.canvasMount :global(.tower-game-canvas[data-camera-dragging="true"]) {
   cursor: grabbing;
+}
+
+.canvasMount :global(.tower-game-canvas:focus-visible) {
+  box-shadow: inset 0 0 0 2px rgba(64, 228, 250, 0.58);
 }
 
 .gridBackdrop {
@@ -93,7 +119,8 @@
   z-index: 0;
   inset: 0;
   background:
-    radial-gradient(circle at 50% 58%, rgba(66, 105, 143, 0.14), transparent 38%),
+    radial-gradient(circle at 50% 58%, rgba(0, 218, 246, 0.12), transparent 35%),
+    radial-gradient(circle at 72% 36%, rgba(255, 36, 151, 0.08), transparent 30%),
     linear-gradient(180deg, rgba(5, 10, 18, 0) 45%, rgba(3, 7, 13, 0.72));
   pointer-events: none;
 }
@@ -183,12 +210,15 @@
 }
 
 .primaryControl {
-  background: linear-gradient(145deg, #315374, #1b344e);
-  box-shadow: 0 8px 26px rgba(31, 68, 100, 0.32);
+  border-color: rgba(39, 221, 245, 0.66);
+  background: linear-gradient(145deg, #075b6b, #15374c);
+  box-shadow:
+    0 8px 26px rgba(0, 192, 221, 0.2),
+    inset 0 0 18px rgba(25, 225, 249, 0.08);
 }
 
 .secondaryControl {
-  background: rgba(13, 27, 42, 0.88);
+  background: rgba(7, 26, 40, 0.9);
 }
 
 .primaryControl:hover:not(:disabled),
@@ -305,10 +335,12 @@
   top: 0.85rem;
   right: 0.85rem;
   width: min(13.5rem, calc(100% - 5.4rem));
-  border: 1px solid rgba(120, 153, 185, 0.32);
+  border: 1px solid rgba(40, 209, 235, 0.32);
   border-radius: 0.55rem;
-  background: rgba(5, 11, 19, 0.78);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.22);
+  background: linear-gradient(145deg, rgba(4, 19, 29, 0.86), rgba(9, 7, 22, 0.84));
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, 0.3),
+    inset 0 0 20px rgba(0, 218, 246, 0.025);
   backdrop-filter: blur(10px);
 }
 
@@ -392,8 +424,8 @@
   bottom: 0;
   left: 0;
   width: 2px;
-  background: linear-gradient(0deg, #496b8a, #b1d1e5);
-  box-shadow: 0 0 13px rgba(120, 174, 211, 0.5);
+  background: linear-gradient(0deg, #ff2f9f, #1de6ff);
+  box-shadow: 0 0 13px rgba(29, 230, 255, 0.64);
   transition: height 180ms ease-out;
 }
 
@@ -428,7 +460,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
-  border-left: 1px solid rgba(132, 172, 205, 0.62);
+  border-left: 1px solid rgba(30, 224, 248, 0.72);
   padding-left: 0.55rem;
   pointer-events: none;
 }
@@ -449,12 +481,14 @@
   min-height: 5.2rem;
   border-top: 1px solid var(--game-line);
   padding: 0.7rem 0.9rem;
-  background: rgba(6, 12, 21, 0.97);
+  background:
+    linear-gradient(90deg, rgba(0, 218, 246, 0.055), transparent 34%, rgba(255, 34, 145, 0.035)),
+    rgba(3, 9, 18, 0.97);
 }
 
 .controlDeck > p {
   margin: 0;
-  color: #718498;
+  color: #7c9ca7;
   font-size: 0.59rem;
   line-height: 1.55;
   text-align: center;

@@ -1,6 +1,6 @@
 .orientation {
   position: relative;
-  padding-block: clamp(2rem, 4vw, 3rem);
+  padding-block: 0 clamp(2rem, 4vw, 3rem);
   scroll-margin-top: 1rem;
 }
 
@@ -202,7 +202,7 @@
 
 @media (max-width: 720px) {
   .orientation {
-    padding-block: 1.55rem;
+    padding-block: 0 1.55rem;
   }
 
   .frame {

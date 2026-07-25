@@ -1,4 +1,5 @@
 import { getResumeDerived } from "@/lib/content";
+import { SkillsStudio } from "@/components/SkillsStudio";
 
 export async function SectionSkills() {
   const resume = await getResumeDerived();
@@ -12,15 +13,18 @@ export async function SectionSkills() {
 
   return (
     <section id="skills" className="section-wrap py-14">
-      <p className="eyebrow">Skills</p>
-      <h2 className="subhead mt-2">What I ship with in production.</h2>
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        {rows.map((row) => (
-          <article key={row.label} className="card-base">
-            <h3 className="text-lg font-semibold">{row.label}</h3>
-            <p className="mt-3 text-sm text-muted">{row.items.join(" · ")}</p>
-          </article>
-        ))}
+      <div className="grid items-end gap-4 md:grid-cols-[minmax(0,1fr)_minmax(16rem,0.56fr)]">
+        <div>
+          <p className="eyebrow">Skills</p>
+          <h2 className="subhead mt-2">What I ship with in production.</h2>
+        </div>
+        <p className="m-0 text-sm leading-relaxed text-muted md:text-right">
+          Four connected disciplines, one production-ready delivery practice. Focus a capability to tune the fabric surface.
+        </p>
+      </div>
+
+      <div className="mt-8">
+        <SkillsStudio capabilities={rows} />
       </div>
     </section>
   );

@@ -221,8 +221,8 @@ a:hover {
   z-index: 1;
 }
 
-.particle-scroll-stage[data-particle-scroll="active"] [data-particle-reveal="clipped"] {
-  clip-path: inset(0 0 var(--particle-clip-bottom) 0);
+.particle-scroll-stage[data-particle-scroll="active"] [data-particle-reveal="forming"] {
+  opacity: var(--particle-reveal-opacity);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -68,7 +68,7 @@ function drawWrappedText(
 
 /**
  * A viewport-sized, post-hero adaptation of Canvas UI's Particle Scroll.
- * Semantic DOM stays interactive while geometric reveals and capped particle
+ * Semantic DOM stays interactive while diffuse reveals and capped particle
  * facsimiles make content settle into place across a lower formation band.
  */
 export function ParticleScrollStage({ children }: { children: ReactNode }) {
@@ -92,7 +92,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
     let dpr = Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
     let particles: Particle[] = [];
     let revealTargets: HTMLElement[] = [];
-    const clippedTargets = new Set<HTMLElement>();
+    const fadingTargets = new Set<HTMLElement>();
     let frame = 0;
     let rebuildFrame = 0;
     let scrollIdleTimer = 0;
@@ -106,8 +106,8 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
 
     const formationMetrics = (scroll = smoothScroll) => {
       const compact = width < 640;
-      const band = clamp(height * 0.26, compact ? 150 : 180, compact ? 220 : 260);
-      const baseLine = height * (compact ? 0.72 : 0.68);
+      const band = clamp(height * 0.21, compact ? 140 : 160, compact ? 190 : 210);
+      const baseLine = height * (compact ? 0.82 : 0.8);
       const maxScroll = Math.max(document.documentElement.scrollHeight - height, 0);
       const endWindow = height * 0.45;
       const endProgress = clamp((scroll - (maxScroll - endWindow)) / Math.max(endWindow, 1));
@@ -120,7 +120,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
     const targetProgressFor = (particle: Particle, scroll: number, rootTop: number) => {
       const { line, band } = formationMetrics(scroll);
       const viewportHomeY = rootTop + particle.homeY - scroll;
-      const rowProgress = clamp((line + band - viewportHomeY) / band);
+      const rowProgress = clamp((line + band * 0.92 - viewportHomeY) / (band * 0.92));
       return clamp((rowProgress - particle.delay) / Math.max(1 - particle.delay, 0.01));
     };
 
@@ -155,17 +155,17 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
 
     const clearRevealTarget = (target: HTMLElement) => {
       target.removeAttribute("data-particle-reveal");
-      target.style.removeProperty("--particle-clip-bottom");
-      clippedTargets.delete(target);
+      target.style.removeProperty("--particle-reveal-opacity");
+      fadingTargets.delete(target);
     };
 
     const clearVisuals = () => {
       clearCanvas();
-      Array.from(clippedTargets).forEach(clearRevealTarget);
+      Array.from(fadingTargets).forEach(clearRevealTarget);
     };
 
     const buildParticles = () => {
-      Array.from(clippedTargets).forEach(clearRevealTarget);
+      Array.from(fadingTargets).forEach(clearRevealTarget);
 
       if (reducedMotion || destroyed) {
         particles = [];
@@ -188,9 +188,9 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
         .slice(0, 140);
       const outlinedElements = Array.from(content.querySelectorAll<HTMLElement>("article, hr")).slice(0, 36);
 
-      // Reveal small visual units geometrically instead of masking the entire
-      // post-hero document. The old full-height mask was rasterized by Chrome
-      // in composited columns, exposing faint vertical seams between tiles.
+      // Fade small visual units independently instead of clipping or masking
+      // the full post-hero document. This keeps the assembly edge diffuse and
+      // avoids the large composited surfaces that exposed vertical tile seams.
       revealTargets = [
         ...outlinedElements,
         ...textElements.filter((element) => !element.closest("article"))
@@ -296,25 +296,32 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
     };
 
     const updateReveals = () => {
-      const { line } = formationMetrics(smoothScroll);
+      const { line, band } = formationMetrics(smoothScroll);
       const scrollLag = window.scrollY - smoothScroll;
-      const revealLine = line;
+      const revealStart = line + band * 0.92;
 
       revealTargets.forEach((target) => {
         const rect = target.getBoundingClientRect();
         const syntheticTop = rect.top + scrollLag;
-        const syntheticBottom = rect.bottom + scrollLag;
+        // Anchor larger components near their leading edge so cards assemble
+        // as they enter the lower viewport rather than waiting for their center.
+        const sampleY = syntheticTop + Math.min(rect.height * 0.2, 56);
+        const progress = clamp((revealStart - sampleY) / Math.max(revealStart - line, 1));
 
-        if (syntheticBottom <= revealLine) {
-          if (clippedTargets.has(target)) clearRevealTarget(target);
+        if (progress >= 0.995) {
+          if (fadingTargets.has(target)) clearRevealTarget(target);
           return;
         }
 
-        const targetHeight = Math.max(rect.height, 1);
-        const clippedFraction = clamp((syntheticBottom - revealLine) / targetHeight);
-        target.dataset.particleReveal = "clipped";
-        target.style.setProperty("--particle-clip-bottom", `${clippedFraction * 100}%`);
-        clippedTargets.add(target);
+        const easedProgress = progress * progress * (3 - 2 * progress);
+        const revealOpacity = easedProgress.toFixed(3);
+        if (target.dataset.particleReveal !== "forming") {
+          target.dataset.particleReveal = "forming";
+        }
+        if (target.style.getPropertyValue("--particle-reveal-opacity") !== revealOpacity) {
+          target.style.setProperty("--particle-reveal-opacity", revealOpacity);
+        }
+        fadingTargets.add(target);
       });
     };
 
@@ -341,7 +348,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
         if (viewportHomeY < line - band * 0.85 || viewportHomeY > line + band * 1.35) return;
 
         const targetProgress = targetProgressFor(particle, smoothScroll, rootTop);
-        const settleTime = targetProgress > particle.progress ? 0.22 : 0.16;
+        const settleTime = targetProgress > particle.progress ? 0.3 : 0.2;
         const step = delta / settleTime;
         if (Math.abs(targetProgress - particle.progress) <= step) {
           particle.progress = targetProgress;
@@ -351,7 +358,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
 
         const settled = 1 - Math.pow(1 - particle.progress, 3);
         const arc = Math.sin(settled * Math.PI);
-        const driftStrength = scrollIdle ? 0.58 : 1;
+        const driftStrength = scrollIdle ? 0.42 : 1;
         const localX =
           particle.scatterX +
           (particle.homeX - particle.scatterX) * settled +
@@ -370,8 +377,9 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
             driftStrength;
         const viewportY = rootTop + localY - smoothScroll;
         const edgeFade = clamp(1 - Math.abs(viewportHomeY - line) / (band * 1.2));
-        const mergeFade = 1 - clamp((particle.progress - 0.86) / 0.14);
-        const opacity = (0.3 + edgeFade * 0.65) * mergeFade;
+        const mergeFade = 1 - clamp((particle.progress - 0.82) / 0.18);
+        const activityOpacity = scrollIdle ? 0.72 : 1;
+        const opacity = (0.18 + edgeFade * 0.62) * mergeFade * activityOpacity;
         if (opacity <= 0.01) return;
 
         context.globalAlpha = opacity;
@@ -475,7 +483,7 @@ export function ParticleScrollStage({ children }: { children: ReactNode }) {
       window.clearTimeout(scrollIdleTimer);
       particles = [];
       revealTargets = [];
-      Array.from(clippedTargets).forEach(clearRevealTarget);
+      Array.from(fadingTargets).forEach(clearRevealTarget);
       canvas.width = 1;
       canvas.height = 1;
       delete stage.dataset.particleScroll;

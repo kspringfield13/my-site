@@ -33,7 +33,7 @@ function getLogoForLabel(label: string): TimelineLogo {
   const lower = label.toLowerCase();
   if (lower.includes("netapp")) return { src: "/company-logos/netapp.png", alt: "NetApp logo" };
   if (lower.includes("ubs")) return { src: "/company-logos/ubs.png", alt: "UBS logo" };
-  if (lower.includes("rrd") || lower.includes("vericast")) return { src: "/company-logos/rrd.png", alt: "Vericast logo" };
+  if (lower.includes("rrd") || lower.includes("vericast")) return { src: "/company-logos/rrd.png", alt: "RRD logo" };
   if (lower.includes("freelance")) return { src: "/company-logos/freelance.png", alt: "Freelance work logo" };
   if (lower.includes("peraton")) return { src: "/company-logos/peraton.png", alt: "Peraton logo" };
   if (lower.includes("cisco")) return { src: "/company-logos/cisco.png", alt: "Cisco logo" };
@@ -90,7 +90,7 @@ function getDetailForLabel(label: string): TimelineDetail {
   if (lower.includes("ubs")) {
     return {
       role: "Risk & Performance Analytics Specialist",
-      companyLine: "UBS (formerly Credit Suisse)",
+      companyLine: "UBS",
       dateLocation: "Nov 2016 - Nov 2017 | Raleigh, NC",
       points: [
         {
@@ -112,7 +112,7 @@ function getDetailForLabel(label: string): TimelineDetail {
   if (lower.includes("rrd") || lower.includes("vericast")) {
     return {
       role: "Data Analyst -> Data Engineer",
-      companyLine: "Vericast (formerly RRD)",
+      companyLine: "RRD",
       dateLocation: "Nov 2017 - Sep 2021 | Morrisville, NC",
       points: [
         {

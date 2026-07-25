@@ -14,6 +14,8 @@
     "build:index": "tsx scripts/build-search-index.ts"
   },
   "dependencies": {
+    "@dimforge/rapier3d-compat": "^0.19.3",
+    "@neondatabase/serverless": "^1.1.0",
     "@vercel/analytics": "^1.6.1",
     "geist": "^1.7.0",
     "gray-matter": "^4.0.3",
@@ -23,12 +25,14 @@
     "react-dom": "^18.2.0",
     "recharts": "^2.15.4",
     "remark-gfm": "^4.0.0",
+    "three": "^0.185.1",
     "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
+    "@types/three": "^0.185.1",
     "autoprefixer": "^10.4.18",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",

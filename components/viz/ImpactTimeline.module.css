@@ -1,4 +1,7 @@
 .rail {
+  --timeline-rail-offset: 0.75rem;
+  --timeline-card-gutter: 2.5rem;
+
   position: relative;
   margin: 1rem 0 0;
   padding: 0;
@@ -10,7 +13,7 @@
   position: absolute;
   top: 1.5rem;
   bottom: 1.5rem;
-  left: 4.2rem;
+  left: var(--timeline-rail-offset);
   width: 1px;
   background: linear-gradient(
     180deg,
@@ -22,7 +25,7 @@
 
 .item {
   position: relative;
-  padding-left: 5.75rem;
+  padding-left: var(--timeline-card-gutter);
 }
 
 .item + .item {
@@ -34,7 +37,7 @@
   position: absolute;
   z-index: 2;
   top: 1.7rem;
-  left: calc(4.2rem - 5px);
+  left: calc(var(--timeline-rail-offset) - 5px);
   width: 11px;
   height: 11px;
   border: 2px solid var(--c-bg);
@@ -265,16 +268,9 @@
 }
 
 @media (max-width: 700px) {
-  .rail::before {
-    left: 0.65rem;
-  }
-
-  .item {
-    padding-left: 1.65rem;
-  }
-
-  .item::before {
-    left: calc(0.65rem - 5px);
+  .rail {
+    --timeline-rail-offset: 0.65rem;
+    --timeline-card-gutter: 1.65rem;
   }
 
   .trigger {

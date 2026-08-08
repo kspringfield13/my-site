@@ -1,6 +1,10 @@
-import { PlaygroundTower } from "@/components/playground/PlaygroundTower";
+import { EmberwildLauncher } from "@/components/playground/EmberwildLauncher";
+import { getSiteConfig } from "@/lib/site-config";
 
-export function SectionPlayground() {
+export async function SectionPlayground() {
+  const site = await getSiteConfig();
+  const launchUrl = site.playground?.emberwildLaunchUrl ?? "/emberwild/";
+
   return (
     <section
       id="playground"
@@ -11,16 +15,16 @@ export function SectionPlayground() {
         <div>
           <p className="eyebrow">Playground</p>
           <h2 id="playground-title" className="subhead mt-2">
-            Small experiments. Real systems underneath.
+            A wild place to build something of your own.
           </h2>
         </div>
         <p className="m-0 text-sm leading-relaxed text-muted md:text-right">
-          First up: build upward with real-time 3D physics. How high can you keep it together?
+          Emberwild is a solitary survival and crafting game in development for the browser.
         </p>
       </div>
 
       <div className="mt-8">
-        <PlaygroundTower />
+        <EmberwildLauncher launchUrl={launchUrl} />
       </div>
     </section>
   );

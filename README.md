@@ -84,7 +84,7 @@ The repository treats content files as the source of truth. Generated files shou
 
 | Source | Purpose |
 | --- | --- |
-| `content/config/site.json` | Name, public contact links, and footer video |
+| `content/config/site.json` | Name, public contact links, footer video, and Playground launch destinations |
 | `content/config/proof-metrics.json` | Career timeline highlights |
 | `content/resume/resume.md` | Authoritative resume content |
 | `content/resume/derived.json` | Generated resume data consumed by the UI |

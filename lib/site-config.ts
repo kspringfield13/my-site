@@ -5,6 +5,9 @@ import { cache } from "react";
 interface SiteConfig {
   name: string;
   footerVideoUrl?: string;
+  playground?: {
+    emberwildLaunchUrl?: string;
+  };
   contact: {
     email: string;
     github: string;
@@ -14,6 +17,9 @@ interface SiteConfig {
 
 const fallback: SiteConfig = {
   name: "Kyle Springfield",
+  playground: {
+    emberwildLaunchUrl: "/emberwild/"
+  },
   contact: {
     email: "kspringfield13@gmail.com",
     github: "https://github.com/kspringfield13",

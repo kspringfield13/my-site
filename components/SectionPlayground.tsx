@@ -3,7 +3,7 @@ import { getSiteConfig } from "@/lib/site-config";
 
 export async function SectionPlayground() {
   const site = await getSiteConfig();
-  const launchUrl = site.playground?.emberwildLaunchUrl ?? "/emberwild/";
+  const launchUrl = site.playground.emberwildLaunchUrl;
 
   return (
     <section

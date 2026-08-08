@@ -2,11 +2,13 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
 
+import defaultSiteConfig from "@/content/config/site.json";
+
 interface SiteConfig {
   name: string;
   footerVideoUrl?: string;
-  playground?: {
-    emberwildLaunchUrl?: string;
+  playground: {
+    emberwildLaunchUrl: string;
   };
   contact: {
     email: string;
@@ -17,9 +19,7 @@ interface SiteConfig {
 
 const fallback: SiteConfig = {
   name: "Kyle Springfield",
-  playground: {
-    emberwildLaunchUrl: "/emberwild/"
-  },
+  playground: defaultSiteConfig.playground,
   contact: {
     email: "kspringfield13@gmail.com",
     github: "https://github.com/kspringfield13",

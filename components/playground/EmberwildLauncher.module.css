@@ -89,6 +89,7 @@
   z-index: 1;
   display: flex;
   width: 57%;
+  min-width: 0;
   min-height: inherit;
   flex-direction: column;
   justify-content: center;
@@ -206,6 +207,8 @@
     inset 0 1px 0 rgba(255, 244, 220, 0.04);
   color: var(--ember-bone);
   text-decoration: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(202, 166, 106, 0.16);
   backdrop-filter: blur(9px);
   -webkit-backdrop-filter: blur(9px);
   transition:
@@ -263,6 +266,11 @@
   }
 }
 
+.cta:active {
+  transform: translateX(1px) scale(0.995);
+  border-color: var(--ember-brass);
+}
+
 @media (max-width: 720px) {
   .launcher {
     min-height: 44rem;
@@ -299,11 +307,20 @@
     width: 100%;
     min-height: 44rem;
     justify-content: flex-end;
-    padding: 17rem clamp(1.45rem, 6vw, 2rem) 2.1rem;
+    padding-top: 17rem;
+    padding-right: max(clamp(1.45rem, 6vw, 2rem), env(safe-area-inset-right));
+    padding-bottom: 2.1rem;
+    padding-left: max(clamp(1.45rem, 6vw, 2rem), env(safe-area-inset-left));
+    container-type: inline-size;
   }
 
   .title {
-    font-size: clamp(3rem, 15vw, 4.35rem);
+    max-width: 100%;
+    /* The viewport fallback supports older browsers; cqi fits the actual padded column. */
+    font-size: clamp(1.75rem, 10.5vw, 4.35rem);
+    font-size: clamp(1.75rem, 15cqi, 4.35rem);
+    letter-spacing: 0.025em;
+    white-space: nowrap;
   }
 
   .rule {
@@ -329,9 +346,9 @@
   }
 
   .content {
-    padding-right: 1.25rem;
+    padding-right: max(1.25rem, env(safe-area-inset-right));
     padding-bottom: 1.65rem;
-    padding-left: 1.25rem;
+    padding-left: max(1.25rem, env(safe-area-inset-left));
   }
 
   .kicker {
@@ -341,10 +358,6 @@
 
   .status {
     font-size: 0.5rem;
-  }
-
-  .title {
-    font-size: 2.8rem;
   }
 
   .cta {
@@ -369,6 +382,7 @@
   }
 
   .cta:hover,
+  .cta:active,
   .cta:hover .arrow {
     transform: none;
   }

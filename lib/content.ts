@@ -153,6 +153,14 @@ export const getSearchDocs = cache(async (): Promise<SearchDoc[]> => {
   }));
   const sectionDocs: SearchDoc[] = [
     {
+      id: "section:hero",
+      type: "Section",
+      title: "Hero",
+      url: "/#hero",
+      tags: ["positioning", "proof", "ai-assisted development", "learning"],
+      body: "Kyle builds data pipelines, analytics systems, and AI-powered apps. In the playground, he experiments with AI-assisted development to broaden his technical knowledge and learn by building."
+    },
+    {
       id: "section:proof",
       type: "Section",
       title: "Proof",
@@ -174,7 +182,7 @@ export const getSearchDocs = cache(async (): Promise<SearchDoc[]> => {
       title: "Emberwild",
       url: "/#playground",
       tags: ["game development", "three.js", "survival", "crafting", "codex", "claude code"],
-      body: "Emberwild is an AAA-quality Three.js browser game focused on survival and crafting, built with help from Codex and Claude Code. Launch the in-development build from the site."
+      body: "The playground is a space for experimenting with AI-assisted development, broadening technical knowledge, and learning by building. Emberwild is an evolving Three.js browser game where players forage, craft, brave the elements, and build a foothold in the wild. Its gameplay systems and 3D world are being developed with Codex and Claude Code, and the latest work-in-progress build is playable from the site."
     },
     {
       id: "section:skills",

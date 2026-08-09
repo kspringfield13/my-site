@@ -13,14 +13,15 @@ export async function SectionPlayground() {
     >
       <div className="grid items-end gap-4 md:grid-cols-[minmax(0,1fr)_minmax(16rem,0.56fr)]">
         <div>
-          <p className="eyebrow">Side project</p>
+          <p className="eyebrow">Playground</p>
           <h2 id="playground-title" className="subhead mt-2">
-            Emberwild: AAA-quality survival in the browser.
+            Emberwild: building a survival world for the browser.
           </h2>
         </div>
         <p className="m-0 text-sm leading-relaxed text-muted md:text-right">
-          Emberwild is a Three.js survival and crafting game I&apos;m building with help from Codex and Claude Code.
-          It&apos;s still in active development, and the latest build launches directly from this site.
+          Emberwild is an evolving Three.js game where you forage, craft, brave the elements, and build a foothold in
+          the wild. I&apos;m developing its gameplay systems and 3D world with Codex and Claude Code—the latest
+          work-in-progress build is playable below.
         </p>
       </div>
 

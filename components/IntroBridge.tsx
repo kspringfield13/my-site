@@ -25,6 +25,11 @@ const ORIENTATION_LINKS = [
     href: "#now",
     label: "Current experiments",
     destination: "Now"
+  },
+  {
+    href: "#playground",
+    label: "AI-assisted building",
+    destination: "Playground"
   }
 ] as const;
 
@@ -146,7 +151,8 @@ export function IntroBridge() {
     <section aria-labelledby="orientation-title" className={`section-wrap ${styles.orientation}`}>
       <div className={styles.frame}>
         <p id="orientation-title" className={styles.statement}>
-          Kyle builds data systems and AI tools that make work clearer.
+          Kyle builds data systems and AI tools that make work clearer. In the playground, he experiments with
+          AI-assisted development to broaden his technical knowledge and learn by building.
         </p>
 
         <nav aria-label="Explore Kyle's work" className={styles.links}>

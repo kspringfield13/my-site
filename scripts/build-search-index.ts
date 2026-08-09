@@ -83,6 +83,22 @@ async function main() {
       body: "Curated flagship projects with repository artifacts and case studies."
     },
     {
+      id: "section:playground",
+      type: "Section",
+      title: "Emberwild",
+      url: "/#playground",
+      tags: ["game development", "three.js", "survival", "crafting", "codex", "claude code"],
+      body: "Emberwild is an AAA-quality Three.js browser game focused on survival and crafting, built with help from Codex and Claude Code. Launch the in-development build from the site."
+    },
+    {
+      id: "section:skills",
+      type: "Section",
+      title: "Skills",
+      url: "/#skills",
+      tags: ["capabilities", "game development", "three.js"],
+      body: "Production capabilities across data engineering, analytics, AI engineering, software delivery, and Three.js game development."
+    },
+    {
       id: "section:now",
       type: "Section",
       title: "Now",

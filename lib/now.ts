@@ -13,6 +13,17 @@ export function formatNowEntryDate(date: string) {
   });
 }
 
+export function formatNowEntryLink(link: string) {
+  try {
+    const url = new URL(link);
+    const hostname = url.hostname.replace(/^www\./, "");
+    const pathname = url.pathname === "/" ? "" : url.pathname.replace(/\/$/, "");
+    return `${hostname}${pathname}`;
+  } catch {
+    return link;
+  }
+}
+
 export function partitionNowEntries(now: NowFeed) {
   const seenIds = new Set<string>();
   const entries = now.entries.filter((entry) => {

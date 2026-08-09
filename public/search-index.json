@@ -169,6 +169,33 @@
     "body": "Curated flagship projects with repository artifacts and case studies."
   },
   {
+    "id": "section:playground",
+    "type": "Section",
+    "title": "Emberwild",
+    "url": "/#playground",
+    "tags": [
+      "game development",
+      "three.js",
+      "survival",
+      "crafting",
+      "codex",
+      "claude code"
+    ],
+    "body": "Emberwild is an AAA-quality Three.js browser game focused on survival and crafting, built with help from Codex and Claude Code. Launch the in-development build from the site."
+  },
+  {
+    "id": "section:skills",
+    "type": "Section",
+    "title": "Skills",
+    "url": "/#skills",
+    "tags": [
+      "capabilities",
+      "game development",
+      "three.js"
+    ],
+    "body": "Production capabilities across data engineering, analytics, AI engineering, software delivery, and Three.js game development."
+  },
+  {
     "id": "section:now",
     "type": "Section",
     "title": "Now",
@@ -178,6 +205,16 @@
       "iterations"
     ],
     "body": "Current experiments with outcomes and next steps."
+  },
+  {
+    "id": "now:2026-08-09-weekform-openai-build-week",
+    "type": "Now",
+    "title": "Weekform at OpenAI Build Week",
+    "url": "/#now",
+    "tags": [
+      "ventures"
+    ],
+    "body": "I'm working on Weekform for OpenAI Build Week, a Codex hackathon focused on turning ambitious ideas into working software. With Codex as a development partner, I'm building a privacy-minded productivity app that turns local app activity and calendar events into reviewable work sessions, clearer weekly allocation, and capacity insights."
   },
   {
     "id": "now:2026-07-24-codex-voice-orchestration",

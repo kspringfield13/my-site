@@ -141,6 +141,19 @@
         "Voice works well for direction and triage; detailed review still benefits from a keyboard and the code in view.",
         "Parallel agents help most when ownership is explicit, tasks are narrow, and every result is verified before it is combined."
       ]
+    },
+    {
+      "id": "2026-08-09-weekform-openai-build-week",
+      "date": "2026-08-09",
+      "category": "ventures",
+      "title": "Weekform at OpenAI Build Week",
+      "details": [
+        "I'm working on Weekform for OpenAI Build Week, a Codex hackathon focused on turning ambitious ideas into working software.",
+        "With Codex as a development partner, I'm building a privacy-minded productivity app that turns local app activity and calendar events into reviewable work sessions, clearer weekly allocation, and capacity insights."
+      ],
+      "links": [
+        "https://devpost.com/software/weekform"
+      ]
     }
   ]
 }

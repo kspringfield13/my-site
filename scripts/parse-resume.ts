@@ -239,7 +239,13 @@ function deriveClusters(skills: string[]) {
       ])
     ],
     ai: [...new Set([...has(/gen ai|genai|ai|llm|langchain|openai/i), "AI workflow design"])],
-    dev: [...new Set([...has(/git|ci\/cd|docker|bash|devops|agile/i), "Testing", "Deployment discipline"])]
+    dev: [
+      ...new Set([
+        ...has(/git|ci\/cd|docker|bash|devops|agile|three\.?js|webgl|game development/i),
+        "Testing",
+        "Deployment discipline"
+      ])
+    ]
   };
 }
 

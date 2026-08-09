@@ -1,5 +1,9 @@
 import { getNowEntries } from "@/lib/content";
-import { formatNowEntryDate, partitionNowEntries } from "@/lib/now";
+import {
+  formatNowEntryDate,
+  formatNowEntryLink,
+  partitionNowEntries
+} from "@/lib/now";
 
 export const metadata = {
   title: "Now Archive",
@@ -19,6 +23,9 @@ export default async function NowArchivePage() {
           return (
             <article key={entry.id} className="card-base">
               <p className="eyebrow">{formatNowEntryDate(entry.date)} · {entry.category}</p>
+              {entry.title ? (
+                <h2 className="mt-3 text-lg font-semibold text-fg">{entry.title}</h2>
+              ) : null}
               <div className="mt-3 space-y-2">
                 {entry.details.map((paragraph, index) => (
                   <p key={`${entry.id}-${index}`} className="text-sm text-muted">
@@ -26,6 +33,23 @@ export default async function NowArchivePage() {
                   </p>
                 ))}
               </div>
+              {entry.links?.length ? (
+                <div className="mt-4 flex flex-wrap gap-3">
+                  {entry.links.map((link) => (
+                    <a
+                      key={link}
+                      href={link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-sm font-medium text-link underline decoration-border underline-offset-4 transition hover:text-link-hover"
+                    >
+                      {formatNowEntryLink(link)}
+                      <span aria-hidden="true">↗</span>
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  ))}
+                </div>
+              ) : null}
             </article>
           );
         })}

@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { getNowEntries } from "@/lib/content";
-import { formatNowEntryDate, partitionNowEntries } from "@/lib/now";
+import {
+  formatNowEntryDate,
+  formatNowEntryLink,
+  partitionNowEntries
+} from "@/lib/now";
 
 export async function SectionNow() {
   const now = await getNowEntries();
@@ -48,6 +52,23 @@ export async function SectionNow() {
                 </p>
               ))}
             </div>
+            {primaryEntry.links?.length ? (
+              <div className="mt-5 flex flex-wrap gap-3">
+                {primaryEntry.links.map((link) => (
+                  <a
+                    key={link}
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-sm font-medium text-link underline decoration-border underline-offset-4 transition hover:text-link-hover"
+                  >
+                    {formatNowEntryLink(link)}
+                    <span aria-hidden="true">↗</span>
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                ))}
+              </div>
+            ) : null}
           </article>
 
           {supportingEntries.length > 0 ? (
@@ -66,6 +87,23 @@ export async function SectionNow() {
                       </li>
                     ))}
                   </ul>
+                  {entry.links?.length ? (
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      {entry.links.map((link) => (
+                        <a
+                          key={link}
+                          href={link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs font-medium text-link underline decoration-border underline-offset-4 transition hover:text-link-hover"
+                        >
+                          {formatNowEntryLink(link)}
+                          <span aria-hidden="true">↗</span>
+                          <span className="sr-only"> (opens in a new tab)</span>
+                        </a>
+                      ))}
+                    </div>
+                  ) : null}
                 </article>
               ))}
             </div>

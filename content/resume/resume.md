@@ -11,7 +11,7 @@
 - Synthesize large, noisy datasets to uncover customer patterns, segment opportunities, and inform product and marketing strategy.
 
 ## Core Skills & Technologies
-SQL | Python | dbt | ETL/ELT | Gen AI | Git | Bash | CI/CD | Measurement | Data Visualization | A/B Testing | VS Code | Cursor | Claude Code | Codex | Tableau | Streamlit | Snowflake | AWS | Databricks | Jupyter Notebook | Excel | Docker | Agile
+SQL | Python | dbt | ETL/ELT | Gen AI | Git | Bash | CI/CD | Measurement | Data Visualization | A/B Testing | VS Code | Cursor | Claude Code | Codex | Three.js Game Development | Tableau | Streamlit | Snowflake | AWS | Databricks | Jupyter Notebook | Excel | Docker | Agile
 
 ## Education
 ### Bachelor of Science in Business Information Technology
@@ -54,7 +54,7 @@ SQL | Python | dbt | ETL/ELT | Gen AI | Git | Bash | CI/CD | Measurement | Data 
 ### Senior Data Scientist - Vericast
 - Dates: Feb 2020 - Jul 2021
 - Location: Morrisville, NC
-- Developed Python scripts for automation and data models within Jupyter Notebooks, streamlining digital campaign measurement workflows to significantly enance operational efficiency.
+- Developed Python scripts for automation and data models within Jupyter Notebooks, streamlining digital campaign measurement workflows to significantly enhance operational efficiency.
 - Applied machine learning to custom data models in Python and SQL, enhancing predictive analytics and campaign performance evaluations.
 
 ### Marketing Data Scientist - Vericast
@@ -81,7 +81,7 @@ SQL | Python | dbt | ETL/ELT | Gen AI | Git | Bash | CI/CD | Measurement | Data 
 - Collaborated with Support Account Managers and sales teams on top enterprise customer accounts to provide accurate and timely customer-facing reports.
 - Created custom Oracle BI reports and dashboards to extract data, analyze results using statistical techniques, and provide weekly and monthly reporting.
 
-### Certifications
+## Certifications
 - Certified Tableau Data Analyst - Tableau
 - Certified AI Engineer for Developers Associate - DataCamp
 - Certified Python Data Associate - DataCamp

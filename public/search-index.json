@@ -134,6 +134,22 @@
     "body": "Full-stack studio management platform with scheduling, bookings, memberships, reporting, and role-based admin/instructor/client workflows. Full-stack studio management platform (Next.js, Supabase, Stripe, Capacitor) with scheduling, bookings, memberships, waivers, reporting, and role-based admin/instructor/client workflows. Unified scheduling, bookings, and membership workflows in one platform. Role-based views for admins, instructors, and clients. Integrated waivers, payments, and reporting with Stripe + Supabase. \n## Context\nStudio operations often split scheduling, bookings, payments, waivers, and reporting across disconnected tools.\n\n## Approach\nBuilt a unified platform to centralize operations with role-specific workflows for admins, instructors, and clients.\n\n## Architecture\nNext.js app + Supabase data/auth + Stripe billing + Capacitor mobile packaging.\n\n## Results\nTeams can manage the full client lifecycle from booking through payments and attendance reporting in one system.\n\n## Lessons\nOperational products become far more useful when role permissions and day-to-day workflows are first-class in the architecture.\n\n## Artifacts\n- Product: https://samsstudio.xyz\n\n## If I had 2 more weeks...\nExpand automation around retention nudges, cohort analytics, and instructor workload optimization."
   },
   {
+    "id": "section:ai-workflow",
+    "type": "Section",
+    "title": "Kyle's AI workflow",
+    "url": "/about#ai-workflow",
+    "tags": [
+      "ai",
+      "models",
+      "openai",
+      "anthropic",
+      "spacexai",
+      "tools",
+      "workflow"
+    ],
+    "body": "I use the latest models from OpenAI, Anthropic, and SpaceXAI to research ideas, build applications, debug code, and improve data workflows. I choose models based on the task and revisit those choices as capabilities evolve. Tools such as Cursor, Claude Code, Codex, and ChatGPT help me explore ideas, prototype systems, and review the results."
+  },
+  {
     "id": "section:hero",
     "type": "Section",
     "title": "Hero",
@@ -286,7 +302,7 @@
     "tags": [
       "models"
     ],
-    "body": "At work, Claude Opus 4.8 is my default model in Cursor. In my experience, its reasoning is unmatched for building applications, debugging, refining interfaces, and turning loosely formed ideas into reliable implementations with fewer corrections. Cursor's Auto mode is convenient, but I still prefer choosing Opus directly; handoffs to models such as Composer 2.5 have been less consistent for the complex work I give it. Outside work, I gravitate toward ChatGPT for everyday questions, research, and browsing. I have also been impressed by GPT-5.5 in the Codex app, which gives me a powerful personal development workflow through a standard subscription without requiring the higher-cost plan I previously needed to get sustained value from Claude Code."
+    "body": "I use the latest models from OpenAI, Anthropic, and SpaceXAI to build applications, debug code, refine interfaces, and turn loosely formed ideas into reliable implementations. I choose models based on the task and revisit those choices as capabilities evolve, focusing on useful results and careful review rather than a fixed model version. Outside work, I use ChatGPT for everyday questions, research, and browsing, and tools such as Cursor, Codex, and Claude Code for AI-assisted development."
   },
   {
     "id": "now:2026-02-20-models",

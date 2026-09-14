@@ -11,6 +11,7 @@ import { addProjectSkills, buildProjectEvidence } from "@/lib/agent-kyle/project
 import type { CapabilityHeatmapCell, EvidenceItem } from "@/lib/agent-kyle/types";
 import { getSiteConfig } from "@/lib/site-config";
 import type { ProjectMeta } from "@/lib/types";
+import { aiWorkflowEvidence } from "@/lib/agent-kyle/workflow-context";
 
 export { rankEvidenceByQuery } from "@/lib/agent-kyle/retrieval";
 
@@ -101,6 +102,8 @@ export async function buildEvidenceContext(): Promise<AgentEvidenceContext> {
       title: entry.title || entry.category.toUpperCase(),
       url,
       sourceType: "now",
+      publishedAt: entry.date,
+      isCurrent: url === "/#now",
       // Keep complete Now context available to the model. Tool and model names often
       // appear late in an entry after the broader setup.
       snippet: compactSnippet(entry.details.join(" "), 900),
@@ -119,6 +122,7 @@ export async function buildEvidenceContext(): Promise<AgentEvidenceContext> {
     }));
 
   const evidence = dedupeEvidence([
+    aiWorkflowEvidence,
     ...projectEvidence,
     ...resumeEvidence,
     ...nowEvidence,

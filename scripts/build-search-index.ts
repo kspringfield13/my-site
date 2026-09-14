@@ -4,6 +4,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import { partitionNowEntries } from "../lib/now";
 import type { NowFeed } from "../lib/types";
+import { aiWorkflowSearchDoc } from "../lib/agent-kyle/workflow-context";
 
 interface SearchDoc {
   id: string;
@@ -58,6 +59,7 @@ async function main() {
   );
 
   docs.push(
+    aiWorkflowSearchDoc,
     {
       id: "section:hero",
       type: "Section",

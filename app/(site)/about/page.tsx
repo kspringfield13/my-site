@@ -1,4 +1,5 @@
 import Image from "next/image";
+import aiWorkflow from "@/content/config/ai-workflow.json";
 
 export const metadata = {
   title: "About",
@@ -109,8 +110,8 @@ export default function AboutPage() {
             <p className="max-w-3xl text-sm text-muted">
               I’ve always been drawn to spaces where technology feels playful and alive. FPV drone flying hooked me because it’s systems thinking under pressure, feedback loops, precision, intuition, and trust. I explored NFTs and crypto early, not for speculation, but for the underlying ideas: digital ownership, coordination at scale, incentives, and programmable trust. I’m a long-term believer in those concepts and enjoy learning by experimenting, breaking things, and rebuilding them better.
             </p>
-            <p className="max-w-3xl text-sm text-muted">
-              Lately, I’ve been completely absorbed by AI and rapidly advancing technology like ChatGPT, Claude, Cursor, OpenClaw, and whatever comes next. Not as magic, but as a new interface for thinking, building, and creativity. These tools feel like collaborators, ways to explore ideas faster, prototype systems sooner, and stretch what a single person can create.
+            <p id="ai-workflow" className="max-w-3xl scroll-mt-24 text-sm text-muted">
+              {aiWorkflow.summary} {aiWorkflow.approach}
             </p>
             <p className="max-w-3xl text-sm text-muted">
               This site captures that intersection: work and life, rigor and play, structure and curiosity. It’s a place to share what I’m building, what I’m learning, and what I’m currently excited about. I’m deeply grateful to be living in this moment of technological change and I try to enjoy every step of the journey while it unfolds.

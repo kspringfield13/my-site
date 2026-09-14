@@ -43,6 +43,7 @@ Agent Kyle remains offline until `GROQ_API_KEY` is configured. The rest of the s
 | `npm run dev` | Start the local Next.js development server |
 | `npm run typecheck` | Run TypeScript validation without emitting files |
 | `npm run test:agent-retrieval` | Verify key Agent Kyle questions retrieve the expected Now context |
+| `npm run test:agent-provider` | Verify model requests, usage accounting, and safe provider error diagnostics |
 | `npm run build:index` | Rebuild `public/search-index.json` |
 | `npm run ingest` | Refresh GitHub metadata, parse the resume, and rebuild the search index |
 | `npm run build` | Rebuild the search index and create a production build |
@@ -58,7 +59,7 @@ Copy `.env.example` to `.env.local` and configure only the values needed for you
 | `GITHUB_TOKEN` | Optional | Read-only GitHub PAT for higher ingestion limits and pinned repository GraphQL data |
 | `GROQ_API_KEY` | Agent Kyle | API key used for conversational responses |
 | `AGENT_KYLE_ENABLED` | Optional | Set to `false` to disable Agent Kyle |
-| `AGENT_KYLE_MODEL` | Optional | Groq model ID; defaults to `llama-3.1-8b-instant` |
+| `AGENT_KYLE_MODEL` | Optional | Groq model ID; defaults to `openai/gpt-oss-20b` |
 | `AGENT_KYLE_DAILY_TOKEN_BUDGET` | Optional | Process-level daily token allowance; defaults to `120000` |
 | `AGENT_KYLE_REQUEST_TIMEOUT_MS` | Optional | Model request timeout; defaults to `20000` |
 | `AGENT_KYLE_RATE_LIMIT_SALT` | Recommended | Private salt used when hashing visitor IP addresses |
@@ -136,6 +137,8 @@ Commit `public/search-index.json`, then verify both `/#now` and `/archive/now`.
 
 ## Agent Kyle
 
+See [the Agent Kyle content guide](docs/agent-kyle-context.md) for editable source locations, retrieval limits, and the shared AI workflow statement.
+
 Agent Kyle appears in the homepage bottom dock after a visitor reaches the Projects section. It can answer questions about Kyle's experience, projects, skills, current work, and potential role fit.
 
 The agent retrieves evidence from:
@@ -151,6 +154,10 @@ LinkedIn is not scraped at request time. Professional context is maintained thro
 Responses are constrained to supplied evidence, validated with Zod, and may include follow-up questions or actions such as opening a case study, resume, GitHub profile, LinkedIn profile, or email link.
 
 ### Guardrails
+
+The default model is `openai/gpt-oss-20b`, Groq's recommended replacement for `llama-3.1-8b-instant`, which was retired on August 16, 2026. See [Groq's deprecation notices](https://console.groq.com/docs/deprecations). When changing models, update `AGENT_KYLE_MODEL` in Vercel as well as local configuration and redeploy; existing deployments keep their original environment values.
+
+Chat provider errors are logged server-side with their HTTP status and model, without provider response bodies or visitor messages. A provider failure returns a complete availability response so the panel can show its unavailable state instead of incorrectly reporting a visitor limit or leaving the status at Ready.
 
 - Requests are validated and free text is sanitized.
 - Visitor IP addresses are hashed before rate-limit storage.
@@ -201,6 +208,7 @@ Before shipping changes:
 ```bash
 npm run typecheck
 npm run test:agent-retrieval
+npm run test:agent-provider
 npm run build
 ```
 

@@ -2,8 +2,16 @@ import { stripMarkdownCodeFence } from "@/lib/agent-kyle/sanitize";
 import type { GroqCompletionResult } from "@/lib/agent-kyle/types";
 
 const GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
-const DEFAULT_MODEL = process.env.AGENT_KYLE_MODEL || "llama-3.1-8b-instant";
+const DEFAULT_MODEL = process.env.AGENT_KYLE_MODEL || "openai/gpt-oss-20b";
 const DEFAULT_TIMEOUT_MS = Number(process.env.AGENT_KYLE_REQUEST_TIMEOUT_MS || 20000);
+
+export class GroqRequestError extends Error {
+  constructor(public readonly status: number, public readonly model: string) {
+    // Keep provider response bodies (which can echo input) out of logs and responses.
+    super(`Groq request failed (${status}) for model ${model}`);
+    this.name = "GroqRequestError";
+  }
+}
 
 interface GroqChatResponse {
   model?: string;
@@ -80,8 +88,7 @@ export async function createGroqJsonCompletion(input: {
     });
 
     if (!response.ok) {
-      const text = await response.text();
-      throw new Error(`Groq request failed (${response.status}): ${text.slice(0, 320)}`);
+      throw new GroqRequestError(response.status, model);
     }
 
     const payload = (await response.json()) as GroqChatResponse;

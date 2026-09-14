@@ -1,5 +1,6 @@
 import { sanitizeFreeText } from "@/lib/agent-kyle/sanitize";
 import type { EvidenceItem } from "@/lib/agent-kyle/types";
+import { AI_WORKFLOW_ID } from "@/lib/agent-kyle/workflow-context";
 
 const STOP_WORDS = new Set([
   "and",
@@ -60,7 +61,9 @@ function expandQueryTokens(query: string): string[] {
       "claude code",
       "codex",
       "chatgpt",
-      "opus",
+      "openai",
+      "anthropic",
+      "spacexai",
       "ai-assisted",
       "development assistant"
     );
@@ -115,7 +118,8 @@ export function selectChatEvidence(query: string, evidence: EvidenceItem[], limi
     4
   );
 
-  const prioritized = [...relevantNow, ...ranked];
+  const currentWorkflow = evidence.filter((item) => item.id === AI_WORKFLOW_ID);
+  const prioritized = [...currentWorkflow, ...relevantNow, ...ranked];
   return prioritized
     .filter((item, index) => prioritized.findIndex((candidate) => candidate.id === item.id) === index)
     .slice(0, limit);

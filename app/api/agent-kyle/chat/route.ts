@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { consumeBudget, inspectBudget } from "@/lib/agent-kyle/budget";
 import { generateAgentChat } from "@/lib/agent-kyle/chat";
+import { GroqRequestError } from "@/lib/agent-kyle/groq";
 import { applySessionCookie, getRequestIdentity } from "@/lib/agent-kyle/http";
 import { consumeRateLimit } from "@/lib/agent-kyle/rate-limit";
 import { inspectAgentAvailability } from "@/lib/agent-kyle/status";
@@ -73,15 +74,18 @@ export async function POST(request: NextRequest) {
     applySessionCookie(response, identity);
     return response;
   } catch (error) {
-    const message = error instanceof Error ? error.message.toLowerCase() : "";
-    const isQuota = message.includes("quota") || message.includes("rate") || message.includes("limit");
+    const providerRateLimited = error instanceof GroqRequestError && error.status === 429;
+    console.error("Agent Kyle chat failed", error instanceof GroqRequestError
+      ? { status: error.status, model: error.model }
+      : { type: error instanceof Error ? error.name : "UnknownError" });
     const response = NextResponse.json(
       {
+        ...inspectAgentAvailability({ ipHash: identity.ipHash, sessionId: identity.sessionId }),
         available: false,
-        reason: isQuota ? "daily_budget_exceeded" : "rate_limited",
+        reason: providerRateLimited ? "rate_limited" : "provider_unavailable",
         error: "Agent Kyle is temporarily unavailable."
       },
-      { status: isQuota ? 503 : 500 }
+      { status: providerRateLimited ? 429 : 503 }
     );
     applySessionCookie(response, identity);
     return response;

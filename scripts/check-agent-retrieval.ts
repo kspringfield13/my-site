@@ -1,6 +1,9 @@
 #!/usr/bin/env tsx
 import fs from "node:fs/promises";
 import path from "node:path";
+import assert from "node:assert/strict";
+import { AI_WORKFLOW_ID, aiWorkflowEvidence, aiWorkflowSearchDoc } from "../lib/agent-kyle/workflow-context";
+import { buildAgentChatPrompt } from "../lib/agent-kyle/prompts";
 import { addProjectSkills, buildProjectEvidence } from "../lib/agent-kyle/project-context";
 import { selectChatEvidence, tokenizeEvidenceText } from "../lib/agent-kyle/retrieval";
 import type { EvidenceItem } from "../lib/agent-kyle/types";
@@ -34,6 +37,23 @@ async function main() {
       throw new Error(`Agent retrieval check failed: missing ${expectedId}.`);
     }
   }
+
+  // Older, keyword-heavy entries must not crowd out Kyle's current statement.
+  const workflowSelection = selectChatEvidence("Which AI models does Kyle use?", [...nowEvidence, aiWorkflowEvidence], 6);
+  assert.equal(workflowSelection[0].id, AI_WORKFLOW_ID);
+  for (const provider of ["OpenAI", "Anthropic", "SpaceXAI"]) {
+    assert.ok(workflowSelection[0].snippet.includes(provider));
+  }
+  const versionPattern = /(?:opus|composer|gpt)[-\s]+\d/i;
+  assert.ok(!versionPattern.test(feed.entries.map((entry) => entry.details.join(" ")).join(" ")));
+  assert.ok(!versionPattern.test(aiWorkflowSearchDoc.body));
+  const prompt = buildAgentChatPrompt({
+    messages: [{ role: "user", content: "Which AI models does Kyle use?" }],
+    evidence: [aiWorkflowEvidence, { ...nowEvidence[0], publishedAt: "2026-06-07", isCurrent: false }]
+  });
+  assert.ok(prompt.includes("Do not name model versions"));
+  assert.ok(prompt.includes("published=2026-06-07 | archived"));
+  assert.ok(prompt.includes(aiWorkflowEvidence.snippet));
 
   const projectsPath = path.join(process.cwd(), "content", "projects", "projects.json");
   const projectIndex = JSON.parse(await fs.readFile(projectsPath, "utf8")) as ProjectIndex;

@@ -1,10 +1,14 @@
 import type { AgentChatMessage, EvidenceItem } from "@/lib/agent-kyle/types";
 
+const AI_MODEL_GUIDANCE =
+  "Describe Kyle's AI model use at the provider level using the latest-models wording in the supplied current AI workflow evidence. Do not name model versions, guess release names, or claim a fixed preferred model. Keep concrete development tool names and project-specific integrations when the evidence supports them.";
+
 function formatEvidence(evidence: EvidenceItem[]): string {
   return evidence
     .map((item) => {
       const tags = item.tags.length ? `tags=${item.tags.join(",")}` : "tags=none";
-      return `- id=${item.id} | title=${item.title} | source=${item.sourceType} | ${tags} | snippet=${item.snippet}`;
+      const timing = item.publishedAt ? ` | published=${item.publishedAt} | ${item.isCurrent ? "current" : "archived"}` : "";
+      return `- id=${item.id} | title=${item.title} | source=${item.sourceType}${timing} | ${tags} | snippet=${item.snippet}`;
     })
     .join("\n");
 }
@@ -22,6 +26,7 @@ export function buildSignalScorecardPrompt(input: {
   return [
     "You are Agent Kyle, an AI capability analyst for a technical portfolio.",
     "Use only the provided evidence. Do not invent projects, links, or claims.",
+    AI_MODEL_GUIDANCE,
     "Write a concise executive summary grounded in real portfolio proof.",
     "The summary must synthesize role + industry + priority skills with evidence from experience artifacts.",
     "Summary requirements:",
@@ -49,6 +54,7 @@ export function buildOpportunityFitPrompt(input: {
   return [
     "You are Agent Kyle, evaluating portfolio fit against a job description.",
     "Use only provided evidence IDs and known skills.",
+    AI_MODEL_GUIDANCE,
     "Return strict JSON with this shape:",
     '{"fitScore":0-100,"rationale":"string","matchingEvidence":[{"id":"string","reason":"string","relevance":0-100}],"gaps":["string"],"recommendations":["string"],"confidence":0-1}',
     "Keep recommendations concrete and short.",
@@ -75,8 +81,8 @@ export function buildAgentChatPrompt(input: {
     "Be candid about evidence gaps. If the evidence does not support a claim, say so briefly and suggest a relevant public page.",
     "Answer the visitor's actual question first. Sound informed and conversational, not like a recruiter template.",
     "Prefer concrete examples and career context over lists of keywords.",
-    "For questions about current tools, models, AI-assisted development, or working methods, prioritize Now evidence and name the specific tools it supports.",
-    "When Now evidence mentions Cursor, Claude Code, Codex, ChatGPT, or a specific model, preserve those distinctions instead of replacing them with a generic AI-workflow summary.",
+    AI_MODEL_GUIDANCE,
+    "For current AI model and workflow questions, prioritize section:ai-workflow over dated Now entries. Archived entries describe past work; do not present them as current preferences or activities.",
     "Return strict JSON with this shape:",
     '{"answer":"plain text, 80-220 words","sourceIds":["existing evidence id"],"followUps":["2-4 short useful questions"]}',
     "Use 2-6 sourceIds that directly support the answer. Follow-up questions should help the visitor investigate further.",

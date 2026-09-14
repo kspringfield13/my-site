@@ -13,7 +13,9 @@ export const evidenceItemSchema = z.object({
   sourceType: evidenceSourceSchema,
   snippet: z.string().min(1),
   tags: z.array(z.string()).default([]),
-  projectSlug: z.string().optional()
+  projectSlug: z.string().optional(),
+  publishedAt: z.string().optional(),
+  isCurrent: z.boolean().optional()
 });
 export type EvidenceItem = z.infer<typeof evidenceItemSchema>;
 
@@ -133,7 +135,7 @@ export interface BudgetStatus {
 
 export const agentStatusResponseSchema = z.object({
   available: z.boolean(),
-  reason: z.enum(["ok", "disabled", "missing_api_key", "daily_budget_exceeded", "cooldown", "rate_limited"]).optional(),
+  reason: z.enum(["ok", "disabled", "missing_api_key", "daily_budget_exceeded", "cooldown", "rate_limited", "provider_unavailable"]).optional(),
   retryAfterSec: z.number().int().nonnegative().optional(),
   usageWindow: z.object({
     remainingInWindow: z.number().int().nonnegative(),

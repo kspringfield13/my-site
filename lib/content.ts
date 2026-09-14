@@ -3,6 +3,7 @@ import path from "node:path";
 import { cache } from "react";
 import { getContentPath, loadMdxFile } from "@/lib/mdx";
 import { partitionNowEntries } from "@/lib/now";
+import { aiWorkflowSearchDoc } from "@/lib/agent-kyle/workflow-context";
 import type {
   NowFeed,
   ProjectIndex,
@@ -152,6 +153,7 @@ export const getSearchDocs = cache(async (): Promise<SearchDoc[]> => {
     body: entry.details.join(" ")
   }));
   const sectionDocs: SearchDoc[] = [
+    aiWorkflowSearchDoc,
     {
       id: "section:hero",
       type: "Section",

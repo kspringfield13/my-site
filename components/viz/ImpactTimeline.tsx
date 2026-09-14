@@ -201,7 +201,7 @@ export function ImpactTimeline({ items }: { items: ImpactTimelineItem[] }) {
 
   const decoratedItems = useMemo(
     (): DecoratedTimelineItem[] =>
-      items.map((item) => {
+      [...items].reverse().map((item) => {
         const logo = getLogoForLabel(item.label);
         return {
           ...item,

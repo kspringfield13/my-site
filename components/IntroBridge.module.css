@@ -7,9 +7,6 @@
 .frame {
   position: relative;
   overflow: hidden;
-  background:
-    linear-gradient(90deg, transparent, color-mix(in srgb, var(--c-accent-900) 28%, transparent), transparent),
-    color-mix(in srgb, var(--c-surface-1) 48%, transparent);
   padding: clamp(1.15rem, 2.5vw, 1.65rem);
 }
 

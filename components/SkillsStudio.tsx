@@ -36,10 +36,9 @@ export function SkillsStudio({ capabilities }: { capabilities: SkillCapability[]
         <div className={styles.surface}>
           <div className={styles.surfaceHeader}>
             <span>Capabilities</span>
-            <span>{String(capabilities.length).padStart(2, "0")} production disciplines</span>
-            <span className={styles.explore}>
-              <span className={styles.readyDot} />
-              Move to reveal
+            <span className={styles.disciplines}>
+              <span className={styles.readyDot} aria-hidden="true" />
+              Production disciplines
             </span>
           </div>
 

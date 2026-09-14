@@ -27,7 +27,7 @@ export async function SectionNow() {
       </div>
 
       {primaryEntry ? (
-        <div className="mt-8 grid gap-4 md:grid-cols-[minmax(0,1.65fr)_minmax(16rem,0.85fr)]">
+        <div className="mt-8 grid min-w-0 grid-cols-1 gap-4">
           <article className="card-base relative overflow-hidden border-border-strong p-5 md:p-6">
             <div
               className="pointer-events-none absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-link to-transparent opacity-70"

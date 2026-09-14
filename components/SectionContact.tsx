@@ -35,7 +35,7 @@ export async function SectionContact() {
   const footerVideoSrc = site.footerVideoUrl || process.env.NEXT_PUBLIC_FOOTER_VIDEO_URL;
 
   return (
-    <section id="contact" className="contact-video-shell mt-8 border-t border-border-strong">
+    <section id="contact" className="contact-video-shell mt-8 flex flex-col border-t border-border-strong">
       <FooterVideoBackground src={footerVideoSrc} />
 
       <div className="section-wrap relative z-[1] pt-6 md:pt-6">
@@ -67,6 +67,17 @@ export async function SectionContact() {
           </Link>
         </div>
       </div>
+
+      {footerVideoSrc ? (
+        <div className="section-wrap relative z-[1] mt-auto pb-24 pt-16 md:pb-7">
+          <p className="w-fit text-xs leading-relaxed text-fg [text-shadow:0_1px_6px_rgba(0,0,0,0.65)]">
+            A different kind of exploring.
+            <span className="mt-1 block text-[11px] text-muted">
+              Drone footage filmed and piloted by me.
+            </span>
+          </p>
+        </div>
+      ) : null}
     </section>
   );
 }

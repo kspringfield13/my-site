@@ -162,6 +162,7 @@
       "title": "InsightForge: conversational business intelligence",
       "details": [
         "I'm building InsightForge, a BI workbench that helps turn raw data into useful models, worksheets, and dashboards through conversation.",
+        "The idea came from my own frustration with how much time it takes to build a dashboard that delivers useful insights for stakeholders. I wanted more from the AI features in Tableau and Power BI to help close that gap. Eventually, I found myself asking: why not try building it myself?",
         "The current focus is connecting AI-assisted analysis with reliable data foundations: dbt Core transformations, Postgres-backed analytics, and clear metric definitions that a data engineer can inspect and edit.",
         "I'm also refining how agents work inside the product, so proposed changes are easy to review and the resulting dashboards remain editable. It's an active build, shaped by testing with real workflows and learning where conversation helps most."
       ]

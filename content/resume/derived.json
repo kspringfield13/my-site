@@ -234,8 +234,14 @@
       "Experiment design"
     ],
     "ai": [
-      "Gen AI",
-      "AI workflow design"
+      "LLM applications",
+      "Multi-agent systems",
+      "MCP tool use",
+      "Provider-swappable LLM integrations",
+      "Cost-aware model routing",
+      "Cursor",
+      "Claude Code",
+      "Codex"
     ],
     "dev": [
       "Git",

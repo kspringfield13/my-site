@@ -238,7 +238,16 @@ function deriveClusters(skills: string[]) {
         "Experiment design"
       ])
     ],
-    ai: [...new Set([...has(/gen ai|genai|ai|llm|langchain|openai/i), "AI workflow design"])],
+    ai: [
+      ...new Set([
+        "LLM applications",
+        "Multi-agent systems",
+        "MCP tool use",
+        "Provider-swappable LLM integrations",
+        "Cost-aware model routing",
+        ...has(/claude code|codex|cursor|llm|langchain|openai/i)
+      ])
+    ],
     dev: [
       ...new Set([
         ...has(/git|ci\/cd|docker|bash|devops|agile|three\.?js|webgl|game development/i),

@@ -227,6 +227,16 @@
     "body": "Current experiments with outcomes and next steps."
   },
   {
+    "id": "now:2026-11-11-momentum-sales-contest-platform",
+    "type": "Now",
+    "title": "Momentum: a sales contest platform with AI built in",
+    "url": "/#now",
+    "tags": [
+      "ventures"
+    ],
+    "body": "I'm building Momentum, a platform that runs a sales enablement program as a staged race, and I just put a live demo of it online. Sellers earn points only for work that is verified in the tools they already use. Managers coach one team from a Command Center, and every standing can be audited before a winner is certified. Under it is a React app, a FastAPI service, PostgreSQL, and a dbt-modeled warehouse. The part I'm exploring most is how to put LLMs into a product people have to trust. The Race Coach and Team Brief run through a provider-swappable layer across Anthropic, OpenAI, and Gemini, and every number or citation in an answer is checked against the race data before it is shown. I build it daily with Claude Code and Codex, and I'm learning how far agentic coding goes when the bar is production: tests, migrations, access rules, and a public deployment that resets itself every day."
+  },
+  {
     "id": "now:2026-09-13-insightforge-conversational-bi",
     "type": "Now",
     "title": "InsightForge: conversational business intelligence",

@@ -166,6 +166,21 @@
         "The current focus is connecting AI-assisted analysis with reliable data foundations: dbt Core transformations, Postgres-backed analytics, and clear metric definitions that a data engineer can inspect and edit.",
         "I'm also refining how agents work inside the product, so proposed changes are easy to review and the resulting dashboards remain editable. It's an active build, shaped by testing with real workflows and learning where conversation helps most."
       ]
+    },
+    {
+      "id": "2026-11-11-momentum-sales-contest-platform",
+      "date": "2026-11-11",
+      "category": "ventures",
+      "title": "Momentum: a sales contest platform with AI built in",
+      "details": [
+        "I'm building Momentum, a platform that runs a sales enablement program as a staged race, and I just put a live demo of it online.",
+        "Sellers earn points only for work that is verified in the tools they already use. Managers coach one team from a Command Center, and every standing can be audited before a winner is certified. Under it is a React app, a FastAPI service, PostgreSQL, and a dbt-modeled warehouse.",
+        "The part I'm exploring most is how to put LLMs into a product people have to trust. The Race Coach and Team Brief run through a provider-swappable layer across Anthropic, OpenAI, and Gemini, and every number or citation in an answer is checked against the race data before it is shown.",
+        "I build it daily with Claude Code and Codex, and I'm learning how far agentic coding goes when the bar is production: tests, migrations, access rules, and a public deployment that resets itself every day."
+      ],
+      "links": [
+        "https://momentum-demo-dusky.vercel.app/"
+      ]
     }
   ]
 }

@@ -51,15 +51,15 @@ function getDetailForLabel(label: string): TimelineDetail {
       points: [
         {
           label: "Challenge",
-          text: "Turn complex sales operations and program needs into governed, decision-ready reporting.",
+          text: "Give sales operations leaders and program owners a governed, decision-ready view of program performance, survey insights, content governance, and sales trends.",
         },
         {
           label: "Contribution",
-          text: "Build Tableau and GitHub Pages reporting on Snowflake and dbt models, accelerated by AI-assisted workflows.",
+          text: "Build Tableau dashboards, GitHub Pages reporting, and Snowflake/dbt models across multiple sources, using Cursor and agentic coding to automate reporting logic and data validation.",
         },
         {
           label: "Impact",
-          text: "Improve visibility, validation, consistency, and stakeholder responsiveness across recurring analytics.",
+          text: "Consistent metrics, stronger data quality, and faster answers for stakeholders: the same rigor I now bring to LLM applications in production.",
         },
       ],
     };

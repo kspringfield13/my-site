@@ -13,7 +13,7 @@
 | Biography and personal interests | `app/(site)/about/page.tsx` | About page; only the shared AI workflow paragraph is directly included in agent evidence |
 | Homepage introduction | `components/IntroBridge.tsx` | Homepage introduction |
 | Career timeline | `components/viz/ImpactTimeline.tsx` | Homepage proof section |
-| Playground description | `components/SectionPlayground.tsx` | Homepage Emberwild section |
+| Playground description | `components/SectionPlayground.tsx` | Homepage Momentum demo section |
 | Contact links | `content/config/site.json` | Contact UI and Agent Kyle actions |
 | Short searchable section descriptions | `scripts/build-search-index.ts` | Generated search index and Agent Kyle section evidence |
 

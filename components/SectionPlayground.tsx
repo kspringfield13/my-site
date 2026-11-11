@@ -1,9 +1,9 @@
-import { EmberwildLauncher } from "@/components/playground/EmberwildLauncher";
+import { MomentumLauncher } from "@/components/playground/MomentumLauncher";
 import { getSiteConfig } from "@/lib/site-config";
 
 export async function SectionPlayground() {
   const site = await getSiteConfig();
-  const launchUrl = site.playground.emberwildLaunchUrl;
+  const launchUrl = site.playground.momentumDemoUrl;
 
   return (
     <section
@@ -15,18 +15,18 @@ export async function SectionPlayground() {
         <div>
           <p className="eyebrow">Playground</p>
           <h2 id="playground-title" className="subhead mt-2">
-            Emberwild: building a survival world for the browser.
+            Momentum: a sales contest platform, built end to end.
           </h2>
         </div>
         <p className="m-0 text-sm leading-relaxed text-muted md:text-right">
-          Emberwild is an evolving Three.js game where you forage, craft, brave the elements, and build a foothold in
-          the wild. I&apos;m developing its gameplay systems and 3D world with Codex and Claude Code—the latest
-          work-in-progress build is playable below.
+          Momentum turns a sales enablement program into a staged race with verified points, team coaching, and
+          auditable standings. I&apos;m building the React, FastAPI, and PostgreSQL prototype with Claude Code and
+          Codex. The live demo below runs on fictional data.
         </p>
       </div>
 
       <div className="mt-8">
-        <EmberwildLauncher launchUrl={launchUrl} />
+        <MomentumLauncher launchUrl={launchUrl} />
       </div>
     </section>
   );

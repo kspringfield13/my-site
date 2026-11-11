@@ -181,10 +181,10 @@ export const getSearchDocs = cache(async (): Promise<SearchDoc[]> => {
     {
       id: "section:playground",
       type: "Section",
-      title: "Emberwild",
+      title: "Momentum",
       url: "/#playground",
-      tags: ["game development", "three.js", "survival", "crafting", "codex", "claude code"],
-      body: "The playground is a space for experimenting with AI-assisted development, broadening technical knowledge, and learning by building. Emberwild is an evolving Three.js browser game where players forage, craft, brave the elements, and build a foothold in the wild. Its gameplay systems and 3D world are being developed with Codex and Claude Code, and the latest work-in-progress build is playable from the site."
+      tags: ["momentum", "sales contest", "sales enablement", "react", "fastapi", "postgresql", "codex", "claude code"],
+      body: "The playground is a space for experimenting with AI-assisted development, broadening technical knowledge, and learning by building. Momentum is a sales contest platform prototype that turns a sales enablement program into a staged race: sellers earn points only for verified work, managers coach their team from one Command Center, and every standing is auditable. It is built with React, FastAPI, and PostgreSQL using Claude Code and Codex, and a live demo running on fictional data opens from the site."
     },
     {
       id: "section:skills",

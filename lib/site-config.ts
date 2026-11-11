@@ -8,7 +8,7 @@ interface SiteConfig {
   name: string;
   footerVideoUrl?: string;
   playground: {
-    emberwildLaunchUrl: string;
+    momentumDemoUrl: string;
   };
   contact: {
     email: string;

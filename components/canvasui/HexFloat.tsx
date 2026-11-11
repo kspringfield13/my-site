@@ -647,6 +647,7 @@ function patchHoverRules() {
 export function createHexFloat(
   elements: HexFloatElements,
   options: HexFloatOptions = {},
+  onContentError?: () => void,
 ): HexFloatInstance | null {
   const config = { ...DEFAULTS, ...options };
   const { source, content, output } = elements;
@@ -678,7 +679,13 @@ export function createHexFloat(
         sourceCtx!.drawElementImage!(content, 0, 0);
         contentDirty = true;
         wake();
-      } catch {}
+      } catch {
+        // The API is experimental and its requirements have changed between Chrome
+        // releases. A browser that refuses to draw must fall back to plain HTML, or
+        // the content would be laid out inside the canvas and never shown.
+        paintable.onpaint = null;
+        onContentError?.();
+      }
     };
   }
 
@@ -1666,6 +1673,7 @@ export function HexFloat({
     instanceRef.current = createHexFloat(
       { source, content, output },
       initialOptions,
+      () => setFailed(true),
     );
     if (native && !instanceRef.current) setFailed(true);
     return () => {
@@ -1684,6 +1692,9 @@ export function HexFloat({
         ref={sourceRef}
         // @ts-expect-error experimental html-in-canvas attribute
         layoutsubtree="true"
+        // Chrome 157 replaced layoutsubtree with content="drawable" on the canvas
+        // and a drawable attribute on each element drawn; both spellings are sent.
+        content="drawable"
         suppressHydrationWarning
         style={
           native
@@ -1694,6 +1705,8 @@ export function HexFloat({
         {native ? (
           <div
             ref={contentRef}
+            // @ts-expect-error experimental html-in-canvas attribute
+            drawable=""
             style={{
               position: "relative",
               width: "100%",

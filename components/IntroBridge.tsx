@@ -3,8 +3,6 @@
 import {
   useEffect,
   useRef,
-  useState,
-  type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent
 } from "react";
@@ -33,8 +31,12 @@ const ORIENTATION_LINKS = [
   }
 ] as const;
 
-const DEPARTURE_DELAY_MS = 130;
-const TRANSITION_DURATION_MS = 380;
+// Departure: the clicked card acknowledges the press and a trace line opens at its row.
+const DEPARTURE_MS = 120;
+// Arrival: after the jump, the trace glides to the destination heading while the section settles in.
+const ARRIVAL_MS = 300;
+const EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)";
+const LAUNCHING_CLASS = styles.anchorLaunching;
 
 function focusDestination(destination: HTMLElement) {
   const focusTarget = destination.querySelector<HTMLElement>("h2") ?? destination;
@@ -56,18 +58,55 @@ function focusDestination(destination: HTMLElement) {
   });
 }
 
+/** The heading block and the content below it, in reading order. */
+function arrivalBlocks(destination: HTMLElement) {
+  const blocks = Array.from(destination.children).filter(
+    (child): child is HTMLElement => child instanceof HTMLElement
+  );
+  return blocks.length > 0 ? blocks.slice(0, 2) : [destination];
+}
+
+/** Where the trace should land: just above the destination's eyebrow/heading. */
+function landingY(destination: HTMLElement) {
+  const marker =
+    destination.querySelector<HTMLElement>(".eyebrow") ?? destination.querySelector<HTMLElement>("h2") ?? destination;
+  return Math.max(0, marker.getBoundingClientRect().top - 12);
+}
+
+function playArrival(destination: HTMLElement, reduceMotion: boolean) {
+  arrivalBlocks(destination).forEach((block, index) => {
+    block.getAnimations().forEach((animation) => animation.cancel());
+
+    block.animate(
+      reduceMotion
+        ? [{ opacity: 0.35 }, { opacity: 1 }]
+        : [
+            { opacity: 0, transform: `translate3d(0, ${index === 0 ? 10 : 16}px, 0)` },
+            { opacity: 1, transform: "translate3d(0, 0, 0)" }
+          ],
+      {
+        duration: reduceMotion ? 200 : ARRIVAL_MS + index * 40,
+        delay: reduceMotion ? 0 : 40 + index * 70,
+        easing: EASE_OUT,
+        fill: "backwards"
+      }
+    );
+  });
+}
+
 export function IntroBridge() {
   const timersRef = useRef<number[]>([]);
   const isTransitioningRef = useRef(false);
-  const [teleport, setTeleport] = useState({ active: false, originY: 0, run: 0 });
+  const traceRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
+    const timers = timersRef.current;
     return () => {
-      timersRef.current.forEach((timer) => window.clearTimeout(timer));
+      timers.forEach((timer) => window.clearTimeout(timer));
     };
   }, []);
 
-  function navigateTo(destination: HTMLElement, href: string, reduceMotion: boolean) {
+  function navigateTo(destination: HTMLElement, href: string) {
     destination.scrollIntoView({ behavior: "auto", block: "start" });
 
     if (window.location.hash !== href) {
@@ -75,19 +114,6 @@ export function IntroBridge() {
     }
 
     focusDestination(destination);
-
-    if (!reduceMotion) {
-      destination.animate(
-        [
-          { opacity: 0.58, transform: "translate3d(0, 9px, 0)" },
-          { opacity: 1, transform: "translate3d(0, 0, 0)" }
-        ],
-        {
-          duration: 280,
-          easing: "cubic-bezier(0.16, 1, 0.3, 1)"
-        }
-      );
-    }
   }
 
   function handleAnchorClick(event: ReactMouseEvent<HTMLAnchorElement>, href: string) {
@@ -121,8 +147,11 @@ export function IntroBridge() {
 
   function activateAnchor(anchor: HTMLAnchorElement, destination: HTMLElement, href: string) {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion) {
-      navigateTo(destination, href, true);
+    const trace = traceRef.current;
+
+    if (reduceMotion || !trace) {
+      navigateTo(destination, href);
+      playArrival(destination, true);
       return;
     }
 
@@ -130,20 +159,42 @@ export function IntroBridge() {
     isTransitioningRef.current = true;
 
     const anchorRect = anchor.getBoundingClientRect();
-    setTeleport((current) => ({
-      active: true,
-      originY: anchorRect.top + anchorRect.height / 2,
-      run: current.run + 1
-    }));
+    const originY = anchorRect.top + anchorRect.height / 2;
+    const at = (y: number, scaleX: number) => `translate3d(0, ${y}px, 0) scaleX(${scaleX})`;
+
+    anchor.classList.add(LAUNCHING_CLASS);
+    trace.getAnimations().forEach((animation) => animation.cancel());
+
+    // Departure: open the trace across the clicked card's row.
+    trace.animate(
+      [
+        { opacity: 0, transform: at(originY, 0.08) },
+        { opacity: 1, transform: at(originY, 1) }
+      ],
+      { duration: DEPARTURE_MS, easing: EASE_OUT, fill: "forwards" }
+    );
 
     timersRef.current.push(
       window.setTimeout(() => {
-        navigateTo(destination, href, false);
-      }, DEPARTURE_DELAY_MS),
+        navigateTo(destination, href);
+        anchor.classList.remove(LAUNCHING_CLASS);
+
+        // Arrival: glide the trace to where the destination heading now sits, then let it dissolve.
+        const targetY = landingY(destination);
+        trace.getAnimations().forEach((animation) => animation.cancel());
+        trace.animate(
+          [
+            { opacity: 1, transform: at(originY, 1), offset: 0 },
+            { opacity: 0.9, transform: at(targetY, 0.7), offset: 0.6 },
+            { opacity: 0, transform: at(targetY, 0.2), offset: 1 }
+          ],
+          { duration: ARRIVAL_MS, easing: EASE_OUT, fill: "forwards" }
+        );
+        playArrival(destination, false);
+      }, DEPARTURE_MS),
       window.setTimeout(() => {
         isTransitioningRef.current = false;
-        setTeleport((current) => ({ ...current, active: false }));
-      }, TRANSITION_DURATION_MS)
+      }, DEPARTURE_MS + ARRIVAL_MS)
     );
   }
 
@@ -179,12 +230,10 @@ export function IntroBridge() {
         </nav>
       </div>
 
-      <span
-        key={teleport.run}
-        aria-hidden="true"
-        className={`${styles.teleportTrace} ${teleport.active ? styles.teleportTraceActive : ""}`}
-        style={{ "--teleport-origin-y": `${teleport.originY}px` } as CSSProperties}
-      />
+      <span ref={traceRef} aria-hidden="true" className={styles.teleportTrace}>
+        <span className={styles.traceHaze} />
+        <span className={styles.traceLine} />
+      </span>
     </section>
   );
 }

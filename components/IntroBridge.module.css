@@ -88,7 +88,6 @@
   z-index: 1;
 }
 
-.anchor:hover,
 .anchor:focus-visible {
   transform: translateY(-3px) scale(1.01);
   border-color: var(--c-border-accent);
@@ -99,20 +98,14 @@
   color: var(--c-link-hover);
 }
 
-.anchor:hover::before,
 .anchor:focus-visible::before {
   opacity: 1;
 }
 
-.anchor:hover::after,
 .anchor:focus-visible::after {
   transform: translateX(350%) skewX(-18deg);
 }
 
-.anchor:active {
-  transform: translateY(-1px) scale(0.995);
-  transition-duration: 90ms;
-}
 
 .anchor:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--c-link) 72%, transparent);
@@ -167,104 +160,103 @@
     transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.anchor:hover .index,
 .anchor:focus-visible .index,
-.anchor:hover .arrow,
 .anchor:focus-visible .arrow {
   color: var(--c-link-hover);
 }
 
-.anchor:hover .arrow,
 .anchor:focus-visible .arrow {
   transform: translate(4px, 4px) rotate(-5deg);
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .anchor:hover {
+    transform: translateY(-3px) scale(1.01);
+    border-color: var(--c-border-accent);
+    background: color-mix(in srgb, var(--c-surface-3) 72%, transparent);
+    box-shadow:
+      0 14px 30px -18px color-mix(in srgb, var(--c-link) 72%, transparent),
+      inset 0 1px color-mix(in srgb, var(--c-link-hover) 12%, transparent);
+    color: var(--c-link-hover);
+  }
+
+  .anchor:hover::before {
+    opacity: 1;
+  }
+
+  .anchor:hover::after {
+    transform: translateX(350%) skewX(-18deg);
+  }
+
+  .anchor:hover .index,
+  .anchor:hover .arrow {
+    color: var(--c-link-hover);
+  }
+
+  .anchor:hover .arrow {
+    transform: translate(4px, 4px) rotate(-5deg);
+  }
+}
+
+/* Press: a firm, quick dip. Launching: the card holds the press while the arrow points the way down. */
+.anchor:active,
+.anchor.anchorLaunching {
+  transform: translateY(-1px) scale(0.985);
+  transition-duration: 100ms;
+}
+
+.anchor.anchorLaunching {
+  border-color: var(--c-border-accent);
+  color: var(--c-link-hover);
+}
+
+.anchor.anchorLaunching .arrow {
+  color: var(--c-link-hover);
+  transform: translate(7px, 7px);
+  transition-duration: 110ms;
+}
+
+.anchor:active .arrow {
+  transition-duration: 100ms;
+}
+
+/* Driven by WAAPI in IntroBridge.tsx: transform carries the Y position, so it stays on the compositor. */
 .teleportTrace {
   position: fixed;
-  inset: 0;
+  inset-inline: 0;
+  top: 0;
   z-index: 55;
+  height: 18px;
+  margin-top: -9px;
   pointer-events: none;
   opacity: 0;
+  transform-origin: center;
+  will-change: transform, opacity;
 }
 
-.teleportTrace::before,
-.teleportTrace::after {
-  content: "";
+.traceLine,
+.traceHaze {
   position: absolute;
   inset-inline: 0;
-  top: var(--teleport-origin-y);
-  transform: scaleX(0);
-  transform-origin: center;
-  opacity: 0;
 }
 
-.teleportTrace::before {
+.traceLine {
+  top: 50%;
   height: 1px;
-  background: linear-gradient(90deg, transparent 4%, var(--c-border-accent) 26%, var(--c-link-hover) 50%, var(--c-border-accent) 74%, transparent 96%);
+  background: linear-gradient(
+    90deg,
+    transparent 4%,
+    var(--c-border-accent) 26%,
+    var(--c-link-hover) 50%,
+    var(--c-border-accent) 74%,
+    transparent 96%
+  );
   box-shadow: 0 0 12px color-mix(in srgb, var(--c-link) 58%, transparent);
 }
 
-.teleportTrace::after {
-  height: 18px;
-  margin-top: -9px;
+.traceHaze {
+  inset-block: 0;
   background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--c-link) 10%, transparent), transparent);
-}
-
-.teleportTraceActive {
-  animation: trace-container 380ms linear both;
-}
-
-.teleportTraceActive::before {
-  animation: trace-line 380ms cubic-bezier(0.22, 0.75, 0.18, 1) both;
-}
-
-.teleportTraceActive::after {
-  animation: trace-haze 380ms cubic-bezier(0.22, 0.75, 0.18, 1) both;
-}
-
-@keyframes trace-container {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  12%,
-  72% {
-    opacity: 1;
-  }
-}
-
-@keyframes trace-line {
-  0% {
-    transform: translate3d(0, 0, 0) scaleX(0.06);
-    opacity: 0;
-  }
-  32% {
-    transform: translate3d(0, 0, 0) scaleX(1);
-    opacity: 0.95;
-  }
-  55% {
-    transform: translate3d(0, calc(50vh - var(--teleport-origin-y)), 0) scaleX(0.82);
-    opacity: 0.72;
-  }
-  100% {
-    transform: translate3d(0, calc(50vh - var(--teleport-origin-y)), 0) scaleX(0.1);
-    opacity: 0;
-  }
-}
-
-@keyframes trace-haze {
-  0% {
-    transform: translate3d(0, 0, 0) scaleX(0.12);
-    opacity: 0;
-  }
-  38% {
-    transform: translate3d(0, 0, 0) scaleX(0.86);
-    opacity: 0.7;
-  }
-  100% {
-    transform: translate3d(0, calc(50vh - var(--teleport-origin-y)), 0) scaleX(0.24);
-    opacity: 0;
-  }
 }
 
 @media (max-width: 720px) {
@@ -324,7 +316,11 @@
 
   .anchor:hover,
   .anchor:focus-visible,
-  .anchor:active {
+  .anchor:active,
+  .anchor.anchorLaunching,
+  .anchor:hover .arrow,
+  .anchor:focus-visible .arrow,
+  .anchor.anchorLaunching .arrow {
     transform: none;
   }
 

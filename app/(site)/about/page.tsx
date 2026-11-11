@@ -24,20 +24,30 @@ const QUICK_LINKS = [
   }
 ];
 
-const FUN_FACTS = [
+type FunFact = {
+  title: string;
+  imageSrc: string;
+  imageLabel: string;
+  description: string;
+  link?: { href: string; label: string };
+};
+
+const FUN_FACTS: FunFact[] = [
   {
-    title: "Rich Dad Poor Dad",
-    imageSrc: "/rich_dad_poor_dad.png",
+    title: "Your Fellow Americans",
+    imageSrc: "/your-fellow-americans.webp",
     imageLabel: "favorite book",
     description:
-      "Robert Kiyosaki"
+      "Peter Santenello",
+    link: { href: "https://www.amazon.com/dp/B0FX5S5392", label: "Buy on Amazon" }
   },
   {
-    title: "The Joe Rogan Experience",
-    imageSrc: "/the-joe-rogan-experience.png",
+    title: "All-In",
+    imageSrc: "/all-in-podcast.webp",
     imageLabel: "favorite podcast",
     description:
-      "Joe Rogan & Jamie"
+      "Chamath Palihapitiya, David Sacks, David Friedberg & Jason Calacanis",
+    link: { href: "https://allin.com/", label: "Listen at allin.com" }
   },
   {
     title: "Everybody Loves Raymond",
@@ -124,7 +134,7 @@ export default function AboutPage() {
           <section id="fun-facts" className="scroll-mt-24">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <h2 className="subhead">Fun facts</h2>
-              <p className="text-xs text-muted">Last updated: February 2026</p>
+              <p className="text-xs text-muted">Last updated: November 2026</p>
             </div>
 
             <div className="mt-4 grid gap-4 md:grid-cols-2">
@@ -133,6 +143,17 @@ export default function AboutPage() {
                   <ImagePlaceholder label={fact.imageLabel} src={fact.imageSrc} alt={fact.title} aspectClass="aspect-[16/16]" />
                   <h3 className="mt-4 text-base font-display font-semibold text-[color:var(--c-text)]">{fact.title}</h3>
                   <p className="mt-2 text-sm text-muted">{fact.description}</p>
+                  {fact.link ? (
+                    <a
+                      href={fact.link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-block text-sm text-muted underline decoration-border underline-offset-4 transition hover:text-link-hover"
+                    >
+                      {fact.link.label}
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  ) : null}
                 </article>
               ))}
             </div>

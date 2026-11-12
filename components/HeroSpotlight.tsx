@@ -13,7 +13,7 @@ import { THEME_RGB } from "@/lib/theme/palette";
 import { ParticleReveal } from "@/components/canvasui/ParticleReveal";
 import styles from "./HeroSpotlight.module.css";
 
-const X_URL = "https://x.com/kspringfield13";
+const X_URL = "https://x.com/kyleryan";
 
 const DESKTOP_LERP_FACTOR = 0.11;
 const MOBILE_LERP_FACTOR = 0.18;
